@@ -9,7 +9,7 @@
 <!-- About the Project -->
 
 ## :star2: About the Project
-
+Work in Progress, this is not in a usasble state RN
 
 
 <!-- Getting Started -->
@@ -26,7 +26,12 @@
 
 ## :eyes: Usage
 
-
+```cli
+docker compose -f docker-compose-builder.yml up --build
+docker compose -f docker-compose-common.yml up --build
+docker compose -f docker-compose-laravel.yml up --build
+git clone -b <branch> <remote_repo> src
+```
 
 <!-- Roadmap -->
 

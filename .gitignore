@@ -1,1 +1,14 @@
-/.idea/
+.idea/
+dns-config/
+laravel-php-config/
+letsencrypt/
+mysql8-data/
+mysql8-config/
+nginx-pm-data/
+portainer-data/
+portainer-readonly/
+password.txt
+src/
+laravel-storage-app/
+.env
+test.sh

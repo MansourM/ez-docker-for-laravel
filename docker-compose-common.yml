@@ -1,0 +1,96 @@
+version: '3.9'
+
+services:
+
+  dns-server:
+    container_name: dns-server
+    hostname: dns-server
+    image: technitium/dns-server:latest
+    ports:
+      - ${PORT_DNS}:5380/tcp #DNS web console
+      - "53:53/udp" #DNS service
+      - "53:53/tcp" #DNS service
+    environment:
+      - DNS_SERVER_DOMAIN=dns-server
+      #The path to a file that contains a plain text password for the DNS web console admin user.
+      - DNS_SERVER_ADMIN_PASSWORD_FILE=password.txt
+      #Enables DNS server optional protocol DNS-over-HTTP on TCP port 8053 to be used with a TLS
+      #-> terminating reverse proxy like nginx.
+      - DNS_SERVER_OPTIONAL_PROTOCOL_DNS_OVER_HTTP=false
+    volumes:
+      - ./dns-config:/etc/dns/config
+    restart: unless-stopped
+    sysctls:
+      - net.ipv4.ip_local_port_range=1024 65000
+    networks:
+      - net-common
+
+
+  nginx-pm:
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - ${PORT_NGINX_PM}:81  #web console
+      - '443:443'
+    volumes:
+      - ./nginx-pm-data:/data
+      - ./letsencrypt:/etc/letsencrypt
+      #- /nginx-config/nginx.conf:/etc/nginx/nginx.conf
+      #- ./nginx-config/custom-config.conf:/etc/nginx/conf.d/custom-config.conf
+    depends_on:
+      - dns-server
+    networks:
+      - net-common
+
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: always
+    ports:
+      - ${PORT_PORTAINER}:9000  #web console
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - ./portainer-readonly/run/docker.sock:/var/run/docker.sock:ro
+      - ./portainer-data:/data
+    depends_on:
+      - nginx-pm
+    networks:
+      - net-common
+
+
+  mysql8:
+    image: mysql:8.0
+    ports:
+      - ${DB_PORT}:3306
+    environment:
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+    volumes:
+      - ./mysql8-data:/var/lib/mysql
+      - ./mysql8-config:/etc/mysql/conf.d
+    restart: unless-stopped
+    networks:
+      - net-common
+
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - ${PORT_PMA}:80  #web console
+    environment:
+      PMA_HOST: ${DB_HOST}
+      PMA_PORT: ${DB_PORT}
+      PMA_ARBITRARY: 0
+    depends_on:
+      - mysql8
+    networks:
+      - net-common
+
+networks:
+  net-common:
