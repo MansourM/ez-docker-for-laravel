@@ -20,6 +20,8 @@ Work in Progress, this is not in a usasble state RN
 <!-- Prerequisites -->
 ### :bangbang: Prerequisites
 
+git
+docker
 
 
 <!-- Usage -->
@@ -37,7 +39,7 @@ git clone -b <branch> <remote_repo> src
 
 ## :compass: Changes from Parent / Roadmap
 
-* [x] Singleton pattern.
+* [ ] WIP.
 
 
 <!-- Known Issues -->
