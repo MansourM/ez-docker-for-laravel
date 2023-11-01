@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+
+  laravel-server:
+    build:
+      context: .
+      dockerfile: laravel.Dockerfile
+    environment:
+      - APP_ENV=${APP_ENV}
+    volumes:
+      - ./laravel-php-config:/usr/local/etc/php/conf.d
+      - ./laravel-storage-app:/usr/src/storage/app
+    restart: unless-stopped
+    ports:
+      - ${PORT_LARAVEL}:8000
+
+
+networks:
+  default:
+    external: true
+    name: ${ROOT_FOLDER_NAME}_net-common
