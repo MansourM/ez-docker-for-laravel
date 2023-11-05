@@ -181,12 +181,9 @@ Boilerplate for creating a simple bash script with some basic strictness
 checks and help features.
 
 Usage:
-  ${_ME} i | install  : add docker repository to apt sources
-                        then install docker engine
-  ${_ME} u | uninstall: uninstall docker engine
-  ${_ME} r | remove   : deletes all images, containers, and volumes
-                        (Images, containers, volumes, or custom configuration
-                        files on your host aren't automatically removed)
+  ${_ME} c | common   : clone your laravel repo, build its assets and configure for production
+  ${_ME} b | build    : build and run common service containers (dns, nginx, mysql, pma, portainer)
+  ${_ME} s | start    : start laravel container
 
 Options:
   -h --help  Show this screen.
