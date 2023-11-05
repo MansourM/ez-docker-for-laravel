@@ -2,6 +2,7 @@
 <img src="image/ez-docker-for-laravel.png" alt="logo" width="412" height="128" />
   <!--<h1>EZ Docker For Laravel</h1>-->
   <p>easy to set up, robust and production ready environment for Laravel using Docker, Docker Compose and bash script.</p>
+  <p>currently these scripts are debian based and tested on ubuntu 22.04</p>
 </div>
 
 <br />
@@ -27,6 +28,11 @@ docker
 <!-- Usage -->
 
 ## :eyes: Usage
+
+install dokcer engine
+```cli
+./docker-ubuntu.sh install
+```
 
 ```cli
 docker compose -f docker-compose-builder.yml up --build
