@@ -35,6 +35,22 @@ docker compose -f docker-compose-laravel.yml up --build
 git clone -b <branch> <remote_repo> src
 ```
 
+##### .env variable examples
+```env
+PORT_DNS=7011
+PORT_NGINX_PM=7022
+PORT_PMA=7033
+PORT_PORTAINER=7044
+PORT_LARAVEL=7777
+ROOT_FOLDER_NAME=ez-docker-for-laravel
+GIT_URL=https://github.com/MansourM/example.git
+GIT_BRANCH=dev
+```
+you can use this format to avoid entering username and password every time you clone the repo
+```env
+GIT_URL=https://username:password@github.com/MansourM/example.git
+```
+
 <!-- Roadmap -->
 
 ## :compass: Changes from Parent / Roadmap
