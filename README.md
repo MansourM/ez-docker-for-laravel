@@ -34,12 +34,12 @@ install dokcer engine
 sudo ./docker-ubuntu.sh install
 ```
 
-build and run commons service containers (dns, nginx, mysql, pma, portainer)
+build and run common service containers (dns, nginx, mysql, pma, portainer)
 ```cli
 sudo ./deploy.sh common
 ```
 
-clone you laravel repo and build assets
+clone your laravel repo, build its assets and configure for production
 ```cli
 sudo ./deploy.sh build
 ```
