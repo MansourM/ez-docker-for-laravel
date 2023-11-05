@@ -72,3 +72,4 @@ Seyed Mansour Mirbehbahani - sm.mirbehbahani@gmail.com
 ## :gem: Acknowledgements
 
 - [Awesome Readme Template](https://github.com/Louis3797/awesome-readme-template)
+- [Bash Boilerplate](https://github.com/xwmx/bash-boilerplate)
