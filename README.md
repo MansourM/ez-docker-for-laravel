@@ -31,15 +31,24 @@ docker
 
 install dokcer engine
 ```cli
-./docker-ubuntu.sh install
+sudo ./docker-ubuntu.sh install
 ```
 
+build and run commons service containers (dns, nginx, mysql, pma, portainer)
 ```cli
-docker compose -f docker-compose-builder.yml up --build
-docker compose -f docker-compose-common.yml up --build
-docker compose -f docker-compose-laravel.yml up --build
-git clone -b <branch> <remote_repo> src
+sudo ./deploy.sh common
 ```
+
+clone you laravel repo and build assets
+```cli
+sudo ./deploy.sh build
+```
+
+start laravel container
+```cli
+sudo ./deploy.sh start
+```
+
 
 ##### .env variable examples
 ```env
@@ -61,7 +70,7 @@ GIT_URL=https://username:password@github.com/MansourM/example.git
 
 ## :compass: Changes from Parent / Roadmap
 
-* [ ] WIP.
+* [ ] read https://www.reddit.com/r/technitium/comments/vsw1bq/technitium_dns_server_in_a_production_environment/.
 
 
 <!-- Known Issues -->
