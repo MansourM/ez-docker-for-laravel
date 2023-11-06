@@ -238,17 +238,17 @@ _os_dns_disable() {
   # backup resolv.conf if it is not the same as future_resolv_conf
   current_resolv_conf=$(cat /etc/resolv.conf)
   if [[ "$current_resolv_conf" != $future_resolv_conf ]]; then
-    backup_file_name="resolv.conf.bak"
-    if [[ -f $backup_file_name ]]; then
+    backup_file="/etc/resolv.conf.bak"
+    if [[ -f $backup_file ]]; then
       # if default backup file already exists, attach timestamp to backup file name
       # note that this is because "resolv.conf.bak" is the default backup file name which
       # will be used when trying to revert changes to re-enable OS default dns settings
       now=$(date +"%Y-%m-%d-%H%M%S")
-      backup_file_name="/etc/resolv.conf-$now.bak"
+      backup_file="/etc/resolv.conf-$now.bak"
     fi
 
     # Move the current DNS configuration file to the backup file
-    sudo mv /etc/resolv.conf $backup_file_name
+    sudo mv /etc/resolv.conf $backup_file
 
     # create new resolv.conf
     sudo echo $future_resolv_conf >/etc/resolv.conf
@@ -260,9 +260,9 @@ _os_dns_disable() {
 }
 
 _os_dns_enable() {
-  backup_file_name="resolv.conf.bak"
-  if [[ -f $backup_file_name ]]; then
-    sudo mv "/etc/$backup_file_name" "/etc/resolv.conf"
+  backup_file="/etc/resolv.conf.bak"
+  if [[ -f $backup_file ]]; then
+    sudo mv backup_file "/etc/resolv.conf"
   else
     sudo echo "nameserver 8.8.8.8\nnameserver 8.8.4.4\nnameserver 1.1.1.1\nnameserver 1.0.0.1" >/etc/resolv.conf
   fi

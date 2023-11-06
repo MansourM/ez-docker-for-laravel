@@ -2,7 +2,7 @@
 <img src="image/ez-docker-for-laravel.png" alt="logo" width="412" height="128" />
   <!--<h1>EZ Docker For Laravel</h1>-->
   <p>easy to set up, robust and production ready environment for Laravel using Docker, Docker Compose and bash script.</p>
-  <p>currently these scripts are debian based and tested on ubuntu 22.04</p>
+  <p>currently these scripts are debian based and tested on ubuntu 22.04.3 live Server</p>
 </div>
 
 <br />
@@ -19,7 +19,9 @@ Work in Progress, this is not in a usasble state RN
 
 clone the repository
 ```cli 
-git clone https://github.com/MansourM/ez-docker-for-laravel.git
+sudo git clone https://github.com/MansourM/ez-docker-for-laravel.git
+cd ez-docker-for-laravel
+sudo chmod +x ez.sh
 ```
 
 
