@@ -257,20 +257,21 @@ _os_dns_disable() {
   fi
 
   # disable systemd-resolved (default Ubuntu dns resolver)
-  sudo service systemd-resolved stop
-  sudo service systemd-resolved disable
+  sudo systemctl disable systemd-resolved
+  sudo systemctl stop systemd-resolved
 }
 
 _os_dns_enable() {
+  sudo systemctl enable systemd-resolved
+  sudo systemctl start systemd-resolved
+
   backup_file="/etc/resolv.conf.bak"
   if [[ -f $backup_file ]]; then
     sudo mv $backup_file "/etc/resolv.conf"
   else
-    sudo echo "nameserver 8.8.8.8\nnameserver 8.8.4.4\nnameserver 1.1.1.1\nnameserver 1.0.0.1" >/etc/resolv.conf
+    echo "nameserver 8.8.8.8" >> /etc/resolv.conf
+    echo "nameserver 1.1.1.1" >> /etc/resolv.conf
   fi
-
-  sudo service systemd-resolved enable
-  sudo service systemd-resolved start
 }
 
 _shared_deploy() {
