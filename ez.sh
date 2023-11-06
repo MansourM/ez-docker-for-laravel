@@ -264,7 +264,7 @@ _os_dns_disable() {
 _os_dns_enable() {
   backup_file="/etc/resolv.conf.bak"
   if [[ -f $backup_file ]]; then
-    sudo mv backup_file "/etc/resolv.conf"
+    sudo mv $backup_file "/etc/resolv.conf"
   else
     sudo echo "nameserver 8.8.8.8\nnameserver 8.8.4.4\nnameserver 1.1.1.1\nnameserver 1.0.0.1" >/etc/resolv.conf
   fi
