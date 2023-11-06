@@ -247,8 +247,10 @@ _os_dns_disable() {
       backup_file="/etc/resolv.conf-$now.bak"
     fi
 
-    # Move the current DNS configuration file to the backup file
-    sudo mv /etc/resolv.conf $backup_file
+    # Move the current DNS configuration file to the backup file if exists
+    if [[ -f "/etc/resolv.conf" ]]; then
+      sudo mv /etc/resolv.conf $backup_file
+    fi
 
     # create new resolv.conf
     sudo echo $future_resolv_conf >/etc/resolv.conf
