@@ -257,8 +257,8 @@ _os_dns_disable() {
   fi
 
   # disable systemd-resolved (default Ubuntu dns resolver)
-  sudo service systemd-resolved disable
   sudo service systemd-resolved stop
+  sudo service systemd-resolved disable
 }
 
 _os_dns_enable() {
