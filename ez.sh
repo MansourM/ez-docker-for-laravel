@@ -283,14 +283,16 @@ _laravel_build() {
   echo "cloning repository, rename its folder to src..."
   git clone -b $GIT_BRANCH $GIT_URL src
 
+  echo "copying entrypoint-builder.sh file to src folder..."
+  cp entrypoint-builder.sh src/entrypoint-builder.sh
+  chmod +x src/entrypoint-builder.sh
+
   echo "copying .env file to src folder..."
   cp .env src/.env
 
-  echo "copying entrypoint-builder.sh file to src folder..."
-  cp entrypoint-builder.sh src/entrypoint-builder.sh
-
   echo "copying entrypoint-laravel.sh file to src folder..."
   cp entrypoint-laravel.sh src/entrypoint-laravel.sh
+  chmod +x src/entrypoint-laravel.sh
 
   docker compose -f docker-compose-builder.yml up --build
 }
