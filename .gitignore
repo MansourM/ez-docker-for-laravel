@@ -11,4 +11,4 @@ password.txt
 src/
 laravel-storage-app/
 .env
-test.sh
+test*
