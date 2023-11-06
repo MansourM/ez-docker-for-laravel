@@ -17,6 +17,11 @@ Work in Progress, this is not in a usasble state RN
 
 ## :toolbox: Getting Started
 
+clone the repository
+```cli 
+git clone https://github.com/MansourM/ez-docker-for-laravel.git
+```
+
 
 <!-- Prerequisites -->
 ### :bangbang: Prerequisites
@@ -29,26 +34,21 @@ docker
 
 ## :eyes: Usage
 
-install dokcer engine
+commands
 ```cli
-sudo ./docker-ubuntu.sh install
-```
+~:sudo ./ez.sh --help
 
-build and run common service containers (dns, nginx, mysql, pma, portainer)
-```cli
-sudo ./deploy.sh common
+./ez.sh docker:install  :add docker repository to apt sources
+                         then install docker engine
+./ez.sh docker:uninstall:uninstall docker engine
+./ez.sh docker:remove   :deletes all images, containers, and volumes
+                         (You have to delete any edited configuration files manually)
+./ez.sh shared:deploy   :build and run common service containers (dns, nginx, mysql, pma, portainer)
+./ez.sh laravel:deploy  :clone your laravel repo, build its assets and configure for production
+./ez.sh laravel:start   :start laravel container
+./ez.sh dns:disable     :stop and disable OS dns service (systemd-resolved)
+./ez.sh dns:enable      :enable and start OS dns service (systemd-resolved)
 ```
-
-clone your laravel repo, build its assets and configure for production
-```cli
-sudo ./deploy.sh build
-```
-
-start laravel container
-```cli
-sudo ./deploy.sh start
-```
-
 
 ##### .env variable examples
 ```env

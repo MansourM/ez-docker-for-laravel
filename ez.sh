@@ -181,9 +181,16 @@ Boilerplate for creating a simple bash script with some basic strictness
 checks and help features.
 
 Usage:
-  ${_ME} c | common   : clone your laravel repo, build its assets and configure for production
-  ${_ME} b | build    : build and run common service containers (dns, nginx, mysql, pma, portainer)
-  ${_ME} s | start    : start laravel container
+  ${_ME} docker:install  :add docker repository to apt sources
+                          then install docker engine
+  ${_ME} docker:uninstall:uninstall docker engine
+  ${_ME} docker:remove   :deletes all images, containers, and volumes
+                          (You have to delete any edited configuration files manually)
+  ${_ME} shared:deploy   :build and run common service containers (dns, nginx, mysql, pma, portainer)
+  ${_ME} laravel:deploy  :clone your laravel repo, build its assets and configure for production
+  ${_ME} laravel:start   :start laravel container
+  ${_ME} dns:disable     :stop and disable OS dns service (systemd-resolved)
+  ${_ME} dns:enable      :enable and start OS dns service (systemd-resolved)
 
 Options:
   -h --help  Show this screen.
@@ -194,19 +201,82 @@ HEREDOC
 # Program Functions
 ###############################################################################
 
-_not_supported() {
+_invalid_argument() {
   printf "Invalid Argument.\\n"
 }
 
-_deploy_common_containers() {
+_docker_install() {
+  # Add Docker's official GPG key:
+  sudo apt-get update
+  sudo apt-get install ca-certificates curl gnupg
+  sudo install -m 0755 -d /etc/apt/keyrings
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+  sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+  # Add the repository to Apt sources:
+  echo \
+    "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+    "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" |
+    sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
+  sudo apt-get update
+
+  sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+}
+
+_docker_uninstall() {
+  sudo apt-get purge docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-ce-rootless-extras
+}
+
+_docker_remove() {
+  sudo rm -rf /var/lib/docker
+  sudo rm -rf /var/lib/containerd
+}
+
+_os_dns_disable() {
+  future_resolv_conf="nameserver 127.0.0.1"
+
+  # backup resolv.conf if it is not the same as future_resolv_conf
+  current_resolv_conf=$(cat /etc/resolv.conf)
+  if [[ "$current_resolv_conf" != $future_resolv_conf ]]; then
+    backup_file_name="resolv.conf.bak"
+    if [[ -f $backup_file_name ]]; then
+      # if default backup file already exists, attach timestamp to backup file name
+      # note that this is because "resolv.conf.bak" is the default backup file name which
+      # will be used when trying to revert changes to re-enable OS default dns settings
+      now=$(date +"%Y-%m-%d-%H%M%S")
+      backup_file_name="/etc/resolv.conf-$now.bak"
+    fi
+
+    # Move the current DNS configuration file to the backup file
+    sudo mv /etc/resolv.conf $backup_file_name
+
+    # create new resolv.conf
+    sudo echo $future_resolv_conf >/etc/resolv.conf
+  fi
+
+  # disable systemd-resolved (default Ubuntu dns resolver)
+  sudo service systemd-resolved disable
+  sudo service systemd-resolved stop
+}
+
+_os_dns_enable() {
+  backup_file_name="resolv.conf.bak"
+  if [[ -f $backup_file_name ]]; then
+    sudo mv "/etc/$backup_file_name" "/etc/resolv.conf"
+  else
+    sudo echo "nameserver 8.8.8.8\nnameserver 8.8.4.4\nnameserver 1.1.1.1\nnameserver 1.0.0.1" >/etc/resolv.conf
+  fi
+
+  sudo service systemd-resolved enable
+  sudo service systemd-resolved start
+}
+
+_shared_deploy() {
+  _os_dns_disable
   docker compose -f docker-compose-common.yml up --build -d
 }
 
-_start_laravel_container() {
-  docker compose -f docker-compose-laravel.yml up --build
-}
-
-_build_laravel_assets() {
+_laravel_build() {
   echo "removing existing src folder..."
   rm -rf src
 
@@ -225,6 +295,13 @@ _build_laravel_assets() {
   docker compose -f docker-compose-builder.yml up --build
 }
 
+_laravel_start() {
+  docker compose -f docker-compose-laravel.yml up --build
+}
+
+_test() {
+  echo "test..."
+}
 
 ###############################################################################
 # Main
@@ -239,34 +316,46 @@ _build_laravel_assets() {
 #   Entry point for the program, handling basic option parsing and dispatching.
 _main() {
   # Avoid complex option parsing when only one program option is expected.
-  if [[ "${1:-}" =~ ^-h|--help$  ]]
-  then
+  if [[ "${1:-}" =~ ^-h|--help$ ]]; then
     _print_help
-  elif [[ "${1:-}" =~ ^c|common$  ]]
-  then
-    _deploy_common_containers
-  elif [[ "${1:-}" =~ ^b|build$  ]]
-  then
-    _build_laravel_assets
-  elif [[ "${1:-}" =~ ^s|start$  ]]
-  then
-    _start_laravel_container
+  elif [[ "${1:-}" = "docker:install" ]]; then
+    _docker_install
+  elif [[ "${1:-}" = "docker:uninstall" ]]; then
+    _docker_uninstall
+  elif [[ "${1:-}" = "docker:remove" ]]; then
+    _docker_remove
+  elif [[ "${1:-}" = "shared:deploy" ]]; then
+    _shared_deploy
+  elif [[ "${1:-}" = "laravel:deploy" ]]; then
+    _laravel_build
+  elif [[ "${1:-}" = "laravel:start" ]]; then
+    _shared_deploy
+  elif [[ "${1:-}" = "dns:disable" ]]; then
+    _os_dns_disable
+  elif [[ "${1:-}" = "dns:enable" ]]; then
+    _os_dns_enable
+  elif [[ "${1:-}" = "test" ]]; then
+    _test
   else
-    _not_supported "$@"
+    _invalid_argument "$@"
   fi
 }
 
 ###############################################################################
 # Load Env Files
 ###############################################################################
-echo "reading and setting environment variables..."
+if [ ! -f ".env" ]; then
+  echo "missing .env file"
+  exit 1
+else
+  echo "reading .env file..."
   while read -r LINE; do
     if [[ $LINE == *'='* ]] && [[ $LINE != '#'* ]]; then
       ENV_VAR="$(echo $LINE | envsubst)"
       eval "declare $ENV_VAR"
     fi
-  done < .env
-
+  done <.env
+fi
 
 # Call `_main` after everything has been defined.
 _main "$@"
