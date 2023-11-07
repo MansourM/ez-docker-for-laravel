@@ -13,17 +13,17 @@
 Work in Progress, this is not in a usasble state RN
 
 
-<!-- Prerequisites -->
-### :bangbang: Prerequisites
-
-Git! check with
-```cli
-git --version
-```
-
 <!-- Getting Started -->
 
 ## :toolbox: Getting Started
+
+<!-- Prerequisites -->
+#### :bangbang: Prerequisites
+
+git
+```cli
+git --version
+```
 
 1. clone the repository
 ```cli 
@@ -82,16 +82,19 @@ start shared containers
 sudo ./ez.sh shared:start
 ```
 
-start laravel container
-```cli
-sudo ./ez.sh laravel:start
-```
-
 stop laravel container
 ```cli
 sudo ./ez.sh laravel:stop
 ```
 
+start laravel container
+```cli
+sudo ./ez.sh laravel:start
+```
+:tada:
+```
+now you website is running at <your_ip_address>:<laravel_port_in_env>
+```
 
 ##### .env variable examples
 ```env
