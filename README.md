@@ -24,14 +24,16 @@ cd ez-docker-for-laravel
 sudo chmod +x ez.sh
 ```
 
-then create your `.env` file
-
+**don't forget to create and copy your `.env` file**
+```cli
+sudo cp .env.example .env
+sudo nano .env
+```
 
 <!-- Prerequisites -->
 ### :bangbang: Prerequisites
 
 git
-docker
 
 
 <!-- Usage -->
@@ -40,7 +42,7 @@ docker
 
 show all commands
 ```cli
-~:sudo ./ez.sh --help
+sudo ./ez.sh --help
 ```
 add docker repository to apt sources
 then install docker engine
