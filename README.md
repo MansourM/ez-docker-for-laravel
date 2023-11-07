@@ -24,6 +24,8 @@ cd ez-docker-for-laravel
 sudo chmod +x ez.sh
 ```
 
+then create your `.env` file
+
 
 <!-- Prerequisites -->
 ### :bangbang: Prerequisites
@@ -72,7 +74,7 @@ GIT_URL=https://username:password@github.com/MansourM/example.git
 
 ## :compass: Changes from Parent / Roadmap
 
-* [ ] read https://www.reddit.com/r/technitium/comments/vsw1bq/technitium_dns_server_in_a_production_environment/.
+- [ ] test
 
 
 <!-- Known Issues -->
