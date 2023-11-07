@@ -2,30 +2,6 @@ version: '3.9'
 
 services:
 
-  dns-server:
-    container_name: dns-server
-    hostname: dns-server
-    image: technitium/dns-server:latest
-    ports:
-      - ${PORT_DNS}:5380/tcp #DNS web console
-      - "53:53/udp" #DNS service
-      - "53:53/tcp" #DNS service
-    environment:
-      - DNS_SERVER_DOMAIN=dns-server
-      #The path to a file that contains a plain text password for the DNS web console admin user.
-      - DNS_SERVER_ADMIN_PASSWORD_FILE=password.txt
-      #Enables DNS server optional protocol DNS-over-HTTP on TCP port 8053 to be used with a TLS
-      #-> terminating reverse proxy like nginx.
-      - DNS_SERVER_OPTIONAL_PROTOCOL_DNS_OVER_HTTP=false
-    volumes:
-      - ./dns-config:/etc/dns/config
-    restart: unless-stopped
-    sysctls:
-      - net.ipv4.ip_local_port_range=1024 65000
-    networks:
-      - net-common
-
-
   nginx-pm:
     image: 'jc21/nginx-proxy-manager:latest'
     restart: unless-stopped
@@ -41,7 +17,7 @@ services:
     depends_on:
       - dns-server
     networks:
-      - net-common
+      - net-shared
 
 
   portainer:
@@ -58,7 +34,7 @@ services:
     depends_on:
       - nginx-pm
     networks:
-      - net-common
+      - net-shared
 
 
   mysql8:
@@ -75,7 +51,7 @@ services:
       - ./mysql8-config:/etc/mysql/conf.d
     restart: unless-stopped
     networks:
-      - net-common
+      - net-shared
 
 
   phpmyadmin:
@@ -90,7 +66,7 @@ services:
     depends_on:
       - mysql8
     networks:
-      - net-common
+      - net-shared
 
 networks:
-  net-common:
+  net-shared:
