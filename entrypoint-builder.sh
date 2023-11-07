@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 #echo "removing existing vendor..."
 #rm -rf vendor
 #echo "removing existing node_modules..."
@@ -9,6 +8,9 @@
 composer install --optimize-autoloader --no-dev
 
 npm install
+
+#im not sure about this :)
+npm audit fix
 
 #echo "removing existing public/build..."
 #rm -rf public/build

@@ -5,10 +5,12 @@
 ### Read
 * [ ] https://www.reddit.com/r/technitium/comments/vsw1bq/technitium_dns_server_in_a_production_environment/.
 * [ ] https://blog.technitium.com/2017/11/running-dns-server-on-ubuntu-linux.html
+* [ ] optimize vs manual one by one
 
 
 ### Useful commands
 
 ```cli
 netstat -nlptu
+sudo su
 ```
