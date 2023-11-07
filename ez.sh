@@ -189,8 +189,6 @@ Usage:
   ${_ME} shared:deploy   :build and run common service containers (dns, nginx, mysql, pma, portainer)
   ${_ME} laravel:deploy  :clone your laravel repo, build its assets and configure for production
   ${_ME} laravel:start   :start laravel container
-  ${_ME} dns:disable     :stop and disable OS dns service (systemd-resolved)
-  ${_ME} dns:enable      :enable and start OS dns service (systemd-resolved)
 
 Options:
   -h --help  Show this screen.

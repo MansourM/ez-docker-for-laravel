@@ -50,8 +50,6 @@ commands
 ./ez.sh shared:deploy   :build and run common service containers (dns, nginx, mysql, pma, portainer)
 ./ez.sh laravel:deploy  :clone your laravel repo, build its assets and configure for production
 ./ez.sh laravel:start   :start laravel container
-./ez.sh dns:disable     :stop and disable OS dns service (systemd-resolved)
-./ez.sh dns:enable      :enable and start OS dns service (systemd-resolved)
 ```
 
 ##### .env variable examples
