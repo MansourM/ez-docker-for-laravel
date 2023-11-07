@@ -13,42 +13,56 @@
 Work in Progress, this is not in a usasble state RN
 
 
+<!-- Prerequisites -->
+### :bangbang: Prerequisites
+
+Git! check with
+```cli
+git --version
+```
+
 <!-- Getting Started -->
 
 ## :toolbox: Getting Started
 
-clone the repository
+1. clone the repository
 ```cli 
 sudo git clone https://github.com/MansourM/ez-docker-for-laravel.git
 cd ez-docker-for-laravel
 sudo chmod +x ez.sh
 ```
 
-**don't forget to create and copy your `.env` file**
+2. install dokcer engine
+```cli
+sudo ./ez.sh docker:install
+```
+
+3. create and edit your `.env` file
 ```cli
 sudo cp .env.example .env
 sudo nano .env
 ```
 
-<!-- Prerequisites -->
-### :bangbang: Prerequisites
+4. deploy common service containers (nginx, mysql, pma, portainer)
+```cli
+sudo ./ez.sh shared:deploy
+```
 
-git
+5. deploy laravel container
+```cli
+sudo ./ez.sh laravel:deploy
+```
 
 
-<!-- Usage -->
+<!-- Other Commands -->
 
-## :eyes: Usage
+## :eyes: Other Commands
 
 show all commands
 ```cli
 sudo ./ez.sh --help
 ```
-add docker repository to apt sources
-then install docker engine
-```cli
-sudo ./ez.sh docker:install
-```
+
 uninstall docker engine
 ```cli
 sudo ./ez.sh docker:uninstall
@@ -57,18 +71,27 @@ removes all images, containers, and volumes (You have to delete any edited confi
 ```cli
 sudo ./ez.sh docker:remove
 ```
-build and run common service containers (dns, nginx, mysql, pma, portainer)
+
+stop shared containers
 ```cli
-sudo ./ez.sh shared:deploy
+sudo ./ez.sh shared:stop
 ```
-clone your laravel repo, build its assets and configure for production
+
+start shared containers
 ```cli
-sudo ./ez.sh laravel:deploy
+sudo ./ez.sh shared:start
 ```
+
 start laravel container
 ```cli
 sudo ./ez.sh laravel:start
 ```
+
+stop laravel container
+```cli
+sudo ./ez.sh laravel:stop
+```
+
 
 ##### .env variable examples
 ```env

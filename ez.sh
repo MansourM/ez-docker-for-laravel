@@ -186,9 +186,12 @@ Usage:
   ${_ME} docker:uninstall:uninstall docker engine
   ${_ME} docker:remove   :removes all images, containers, and volumes
                           (You have to delete any edited configuration files manually)
-  ${_ME} shared:deploy   :build and run common service containers (dns, nginx, mysql, pma, portainer)
-  ${_ME} laravel:deploy  :clone your laravel repo, build its assets and configure for production
+  ${_ME} shared:deploy   :build and run shared service containers (dns, nginx, mysql, pma, portainer)
+  ${_ME} shared:start    :start shared service containers
+  ${_ME} shared:stop     :stop shared service containers
+  ${_ME} laravel:deploy  :clone your laravel repo, build its assets and configure for production, then start
   ${_ME} laravel:start   :start laravel container
+  ${_ME} laravel:stop    :stop laravel container
 
 Options:
   -h --help  Show this screen.
@@ -234,6 +237,14 @@ _shared_deploy() {
   docker compose -f docker-compose-shared.yml up --build -d
 }
 
+_shared_start() {
+  docker compose -f docker-compose-shared.yml start
+}
+
+_shared_stop() {
+  docker compose -f docker-compose-shared.yml stop
+}
+
 _laravel_build() {
   echo "removing existing src folder..."
   rm -rf src
@@ -253,10 +264,15 @@ _laravel_build() {
   chmod +x src/entrypoint-laravel.sh
 
   docker compose -f docker-compose-builder.yml up --build
+  docker compose -f docker-compose-laravel.yml up --build -d
 }
 
 _laravel_start() {
-  docker compose -f docker-compose-laravel.yml up --build
+  docker compose -f docker-compose-laravel.yml start
+}
+
+_laravel_stop() {
+  docker compose -f docker-compose-laravel.yml stop
 }
 
 _test() {
@@ -286,9 +302,15 @@ _main() {
     _docker_remove
   elif [[ "${1:-}" = "shared:deploy" ]]; then
     _shared_deploy
+  elif [[ "${1:-}" = "shared:start" ]]; then
+    _shared_start
+  elif [[ "${1:-}" = "shared:stop" ]]; then
+    _shared_stop
   elif [[ "${1:-}" = "laravel:deploy" ]]; then
     _laravel_build
   elif [[ "${1:-}" = "laravel:start" ]]; then
+    _laravel_start
+  elif [[ "${1:-}" = "laravel:stop" ]]; then
     _laravel_start
   elif [[ "${1:-}" = "test" ]]; then
     _test
