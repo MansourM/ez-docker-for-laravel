@@ -184,7 +184,7 @@ Usage:
   ${_ME} docker:install  :add docker repository to apt sources
                           then install docker engine
   ${_ME} docker:uninstall:uninstall docker engine
-  ${_ME} docker:remove   :deletes all images, containers, and volumes
+  ${_ME} docker:remove   :removes all images, containers, and volumes
                           (You have to delete any edited configuration files manually)
   ${_ME} shared:deploy   :build and run common service containers (dns, nginx, mysql, pma, portainer)
   ${_ME} laravel:deploy  :clone your laravel repo, build its assets and configure for production
