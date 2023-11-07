@@ -232,50 +232,8 @@ _docker_remove() {
   sudo rm -rf /var/lib/containerd
 }
 
-_os_dns_disable() {
-  future_resolv_conf="nameserver 127.0.0.1"
-
-  # backup resolv.conf if it is not the same as future_resolv_conf
-  current_resolv_conf=$(cat /etc/resolv.conf)
-  if [[ "$current_resolv_conf" != $future_resolv_conf ]]; then
-    backup_file="/etc/resolv.conf.bak"
-    if [[ -f $backup_file ]]; then
-      # if default backup file already exists, attach timestamp to backup file name
-      # note that this is because "resolv.conf.bak" is the default backup file name which
-      # will be used when trying to revert changes to re-enable OS default dns settings
-      now=$(date +"%Y-%m-%d-%H%M%S")
-      backup_file="/etc/resolv.conf-$now.bak"
-    fi
-
-    # Move the current DNS configuration file to the backup file if exists
-    if [[ -f "/etc/resolv.conf" ]]; then
-      sudo mv /etc/resolv.conf $backup_file
-    fi
-
-    # create new resolv.conf
-    sudo echo $future_resolv_conf >/etc/resolv.conf
-  fi
-
-  # disable systemd-resolved (default Ubuntu dns resolver)
-  sudo systemctl disable systemd-resolved
-  sudo systemctl stop systemd-resolved
-}
-
-_os_dns_enable() {
-  sudo systemctl enable systemd-resolved
-  sudo systemctl start systemd-resolved
-
-  backup_file="/etc/resolv.conf.bak"
-  if [[ -f $backup_file ]]; then
-    sudo mv $backup_file "/etc/resolv.conf"
-  else
-    echo "nameserver 8.8.8.8" >> /etc/resolv.conf
-    echo "nameserver 1.1.1.1" >> /etc/resolv.conf
-  fi
-}
-
 _shared_deploy() {
-  docker compose -f docker-compose-common.yml up --build -d
+  docker compose -f docker-compose-shared.yml up --build -d
 }
 
 _laravel_build() {
@@ -334,10 +292,6 @@ _main() {
     _laravel_build
   elif [[ "${1:-}" = "laravel:start" ]]; then
     _laravel_start
-  elif [[ "${1:-}" = "dns:disable" ]]; then
-    _os_dns_disable
-  elif [[ "${1:-}" = "dns:enable" ]]; then
-    _os_dns_enable
   elif [[ "${1:-}" = "test" ]]; then
     _test
   else
