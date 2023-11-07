@@ -53,6 +53,10 @@ sudo ./ez.sh shared:deploy
 sudo ./ez.sh laravel:deploy
 ```
 
+:tada:
+```
+now you website is running at <your_ip_address>:<laravel_port_in_env>
+```
 
 <!-- Other Commands -->
 
@@ -90,10 +94,6 @@ sudo ./ez.sh laravel:stop
 start laravel container
 ```cli
 sudo ./ez.sh laravel:start
-```
-:tada:
-```
-now you website is running at <your_ip_address>:<laravel_port_in_env>
 ```
 
 ##### .env variable examples
