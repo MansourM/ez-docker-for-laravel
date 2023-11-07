@@ -275,7 +275,6 @@ _os_dns_enable() {
 }
 
 _shared_deploy() {
-  _os_dns_disable
   docker compose -f docker-compose-common.yml up --build -d
 }
 
@@ -334,7 +333,7 @@ _main() {
   elif [[ "${1:-}" = "laravel:deploy" ]]; then
     _laravel_build
   elif [[ "${1:-}" = "laravel:start" ]]; then
-    _shared_deploy
+    _laravel_start
   elif [[ "${1:-}" = "dns:disable" ]]; then
     _os_dns_disable
   elif [[ "${1:-}" = "dns:enable" ]]; then
