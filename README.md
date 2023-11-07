@@ -58,6 +58,13 @@ sudo ./ez.sh laravel:deploy
 now you website is running at <your_ip_address>:<laravel_port_in_env>
 ```
 
+## :info: Additional Info
+nginx proxymanager default login info
+```cli  
+admin@example.com
+changeme
+```
+
 <!-- Other Commands -->
 
 ## :eyes: Other Commands
