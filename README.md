@@ -32,15 +32,15 @@ cd ez-docker-for-laravel
 sudo chmod +x ez.sh
 ```
 
-2. install dokcer engine
-```cli
-sudo ./ez.sh docker:install
-```
-
-3. create and edit your `.env` file
+2. create and edit your `.env` file
 ```cli
 sudo cp .env.example .env
 sudo nano .env
+```
+
+3. install dokcer engine
+```cli
+sudo ./ez.sh docker:install
 ```
 
 4. deploy common service containers (nginx, mysql, pma, portainer)
@@ -96,16 +96,16 @@ start laravel container
 sudo ./ez.sh laravel:start
 ```
 
-##### .env variable examples
+##### .env variable needed for deployment
 ```env
-PORT_DNS=7011
-PORT_NGINX_PM=7022
-PORT_PMA=7033
-PORT_PORTAINER=7044
-PORT_LARAVEL=7777
+PORT_LARAVEL=8000
+PORT_NGINX_PM=8011
+PORT_PMA=8022
+PORT_PORTAINER=8033
 ROOT_FOLDER_NAME=ez-docker-for-laravel
 GIT_URL=https://github.com/MansourM/example.git
 GIT_BRANCH=dev
+DB_ROOT_PASSWORD=
 ```
 you can use this format to avoid entering username and password every time you clone the repo
 ```env
