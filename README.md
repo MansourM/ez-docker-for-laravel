@@ -38,18 +38,34 @@ docker
 
 ## :eyes: Usage
 
-commands
+show all commands
 ```cli
 ~:sudo ./ez.sh --help
-
-./ez.sh docker:install  :add docker repository to apt sources
-                         then install docker engine
-./ez.sh docker:uninstall:uninstall docker engine
-./ez.sh docker:remove   :deletes all images, containers, and volumes
-                         (You have to delete any edited configuration files manually)
-./ez.sh shared:deploy   :build and run common service containers (dns, nginx, mysql, pma, portainer)
-./ez.sh laravel:deploy  :clone your laravel repo, build its assets and configure for production
-./ez.sh laravel:start   :start laravel container
+```
+add docker repository to apt sources
+then install docker engine
+```cli
+sudo ./ez.sh docker:install
+```
+uninstall docker engine
+```cli
+sudo ./ez.sh docker:uninstall
+```
+removes all images, containers, and volumes (You have to delete any edited configuration files manually)
+```cli
+sudo ./ez.sh docker:remove
+```
+build and run common service containers (dns, nginx, mysql, pma, portainer)
+```cli
+sudo ./ez.sh shared:deploy
+```
+clone your laravel repo, build its assets and configure for production
+```cli
+sudo ./ez.sh laravel:deploy
+```
+start laravel container
+```cli
+sudo ./ez.sh laravel:start
 ```
 
 ##### .env variable examples
