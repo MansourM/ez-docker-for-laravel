@@ -19,9 +19,9 @@ echo "building assets..."
 npm run production
 
 #echo "clear cache and optimization files..."
-php artisan cache:clear
-php artisan view:clear
-php artisan optimize:clear
+#php artisan cache:clear
+#php artisan view:clear
+#php artisan optimize:clear
 
 php artisan key:generate
 
