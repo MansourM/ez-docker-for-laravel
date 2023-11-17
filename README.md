@@ -10,22 +10,25 @@
 <!-- About the Project -->
 
 ## :star2: About the Project
-Work in Progress, this is not in a usasble state RN
+I wanted a production-ready environment for my Laravel projects that could be easily set up and integrated with CI/CD pipelines.
+I also wanted to learn more about docker and docker-compose, so I decided to write these scripts to automate the process of setting up a production ready environment for laravel projects.
 
+* right now, This is working with no problems in test and statging environments, but I have not personally ran it in production yet (will soon).
+
+<!-- Prerequisites -->
+## :bangbang: Prerequisites
+
+Ubuntu and Git
+```cli
+git --version
+```
 
 <!-- Getting Started -->
 
 ## :toolbox: Getting Started
 
-<!-- Prerequisites -->
-#### :bangbang: Prerequisites
 
-git
-```cli
-git --version
-```
-
-1. clone the repository
+1. Clone the repository using the following command:
 ```cli 
 sudo git clone https://github.com/MansourM/ez-docker-for-laravel.git
 cd ez-docker-for-laravel
@@ -114,7 +117,7 @@ GIT_URL=https://github.com/MansourM/example.git
 GIT_BRANCH=dev
 DB_ROOT_PASSWORD=
 ```
-you can use this format to avoid entering username and password every time you clone the repo
+You can use this format to include your credentials directly in the URL, avoiding the need to enter them each time you clone the repository.
 ```env
 GIT_URL=https://username:password@github.com/MansourM/example.git
 ```
@@ -123,14 +126,15 @@ GIT_URL=https://username:password@github.com/MansourM/example.git
 
 ## :compass: Changes from Parent / Roadmap
 
-- [ ] test
+- [ ] add CI/CD hooks
+- [ ] mark project as production ready when 1 month of testing in production is done.
 
 
 <!-- Known Issues -->
 
 ## :warning: Known Issues
 
-
+* getting this warning `MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 data listeners added to [TLSSocket]. Use emitter.setMaxListeners() to increase limit` while building node_modules (`npm i`) in builder, not sure what is casuing this, but it does not seem to be causing any problems. 
 
 <!-- Contributing -->
 
@@ -142,7 +146,7 @@ Contributions are always welcome!
 
 ## :warning: License
 
-Distributed under the GNU GPL V2 License.
+This project is licensed under the GNU GPL V2 License.
 
 
 <!-- Contact -->
