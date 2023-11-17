@@ -246,10 +246,7 @@ _shared_stop() {
 }
 
 _laravel_build() {
-  echo "removing existing src folder..."
-  rm -rf src
-
-  echo "cloning repository, rename its folder to src..."
+  echo "cloning repository to src folder..."
   git clone -b $GIT_BRANCH $GIT_URL src
 
   echo "copying entrypoint-builder.sh file to src folder..."
@@ -265,6 +262,9 @@ _laravel_build() {
 
   docker compose -f docker-compose-builder.yml up --build
   docker compose -f docker-compose-laravel.yml up --build -d
+
+  echo "removing src folder..."
+  rm -rf src
 }
 
 _laravel_start() {
