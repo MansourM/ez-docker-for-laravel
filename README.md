@@ -68,6 +68,7 @@ ROOT_FOLDER_NAME=ez-docker-for-laravel
 GIT_URL=https://github.com/MansourM/example.git
 GIT_BRANCH=dev
 DB_ROOT_PASSWORD=
+SHARED_NETWORK_NAME=ez-shared-network
 ```
 You can use this format to include your credentials directly in the URL, avoiding the need to enter them each time you clone the repository.
 ```env
