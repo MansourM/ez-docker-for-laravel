@@ -121,7 +121,7 @@ GIT_URL=https://username:password@github.com/MansourM/example.git
 
 ## :heavy_plus_sign: PHP Extensions
 
-I have installed the minimum PHP plugins required to run Laravel (marked by `&check;`) to the container, you should add the others based on your project's need.
+I have installed the minimum PHP plugins required to run Laravel (marked by &check;) to the container, you should add the others based on your project's need.
 you can add them in `laravel.Dockerfile`
 
 |         | Name | Explanation |
