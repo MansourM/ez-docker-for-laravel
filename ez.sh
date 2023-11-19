@@ -234,6 +234,7 @@ _docker_remove() {
 }
 
 _shared_deploy() {
+  docker network create shared-network
   docker compose -f docker-compose-shared.yml up --build -d
 }
 
