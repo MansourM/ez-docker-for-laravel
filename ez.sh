@@ -203,7 +203,7 @@ Usage:
   ${_ME} all:start   :start all containers
   ${_ME} all:stop    :stop all containers
   ${_ME} all:restart :restart all containers
-  ${_ME} all:down    :remove laravel containers
+  ${_ME} all:down    :removes all containers
 
 Options:
   -h --help  Show this screen.

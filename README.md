@@ -82,27 +82,27 @@ Nginx Proxymanager default login information:
 
 ## :eyes: Other Commands
 
-| Command | Description |
-|---|---|
-| `sudo ./ez.sh --help` | Shows all commands |
-| `sudo ./ez.sh docker:install` | Adds the Docker repository to APT sources and then installs the Docker engine. |
-| `sudo ./ez.sh docker:uninstall` | Uninstalls the Docker engine. |
+| Command | Description                                                                                                |
+|---|------------------------------------------------------------------------------------------------------------|
+| `sudo ./ez.sh --help` | Shows all commands                                                                                         |
+| `sudo ./ez.sh docker:install` | Adds the Docker repository to APT sources and then installs the Docker engine.                             |
+| `sudo ./ez.sh docker:uninstall` | Uninstalls the Docker engine.                                                                              |
 | `sudo ./ez.sh docker:remove` | Removes all images, containers, and volumes. (You have to delete any edited configuration files manually.) |
-| `sudo ./ez.sh shared:deploy` | Builds and runs shared service containers (Nginx, MySQL, phpMyAdmin, Portainer). |
-| `sudo ./ez.sh shared:start` | Starts shared service containers. |
-| `sudo ./ez.sh shared:stop` | Stops shared service containers. |
-| `sudo ./ez.sh shared:restart` | Restarts shared service containers. |
-| `sudo ./ez.sh shared:down` | Removes shared service containers. |
-| `sudo ./ez.sh laravel:deploy` | Clones your Laravel repository, builds its assets, configures it for production, and then starts it. |
-| `sudo ./ez.sh laravel:start` | Starts Laravel container. |
-| `sudo ./ez.sh laravel:stop` | Stops Laravel container. |
-| `sudo ./ez.sh laravel:restart` | Restarts Laravel container. |
-| `sudo ./ez.sh laravel:down` | Removes Laravel container. |
-| `sudo ./ez.sh all:deploy` | Deploys all containers. |
-| `sudo ./ez.sh all:start` | Starts all containers. |
-| `sudo ./ez.sh all:stop` | Stops all containers. |
-| `sudo ./ez.sh all:restart` | Restarts all containers. |
-| `sudo ./ez.sh all:down` | Removes Laravel containers. |
+| `sudo ./ez.sh shared:deploy` | Builds and runs shared service containers (Nginx, MySQL, phpMyAdmin, Portainer).                           |
+| `sudo ./ez.sh shared:start` | Starts shared service containers.                                                                          |
+| `sudo ./ez.sh shared:stop` | Stops shared service containers.                                                                           |
+| `sudo ./ez.sh shared:restart` | Restarts shared service containers.                                                                        |
+| `sudo ./ez.sh shared:down` | Removes shared service containers.                                                                         |
+| `sudo ./ez.sh laravel:deploy` | Clones your Laravel repository, builds its assets, configures it for production, and then starts it.       |
+| `sudo ./ez.sh laravel:start` | Starts Laravel container.                                                                                  |
+| `sudo ./ez.sh laravel:stop` | Stops Laravel container.                                                                                   |
+| `sudo ./ez.sh laravel:restart` | Restarts Laravel container.                                                                                |
+| `sudo ./ez.sh laravel:down` | Removes Laravel container.                                                                                 |
+| `sudo ./ez.sh all:deploy` | Deploys all containers.                                                                                    |
+| `sudo ./ez.sh all:start` | Starts all containers.                                                                                     |
+| `sudo ./ez.sh all:stop` | Stops all containers.                                                                                      |
+| `sudo ./ez.sh all:restart` | Restarts all containers.                                                                                   |
+| `sudo ./ez.sh all:down` | Removes all containers.                                                                                    |
 
 <!-- PHP Extensions -->
 
