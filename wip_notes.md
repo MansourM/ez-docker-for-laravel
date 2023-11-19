@@ -23,10 +23,10 @@ docker exec -t -i <containerId> /bin/bash
 
 ### better readme
 
-- mention that i run npm run production
 - [x] use tables
 - [x] show what php plugins are installed
+- mention that i run npm run production
 - explain why no volumes for laravel
 - add FAQ
 - explain nginx proxy manager and how to use let's encrypt
-- wiki?
+- wiki

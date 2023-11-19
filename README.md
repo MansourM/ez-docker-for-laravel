@@ -10,7 +10,7 @@
 ## <h1>EZ Docker For Laravel</h1>
 EZ Docker For Laravel is a set of scripts designed to create an easy-to-set-up, robust, and production-ready environment for Laravel using Docker, Docker Compose, and bash scripts.
 
-* Currently, the scripts are successfully working in test and staging environments, and I plan to deploy them in production soon.*
+*Currently, the scripts are successfully working in test and staging environments, and I plan to deploy them in production soon.*
 
 <!-- Prerequisites -->
 ## :bangbang: Prerequisites
@@ -27,36 +27,34 @@ git --version
 
 
 1. Clone the repository using the following command:
-```cli 
+```bash 
 sudo git clone https://github.com/MansourM/ez-docker-for-laravel.git && cd ez-docker-for-laravel
 sudo chmod +x ez.sh
 ```
 
 2. create and edit your `.env` file
-```cli
+```bash
 sudo cp .env.example .env
 sudo nano .env
 ```
 
 3. install dokcer engine
-```cli
+```bash
 sudo ./ez.sh docker:install
 ```
 
 4. deploy common service containers (nginx, mysql, pma, portainer)
-```cli
+```bash
 sudo ./ez.sh shared:deploy
 ```
 
 5. deploy laravel container
-```cli
+```bash
 sudo ./ez.sh laravel:deploy
 ```
 
 :tada:
-```
-now you website is running at <your_ip_address>:<laravel_port_in_env>
-```
+now you website is running at `<your_ip_address>:<laravel_port_in_env>`
 
 ## :bulb: Additional Info
 Nginx Proxymanager default login information:
@@ -122,11 +120,11 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 
 |         | Name | Explanation |
 |---------|------|-------------|
-| &check; | [php8.3-cli](https://www.php.net/manual/en/features.commandline.php) | Command-line interface for PHP. |
-| &check; | [php8.3-curl](https://www.php.net/manual/en/book.curl.php) | cURL library support for PHP. |
-| &check; | [php8.3-mysql](https://www.php.net/manual/en/book.mysql.php) | MySQL database support for PHP. |
-| &check; | [php8.3-mbstring](https://www.php.net/manual/en/book.mbstring.php) | Multibyte string support for PHP. |
-| &check; | [php8.3-xml](https://www.php.net/manual/en/book.xml.php) | XML support for PHP. |
+| ✔ | [php8.3-cli](https://www.php.net/manual/en/features.commandline.php) | Command-line interface for PHP. |
+| ✔ | [php8.3-curl](https://www.php.net/manual/en/book.curl.php) | cURL library support for PHP. |
+| ✔ | [php8.3-mysql](https://www.php.net/manual/en/book.mysql.php) | MySQL database support for PHP. |
+| ✔ | [php8.3-mbstring](https://www.php.net/manual/en/book.mbstring.php) | Multibyte string support for PHP. |
+| ✔ | [php8.3-xml](https://www.php.net/manual/en/book.xml.php) | XML support for PHP. |
 | &cross; | [php8.3-imap](https://www.php.net/manual/en/book.imap.php) | IMAP support for PHP. |
 | &cross; | [php8.3-dev](https://www.php.net/manual/en/intro.setup.php) | Development files for PHP. |
 | &cross; | [php8.3-pgsql](https://www.php.net/manual/en/book.pgsql.php) | PostgreSQL database support for PHP. |
