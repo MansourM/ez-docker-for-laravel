@@ -136,6 +136,7 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 - [ ] add CI/CD hooks
 - [ ] mark project as production ready when 1 month of testing in production is done.
 - [ ] add local source (currently only git is supported)
+- [ ] add suggested configuration files (php,mysql,nginx, etc...)
 
 <!-- Maybe -->
 
