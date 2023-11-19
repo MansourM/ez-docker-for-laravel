@@ -9,6 +9,7 @@ WARN[0066] Found orphan containers ([ez-docker-for-laravel-laravel-builder-1 por
 
 * laravel optimize vs manual one by one suggested by docs
 * how can i access a container in local only?
+* supervisor
 
 
 ### Useful commands
