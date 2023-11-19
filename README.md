@@ -57,6 +57,23 @@ sudo ./ez.sh laravel:deploy
 :tada:
 **now your website is running at `<your_ip_address>:<laravel_port_in_env>`**
 
+## :memo: .env variables needed for deployment
+you need to add these to your laravel `.env` file
+```env
+PORT_LARAVEL=8000
+PORT_NGINX_PM=8011
+PORT_PMA=8022
+PORT_PORTAINER=8033
+ROOT_FOLDER_NAME=ez-docker-for-laravel
+GIT_URL=https://github.com/MansourM/example.git
+GIT_BRANCH=dev
+DB_ROOT_PASSWORD=
+```
+You can use this format to include your credentials directly in the URL, avoiding the need to enter them each time you clone the repository.
+```env
+GIT_URL=https://username:password@github.com/MansourM/example.git
+```
+
 ## :bulb: Additional Info
 Nginx Proxymanager default login information:
 
@@ -77,22 +94,6 @@ Nginx Proxymanager default login information:
 | `sudo ./ez.sh shared:start` | Starts shared containers |
 | `sudo ./ez.sh laravel:stop` | Stops laravel container |
 | `sudo ./ez.sh laravel:start` | Starts laravel container |
-
-#### .env variable needed for deployment
-```env
-PORT_LARAVEL=8000
-PORT_NGINX_PM=8011
-PORT_PMA=8022
-PORT_PORTAINER=8033
-ROOT_FOLDER_NAME=ez-docker-for-laravel
-GIT_URL=https://github.com/MansourM/example.git
-GIT_BRANCH=dev
-DB_ROOT_PASSWORD=
-```
-You can use this format to include your credentials directly in the URL, avoiding the need to enter them each time you clone the repository.
-```env
-GIT_URL=https://username:password@github.com/MansourM/example.git
-```
 
 <!-- Roadmap -->
 
