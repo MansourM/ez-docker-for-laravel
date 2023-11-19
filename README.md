@@ -134,9 +134,10 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 ## :compass: Roadmap
 
 - [ ] add CI/CD hooks
+- [ ] warn if APP_DEBUG=true
 - [ ] mark project as production ready when 1 month of testing in production is done.
 - [ ] add local source (currently only git is supported)
-- [ ] add suggested configuration files (php,mysql,nginx, etc...)
+- [ ] add suggested configuration files (php, mysql, nginx, etc...)
 
 <!-- Maybe -->
 
