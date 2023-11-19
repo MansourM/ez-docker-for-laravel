@@ -95,25 +95,6 @@ Nginx Proxymanager default login information:
 | `sudo ./ez.sh laravel:stop` | Stops laravel container |
 | `sudo ./ez.sh laravel:start` | Starts laravel container |
 
-<!-- Roadmap -->
-
-## :compass: Roadmap
-
-- [ ] add CI/CD hooks
-- [ ] mark project as production ready when 1 month of testing in production is done.
-- [ ] add local source (currently only git is supported)
-
-<!-- Maybe -->
-
-## :compass: TODO (Maybe)
-
-- [ ] Implement a GUI (optional dashboard).
-- [ ] Mark the project as production-ready after 1 month of testing in production.
-- [ ] Add more (modular) services (e.g., Redis, Memcached).
-- [ ] Integrate a DNS service.
-- [ ] Enhance shell with proper subcommands.
-
-
 <!-- PHP Extensions -->
 
 ## :heavy_plus_sign: PHP Extensions
@@ -147,6 +128,24 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 | &cross; | [php8.3-xdebug](https://xdebug.org/docs/) | Xdebug support for PHP. |
 | &cross; | [php8.3-imagick](https://www.php.net/manual/en/book.imagick.php) | ImageMagick extension for PHP. |
 
+
+<!-- Roadmap -->
+
+## :compass: Roadmap
+
+- [ ] add CI/CD hooks
+- [ ] mark project as production ready when 1 month of testing in production is done.
+- [ ] add local source (currently only git is supported)
+
+<!-- Maybe -->
+
+## :compass: TODO (Maybe)
+
+- [ ] Implement a GUI (optional dashboard).
+- [ ] Mark the project as production-ready after 1 month of testing in production.
+- [ ] Add more (modular) services (e.g., Redis, Memcached).
+- [ ] Integrate a DNS service.
+- [ ] Enhance shell with proper subcommands.
 
 <!-- Known Issues -->
 
