@@ -1,25 +1,23 @@
 <div align="center">
-<img src="image/ez-docker-for-laravel.png" alt="logo" width="412" height="128" />
-  <!--<h1>EZ Docker For Laravel</h1>-->
+<img src="image/ez-docker-for-laravel.png" alt="EZ Docker For Laravel" width="412" height="128" />
+
   <p>easy to set up, robust and production ready environment for Laravel using Docker, Docker Compose and bash script.</p>
   <p>currently these scripts are debian based and tested on ubuntu 22.04.3 live Server</p>
 </div>
 
-<br />
-
 <!-- About the Project -->
 
-## :star2: About the Project
-I wanted a production-ready environment for my Laravel projects that could be easily set up and integrated with CI/CD pipelines.
-I also wanted to learn more about docker and docker-compose, so I decided to write these scripts to automate the process of setting up a production ready environment for laravel projects.
+## <h1>EZ Docker For Laravel</h1>
+EZ Docker For Laravel is a set of scripts designed to create an easy-to-set-up, robust, and production-ready environment for Laravel using Docker, Docker Compose, and bash scripts.
 
-* right now, This is working with no problems in test and statging environments, but I have not personally ran it in production yet (will soon).
+* Currently, the scripts are successfully working in test and staging environments, and I plan to deploy them in production soon.*
 
 <!-- Prerequisites -->
 ## :bangbang: Prerequisites
 
-Ubuntu and Git
-```cli
+Ensure that you have Ubuntu and Git installed:
+
+```bash
 git --version
 ```
 
@@ -30,8 +28,7 @@ git --version
 
 1. Clone the repository using the following command:
 ```cli 
-sudo git clone https://github.com/MansourM/ez-docker-for-laravel.git
-cd ez-docker-for-laravel
+sudo git clone https://github.com/MansourM/ez-docker-for-laravel.git && cd ez-docker-for-laravel
 sudo chmod +x ez.sh
 ```
 
@@ -62,11 +59,11 @@ now you website is running at <your_ip_address>:<laravel_port_in_env>
 ```
 
 ## :bulb: Additional Info
-Nginx Proxymanager default login info
+Nginx Proxymanager default login information:
 
-| Username | Password  |
-|---|-----------|
-| admin@example.com | changeme  |
+| Username            | Password  |
+|---------------------|-----------|
+| admin@example.com   | changeme  |
 
 <!-- Other Commands -->
 
@@ -110,19 +107,18 @@ GIT_URL=https://username:password@github.com/MansourM/example.git
 
 ## :compass: TODO (Maybe)
 
-- [ ] GUI (optional dashboard)
-- [ ] mark project as production ready when 1 month of testing in production is done.
-- [ ] add more (modular) services (redis, memcached, ...)
-- [ ] add DNS service
-- [ ] better shell with proper subcommands
+- [ ] Implement a GUI (optional dashboard).
+- [ ] Mark the project as production-ready after 1 month of testing in production.
+- [ ] Add more (modular) services (e.g., Redis, Memcached).
+- [ ] Integrate a DNS service.
+- [ ] Enhance shell with proper subcommands.
 
 
 <!-- PHP Extensions -->
 
 ## :heavy_plus_sign: PHP Extensions
 
-I have installed the minimum PHP plugins required to run Laravel (marked by &check;) to the container, you should add the others based on your project's need.
-you can add them in `laravel.Dockerfile`
+I have installed the minimum PHP plugins required to run Laravel (marked by ✔) in the container. You should add others based on your project's needs. Add them in `laravel.Dockerfile`.
 
 |         | Name | Explanation |
 |---------|------|-------------|
@@ -156,13 +152,13 @@ you can add them in `laravel.Dockerfile`
 
 ## :warning: Known Issues
 
-* getting this warning `MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 data listeners added to [TLSSocket]. Use emitter.setMaxListeners() to increase limit` while building node_modules (`npm i`) in builder, not sure what is casuing this, but it does not seem to be causing any problems. 
+- While building node_modules (`npm i`) in the builder, a warning may appear: `MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 data listeners added to [TLSSocket]. Use emitter.setMaxListeners() to increase limit`. This warning does not seem to affect functionality.
 
 <!-- Contributing -->
 
 ## :wave: Contributing
 
-Contributions are always welcome!
+Contributions are always welcome! Feel free to fork the project and submit a pull request.
 
 <!-- License -->
 
@@ -175,7 +171,7 @@ This project is licensed under the GNU GPL V2 License.
 
 ## :handshake: Contact
 
-Seyed Mansour Mirbehbahani - sm.mirbehbahani@gmail.com
+Seyed Mansour Mirbehbahani - [sm.mirbehbahani@gmail.com](mailto:sm.mirbehbahani@gmail.com)
 
 <!-- Acknowledgments -->
 
