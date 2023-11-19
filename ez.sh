@@ -186,12 +186,24 @@ Usage:
   ${_ME} docker:uninstall:uninstall docker engine
   ${_ME} docker:remove   :removes all images, containers, and volumes
                           (You have to delete any edited configuration files manually)
-  ${_ME} shared:deploy   :build and run shared service containers (dns, nginx, mysql, pma, portainer)
+  __________________________________________________________________________________________________________
+  ${_ME} shared:deploy   :build and run shared service containers (nginx, mysql, pma, portainer)
   ${_ME} shared:start    :start shared service containers
   ${_ME} shared:stop     :stop shared service containers
+  ${_ME} shared:restart  :restart shared service containers
+  ${_ME} shared:down     :remove shared service containers
+  __________________________________________________________________________________________________________
   ${_ME} laravel:deploy  :clone your laravel repo, build its assets and configure for production, then start
   ${_ME} laravel:start   :start laravel container
   ${_ME} laravel:stop    :stop laravel container
+  ${_ME} laravel:restart :restart laravel container
+  ${_ME} laravel:down    :remove laravel container
+  __________________________________________________________________________________________________________
+  ${_ME} all:deploy  :deploy all containers
+  ${_ME} all:start   :start all containers
+  ${_ME} all:stop    :stop all containers
+  ${_ME} all:restart :restart all containers
+  ${_ME} all:down    :remove laravel containers
 
 Options:
   -h --help  Show this screen.
@@ -252,8 +264,14 @@ _shared_start() {
 _shared_stop() {
   docker compose -f docker-compose-shared.yml stop
 }
+_shared_restart() {
+  docker compose -f docker-compose-shared.yml restart
+}
+_shared_down() {
+  docker compose -f docker-compose-shared.yml down
+}
 
-_laravel_build() {
+_laravel_deploy() {
   echo "remove existing src folder..."
   rm -rf src
 
@@ -281,6 +299,14 @@ _laravel_start() {
 
 _laravel_stop() {
   docker compose -f docker-compose-laravel.yml stop
+}
+
+_laravel_restart(){
+  docker compose -f docker-compose-laravel.yml restart
+}
+
+_laravel_down(){
+  docker compose -f docker-compose-laravel.yml down
 }
 
 _test() {
@@ -314,12 +340,35 @@ _main() {
     _shared_start
   elif [[ "${1:-}" = "shared:stop" ]]; then
     _shared_stop
+  elif [[ "${1:-}" = "shared:restart" ]]; then
+    _shared_restart
+  elif [[ "${1:-}" = "shared:down" ]]; then
+    _shared_down
   elif [[ "${1:-}" = "laravel:deploy" ]]; then
-    _laravel_build
+    _laravel_deploy
   elif [[ "${1:-}" = "laravel:start" ]]; then
     _laravel_start
   elif [[ "${1:-}" = "laravel:stop" ]]; then
+    _laravel_stop
+  elif [[ "${1:-}" = "laravel:restart" ]]; then
+    _laravel_restart
+  elif [[ "${1:-}" = "laravel:down" ]]; then
+    _laravel_down
+  elif [[ "${1:-}" = "all:deploy" ]]; then
+    _shared_deploy
+    _laravel_deploy
+  elif [[ "${1:-}" = "all:start" ]]; then
+    _shared_start
     _laravel_start
+  elif [[ "${1:-}" = "all:stop" ]]; then
+    _shared_stop
+    _laravel_stop
+  elif [[ "${1:-}" = "all:restart" ]]; then
+    _shared_restart
+    _laravel_restart
+  elif [[ "${1:-}" = "all:down" ]]; then
+    _shared_down
+    _laravel_down
   elif [[ "${1:-}" = "test" ]]; then
     _test
   else
