@@ -121,32 +121,35 @@ GIT_URL=https://username:password@github.com/MansourM/example.git
 
 ## :heavy_plus_sign: PHP Extensions
 
-|       | Name | Explanation |
-|-------|------|-------------|
-| - [x] | [php8.3-cli](https://www.php.net/manual/en/features.commandline.php) | Command-line interface for PHP. |
-| [x]   | [php8.3-dev](https://www.php.net/manual/en/intro.setup.php) | Development files for PHP. |
-| [x]   | [php8.3-pgsql](https://www.php.net/manual/en/book.pgsql.php) | PostgreSQL database support for PHP. |
-| [x]   | [php8.3-sqlite3](https://www.php.net/manual/en/book.sqlite3.php) | SQLite3 database support for PHP. |
-| [x]   | [php8.3-gd](https://www.php.net/manual/en/book.image.php) | GD library support for PHP. |
-| [x]   | [php8.3-curl](https://www.php.net/manual/en/book.curl.php) | cURL library support for PHP. |
-| [x]   | [php8.3-imap](https://www.php.net/manual/en/book.imap.php) | IMAP support for PHP. |
-| [x]   | [php8.3-mysql](https://www.php.net/manual/en/book.mysql.php) | MySQL database support for PHP. |
-| [x]   | [php8.3-mbstring](https://www.php.net/manual/en/book.mbstring.php) | Multibyte string support for PHP. |
-| [x]   | [php8.3-xml](https://www.php.net/manual/en/book.xml.php) | XML support for PHP. |
-| [x]   | [php8.3-zip](https://www.php.net/manual/en/book.zip.php) | ZIP archive support for PHP. |
-| [x]   | [php8.3-bcmath](https://www.php.net/manual/en/book.bc.php) | BCMath arbitrary precision mathematics support for PHP. |
-| [x]   | [php8.3-soap](https://www.php.net/manual/en/book.soap.php) | SOAP support for PHP. |
-| [x]   | [php8.3-intl](https://www.php.net/manual/en/book.intl.php) | Internationalization support for PHP. |
-| [x]   | [php8.3-readline](https://www.php.net/manual/en/book.readline.php) | Readline library support for PHP. |
-| [x]   | [php8.3-ldap](https://www.php.net/manual/en/book.ldap.php) | LDAP support for PHP. |
-| [x]   | [php8.3-msgpack](https://www.php.net/manual/en/book.msgpack.php) | MessagePack support for PHP. |
-| [x]   | [php8.3-igbinary](https://www.php.net/manual/en/book.igbinary.php) | Igbinary support for PHP. |
-| [x]   | [php8.3-redis](https://www.php.net/manual/en/book.redis.php) | Redis support for PHP. |
-| [x]   | [php8.3-swoole](https://www.php.net/manual/en/book.swoole.php) | Swoole extension for PHP. |
-| [x]   | [php8.3-memcached](https://www.php.net/manual/en/book.memcached.php) | Memcached support for PHP. |
-| [x]   | [php8.3-pcov](https://github.com/krakjoe/pcov) | Code coverage driver for PHP. |
-| [x]   | [php8.3-xdebug](https://xdebug.org/docs/) | Xdebug support for PHP. |
-| [x]   | [php8.3-imagick](https://www.php.net/manual/en/book.imagick.php) | ImageMagick extension for PHP. |
+I have installed the minimum PHP plugins required to run Laravel (marked by `&check;`) to the container, you should add the others based on your project's need.
+you can add them in `laravel.Dockerfile`
+
+|         | Name | Explanation |
+|---------|------|-------------|
+| &check; | [php8.3-cli](https://www.php.net/manual/en/features.commandline.php) | Command-line interface for PHP. |
+| &check; | [php8.3-curl](https://www.php.net/manual/en/book.curl.php) | cURL library support for PHP. |
+| &check; | [php8.3-mysql](https://www.php.net/manual/en/book.mysql.php) | MySQL database support for PHP. |
+| &check; | [php8.3-mbstring](https://www.php.net/manual/en/book.mbstring.php) | Multibyte string support for PHP. |
+| &check; | [php8.3-xml](https://www.php.net/manual/en/book.xml.php) | XML support for PHP. |
+| &cross; | [php8.3-imap](https://www.php.net/manual/en/book.imap.php) | IMAP support for PHP. |
+| &cross; | [php8.3-dev](https://www.php.net/manual/en/intro.setup.php) | Development files for PHP. |
+| &cross; | [php8.3-pgsql](https://www.php.net/manual/en/book.pgsql.php) | PostgreSQL database support for PHP. |
+| &cross; | [php8.3-sqlite3](https://www.php.net/manual/en/book.sqlite3.php) | SQLite3 database support for PHP. |
+| &cross; | [php8.3-gd](https://www.php.net/manual/en/book.image.php) | GD library support for PHP. |
+| &cross; | [php8.3-zip](https://www.php.net/manual/en/book.zip.php) | ZIP archive support for PHP. |
+| &cross; | [php8.3-bcmath](https://www.php.net/manual/en/book.bc.php) | BCMath arbitrary precision mathematics support for PHP. |
+| &cross; | [php8.3-soap](https://www.php.net/manual/en/book.soap.php) | SOAP support for PHP. |
+| &cross; | [php8.3-intl](https://www.php.net/manual/en/book.intl.php) | Internationalization support for PHP. |
+| &cross; | [php8.3-readline](https://www.php.net/manual/en/book.readline.php) | Readline library support for PHP. |
+| &cross; | [php8.3-ldap](https://www.php.net/manual/en/book.ldap.php) | LDAP support for PHP. |
+| &cross; | [php8.3-msgpack](https://www.php.net/manual/en/book.msgpack.php) | MessagePack support for PHP. |
+| &cross; | [php8.3-igbinary](https://www.php.net/manual/en/book.igbinary.php) | Igbinary support for PHP. |
+| &cross; | [php8.3-redis](https://www.php.net/manual/en/book.redis.php) | Redis support for PHP. |
+| &cross; | [php8.3-swoole](https://www.php.net/manual/en/book.swoole.php) | Swoole extension for PHP. |
+| &cross; | [php8.3-memcached](https://www.php.net/manual/en/book.memcached.php) | Memcached support for PHP. |
+| &cross; | [php8.3-pcov](https://github.com/krakjoe/pcov) | Code coverage driver for PHP. |
+| &cross; | [php8.3-xdebug](https://xdebug.org/docs/) | Xdebug support for PHP. |
+| &cross; | [php8.3-imagick](https://www.php.net/manual/en/book.imagick.php) | ImageMagick extension for PHP. |
 
 
 <!-- Known Issues -->
