@@ -61,50 +61,26 @@ sudo ./ez.sh laravel:deploy
 now you website is running at <your_ip_address>:<laravel_port_in_env>
 ```
 
-## :info: Additional Info
-nginx proxymanager default login info
-```cli  
-admin@example.com
-changeme
-```
+## :bulb: Additional Info
+Nginx Proxymanager default login info
+
+| Username | Password  |
+|---|-----------|
+| admin@example.com | changeme  |
 
 <!-- Other Commands -->
 
 ## :eyes: Other Commands
 
-show all commands
-```cli
-sudo ./ez.sh --help
-```
-
-uninstall docker engine
-```cli
-sudo ./ez.sh docker:uninstall
-```
-removes all images, containers, and volumes (You have to delete any edited configuration files manually)
-```cli
-sudo ./ez.sh docker:remove
-```
-
-stop shared containers
-```cli
-sudo ./ez.sh shared:stop
-```
-
-start shared containers
-```cli
-sudo ./ez.sh shared:start
-```
-
-stop laravel container
-```cli
-sudo ./ez.sh laravel:stop
-```
-
-start laravel container
-```cli
-sudo ./ez.sh laravel:start
-```
+| Command | Description |
+|---|---|
+| `sudo ./ez.sh --help` | Shows all commands |
+| `sudo ./ez.sh docker:uninstall` | Uninstalls docker engine |
+| `sudo ./ez.sh docker:remove` | Removes all images, containers, and volumes  (You have to delete any edited configuration files manually)|
+| `sudo ./ez.sh shared:stop` | Stops shared containers |
+| `sudo ./ez.sh shared:start` | Starts shared containers |
+| `sudo ./ez.sh laravel:stop` | Stops laravel container |
+| `sudo ./ez.sh laravel:start` | Starts laravel container |
 
 ##### .env variable needed for deployment
 ```env
