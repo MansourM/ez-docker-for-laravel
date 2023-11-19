@@ -234,7 +234,15 @@ _docker_remove() {
 }
 
 _shared_deploy() {
-  docker network create shared-network
+  network_name="ez-shared-network"
+  # Check if the network already exists
+  if docker network inspect "$network_name" >/dev/null 2>&1; then
+    echo "Network '$network_name' already exists"
+  else
+    # Create the network
+    docker network create "$network_name"
+    echo "Network '$network_name' created"
+  fi
   docker compose -f docker-compose-shared.yml up --build -d
 }
 
