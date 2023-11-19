@@ -19,4 +19,4 @@ services:
 networks:
   default:
     external: true
-    name: shared-network
+    name: ${SHARED_NETWORK_NAME}
