@@ -53,8 +53,9 @@ sudo ./ez.sh shared:deploy
 sudo ./ez.sh laravel:deploy
 ```
 
+
 :tada:
-now you website is running at `<your_ip_address>:<laravel_port_in_env>`
+**now your website is running at `<your_ip_address>:<laravel_port_in_env>`**
 
 ## :bulb: Additional Info
 Nginx Proxymanager default login information:
