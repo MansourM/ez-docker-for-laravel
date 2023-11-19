@@ -124,10 +124,21 @@ GIT_URL=https://username:password@github.com/MansourM/example.git
 
 <!-- Roadmap -->
 
-## :compass: Changes from Parent / Roadmap
+## :compass: Roadmap
 
 - [ ] add CI/CD hooks
 - [ ] mark project as production ready when 1 month of testing in production is done.
+- [ ] add local source (currently only git is supported)
+
+<!-- Maybe -->
+
+## :compass: TODO (Maybe)
+
+- [ ] GUI (optional dashboard)
+- [ ] mark project as production ready when 1 month of testing in production is done.
+- [ ] add more (modular) services (redis, memcached, ...)
+- [ ] add DNS service
+- [ ] better shell with proper subcommands
 
 
 <!-- Known Issues -->
