@@ -143,7 +143,6 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 ## :compass: TODO (Maybe)
 
 - [ ] Implement a GUI (optional dashboard).
-- [ ] Mark the project as production-ready after 1 month of testing in production.
 - [ ] Add more (modular) services (e.g., Redis, Memcached).
 - [ ] Integrate a DNS service.
 - [ ] Enhance shell with proper subcommands.
