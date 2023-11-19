@@ -6,6 +6,15 @@ WARN[0066] Found orphan containers ([ez-docker-for-laravel-laravel-builder-1 por
 WARN[0000] Found orphan containers ([ez-docker-for-laravel-laravel-server-1 ez-docker-for-laravel-laravel-builder-1]) for this project. If you removed or renamed this service in your compose file, you can run this command with the --remove-orphans flag to clean it up.
 
 
+ez-docker-for-laravel-laravel-builder-1  | In ProviderRepository.php line 206:
+ez-docker-for-laravel-laravel-builder-1  |
+ez-docker-for-laravel-laravel-builder-1  |   Class "Barryvdh\Debugbar\ServiceProvider" not found
+ez-docker-for-laravel-laravel-builder-1  |
+ez-docker-for-laravel-laravel-builder-1  |
+ez-docker-for-laravel-laravel-builder-1  | Script @php artisan package:discover --ansi handling the post-autoload-dump event returned with error code 1
+
+
+
 
 ### Read
 

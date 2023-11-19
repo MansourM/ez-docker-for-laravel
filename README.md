@@ -38,7 +38,7 @@ sudo cp .env.example .env
 sudo nano .env
 ```
 
-3. install dokcer engine
+3. install dokcer engine (Optional, only if not installed already)
 ```bash
 sudo ./ez.sh docker:install
 ```
