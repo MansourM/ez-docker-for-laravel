@@ -275,7 +275,7 @@ _laravel_deploy() {
   echo "remove existing src folder..."
   rm -rf src
 
-  echo "cloning repository to src folder..."
+  #echo "cloning repository to src folder..."
   git clone -b $GIT_BRANCH $GIT_URL src
 
   echo "copying entrypoint-builder.sh file to src folder..."
