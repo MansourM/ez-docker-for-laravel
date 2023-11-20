@@ -144,6 +144,8 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 
 - [ ] add CI/CD hooks
 - [ ] warn if APP_DEBUG=true
+- [ ] add a production mode and a test (staging) mode based on APP_DEBUG value
+- [ ] add merge/includes for compose file for different modes (production, staging, development, etc? )
 - [ ] mark project as production ready when 1 month of testing in production is done.
 - [ ] add local source (currently only git is supported)
 - [ ] add suggested configuration files (php, mysql, nginx, etc...)
@@ -156,6 +158,7 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 - [ ] Add more (modular) services (e.g., Redis, Memcached).
 - [ ] Integrate a DNS service.
 - [ ] Enhance shell with proper subcommands.
+
 
 <!-- Known Issues -->
 
