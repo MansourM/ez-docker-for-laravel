@@ -1,5 +1,3 @@
-# from https://github.com/laravel/sail/blob/1.x/runtimes/8.3/Dockerfile
-
 FROM ubuntu:22.04
 
 ARG NODE_VERSION=20
@@ -32,4 +30,17 @@ RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 WORKDIR /usr/src
 
-ENTRYPOINT [ "./entrypoint-builder.sh" ]
+
+RUN npm install
+RUN npm audit fix
+RUN npm run production
+
+RUN composer install --optimize-autoloader --no-dev
+
+RUN php artisan key:generate
+
+RUN echo "generate optimization files..."
+RUN php artisan config:cache
+RUN php artisan event:cache
+RUN php artisan route:cache
+RUN php artisan view:cache

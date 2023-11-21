@@ -6,4 +6,4 @@ fi
 
 php artisan migrate --seed
 
-php artisan serve --port=80 --host=0.0.0.0 --env=.env
+php artisan serve --port=8000 --host=0.0.0.0 --env=.env

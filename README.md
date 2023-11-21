@@ -167,6 +167,7 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 ## :warning: Known Issues
 
 - While building node_modules (`npm i`) in the builder, a warning may appear: `MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 data listeners added to [TLSSocket]. Use emitter.setMaxListeners() to increase limit`. This warning does not seem to affect functionality.
+- Symbols in password like`()` seems to break .env reader function in the shell script
 
 <!-- Contributing -->
 
