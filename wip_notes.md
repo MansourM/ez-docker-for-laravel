@@ -32,9 +32,19 @@ docker exec -t -i <containerId> /bin/bash
 sudo resolvectl status
 sudo resolvectl dns eth0 1.1.1.1 8.8.8.8
 sudo resolvectl dns eth0 10.202.10.202 10.202.10.102
+sudo resolvectl dns ens33 10.202.10.202 10.202.10.102
 sudo resolvectl dns eth0 8.8.8.8 8.8.4.4 --set-dns
 
 #ENTRYPOINT ["tail", "-f", "/dev/null"]
+
+df -h
+sudo apt clean
+# which can show disk usage and size of 'Build Cache'
+docker system df
+# add -f or --force to not prompt for confirmation
+docker image prune
+# add -f or --force to not prompt for confirmation
+docker container prune
 ```
 
 
