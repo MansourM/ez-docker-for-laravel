@@ -38,12 +38,12 @@ sudo cp .env.example .env
 sudo nano .env
 ```
 
-3. install dokcer engine (Optional, only if not installed already)
+2.1. install dokcer engine (Optional, only if not installed already)
 ```bash
 sudo ./ez.sh docker:install
 ```
 
-4. deploy common service containers (nginx, mysql, pma, portainer)
+3. deploy common service containers (nginx, mysql, pma, portainer)
 ```bash
 sudo ./ez.sh all:deploy
 ```
