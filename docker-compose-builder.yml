@@ -8,3 +8,4 @@ services:
       dockerfile: builder.Dockerfile
     volumes:
       - ./src:/usr/src
+    entrypoint: entrypoint-builder.sh

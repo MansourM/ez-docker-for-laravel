@@ -28,5 +28,3 @@ RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 WORKDIR /usr/src
-
-ENTRYPOINT [ "./entrypoint-builder.sh" ]
