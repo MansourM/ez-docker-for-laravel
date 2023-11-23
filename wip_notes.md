@@ -32,6 +32,7 @@ docker exec -t -i <containerId> /bin/bash
 sudo resolvectl status
 sudo resolvectl dns eth0 1.1.1.1 8.8.8.8
 sudo resolvectl dns eth0 10.202.10.202 10.202.10.102
+sudo resolvectl dns ens33 1.1.1.1 8.8.8.8
 sudo resolvectl dns ens33 10.202.10.202 10.202.10.102
 sudo resolvectl dns eth0 8.8.8.8 8.8.4.4 --set-dns
 
