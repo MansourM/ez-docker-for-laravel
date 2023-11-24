@@ -1,0 +1,104 @@
+name: ez
+help: easy to setup, robust and production ready environment for Laravel using Docker, Docker Compose and bash script.
+version: 0.1.0
+
+environment_variables:
+- name: api_key
+  help: Set your API key
+
+commands:
+- name: docker
+  alias: d
+  help: Docker Commands
+
+  commands:
+  - name: install
+    alias: i
+    help: add docker repository to apt sources, then install docker engine
+
+  - name: uninstall
+    alias : u
+    help: uninstall docker engine
+
+  - name: remove
+    alias: r
+    help: removes all images, containers, and volumes, (You have to delete any edited configuration files manually)
+
+- name: shared
+  alias: s
+  help: Shared containers Commands
+
+  commands:
+  - name: deploy
+    alias: d
+    help: build and start shared containers
+
+  - name: start
+    alias : s
+    help: start shared containers
+
+  - name: stop
+    alias: p
+    help: stop shared containers
+
+  - name: restart
+    alias : r
+    help: restart shared containers
+
+  - name: down
+    alias: n
+    help: remove shared containers
+
+- name: laravel
+  alias: l
+  help: Laravel containers Commands
+
+  commands:
+  - name: deploy
+    alias: d
+    help: build and start Laravel containers
+
+  - name: start
+    alias : s
+    help: start Laravel containers
+
+  - name: stop
+    alias: p
+    help: stop Laravel containers
+
+  - name: restart
+    alias : r
+    help: restart Laravel containers
+
+  - name: down
+    alias: n
+    help: remove Laravel containers
+
+- name: all
+  alias: a
+  help: all containers Commands
+
+  commands:
+  - name: deploy
+    alias: d
+    help: build and start all containers
+
+  - name: start
+    alias : s
+    help: start all containers
+
+  - name: stop
+    alias: p
+    help: stop all containers
+
+  - name: restart
+    alias : r
+    help: restart all containers
+
+  - name: down
+    alias: n
+    help: remove all containers
+
+examples:
+- ez docker install
+- ez d i

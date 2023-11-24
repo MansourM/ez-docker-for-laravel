@@ -6,7 +6,7 @@ mysql8-config/
 nginx-pm-data/
 portainer-data/
 portainer-readonly/
-src/
+laravel/
 laravel-storage-app/
 .env*
 !.env*.example
