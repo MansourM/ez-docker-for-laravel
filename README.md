@@ -29,7 +29,7 @@ git --version
 1. Clone the repository using the following command:
 ```bash 
 sudo git clone https://github.com/MansourM/ez-docker-for-laravel.git && cd ez-docker-for-laravel
-sudo chmod +x ez.sh
+sudo chmod +x ez
 ```
 
 2. create and edit your `.env` file
@@ -40,12 +40,12 @@ sudo nano .env
 
 2.1. install dokcer engine (Optional, only if not installed already)
 ```bash
-sudo ./ez.sh docker:install
+sudo ./ez docker:install
 ```
 
 3. deploy common service containers (nginx, mysql, pma, portainer)
 ```bash
-sudo ./ez.sh all:deploy
+sudo ./ez all:deploy
 ```
 
 
@@ -84,25 +84,25 @@ Nginx Proxymanager default login information:
 
 | Command | Description                                                                                                |
 |---|------------------------------------------------------------------------------------------------------------|
-| `sudo ./ez.sh --help` | Shows all commands                                                                                         |
-| `sudo ./ez.sh docker:install` | Adds the Docker repository to APT sources and then installs the Docker engine.                             |
-| `sudo ./ez.sh docker:uninstall` | Uninstalls the Docker engine.                                                                              |
-| `sudo ./ez.sh docker:remove` | Removes all images, containers, and volumes. (You have to delete any edited configuration files manually.) |
-| `sudo ./ez.sh shared:deploy` | Builds and runs shared service containers (Nginx, MySQL, phpMyAdmin, Portainer).                           |
-| `sudo ./ez.sh shared:start` | Starts shared service containers.                                                                          |
-| `sudo ./ez.sh shared:stop` | Stops shared service containers.                                                                           |
-| `sudo ./ez.sh shared:restart` | Restarts shared service containers.                                                                        |
-| `sudo ./ez.sh shared:down` | Removes shared service containers.                                                                         |
-| `sudo ./ez.sh laravel:deploy` | Clones your Laravel repository, builds its assets, configures it for production, and then starts it.       |
-| `sudo ./ez.sh laravel:start` | Starts Laravel container.                                                                                  |
-| `sudo ./ez.sh laravel:stop` | Stops Laravel container.                                                                                   |
-| `sudo ./ez.sh laravel:restart` | Restarts Laravel container.                                                                                |
-| `sudo ./ez.sh laravel:down` | Removes Laravel container.                                                                                 |
-| `sudo ./ez.sh all:deploy` | Deploys all containers.                                                                                    |
-| `sudo ./ez.sh all:start` | Starts all containers.                                                                                     |
-| `sudo ./ez.sh all:stop` | Stops all containers.                                                                                      |
-| `sudo ./ez.sh all:restart` | Restarts all containers.                                                                                   |
-| `sudo ./ez.sh all:down` | Removes all containers.                                                                                    |
+| `sudo ./ez --help` | Shows all commands                                                                                         |
+| `sudo ./ez docker:install` | Adds the Docker repository to APT sources and then installs the Docker engine.                             |
+| `sudo ./ez docker:uninstall` | Uninstalls the Docker engine.                                                                              |
+| `sudo ./ez docker:remove` | Removes all images, containers, and volumes. (You have to delete any edited configuration files manually.) |
+| `sudo ./ez shared:deploy` | Builds and runs shared service containers (Nginx, MySQL, phpMyAdmin, Portainer).                           |
+| `sudo ./ez shared:start` | Starts shared service containers.                                                                          |
+| `sudo ./ez shared:stop` | Stops shared service containers.                                                                           |
+| `sudo ./ez shared:restart` | Restarts shared service containers.                                                                        |
+| `sudo ./ez shared:down` | Removes shared service containers.                                                                         |
+| `sudo ./ez laravel:deploy` | Clones your Laravel repository, builds its assets, configures it for production, and then starts it.       |
+| `sudo ./ez laravel:start` | Starts Laravel container.                                                                                  |
+| `sudo ./ez laravel:stop` | Stops Laravel container.                                                                                   |
+| `sudo ./ez laravel:restart` | Restarts Laravel container.                                                                                |
+| `sudo ./ez laravel:down` | Removes Laravel container.                                                                                 |
+| `sudo ./ez all:deploy` | Deploys all containers.                                                                                    |
+| `sudo ./ez all:start` | Starts all containers.                                                                                     |
+| `sudo ./ez all:stop` | Stops all containers.                                                                                      |
+| `sudo ./ez all:restart` | Restarts all containers.                                                                                   |
+| `sudo ./ez all:down` | Removes all containers.                                                                                    |
 
 <!-- PHP Extensions -->
 
@@ -193,4 +193,3 @@ Seyed Mansour Mirbehbahani - [sm.mirbehbahani@gmail.com](mailto:sm.mirbehbahani@
 ## :gem: Acknowledgements
 
 - [Awesome Readme Template](https://github.com/Louis3797/awesome-readme-template)
-- [Bash Boilerplate](https://github.com/xwmx/bash-boilerplate)
