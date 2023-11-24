@@ -40,12 +40,12 @@ sudo nano .env
 
 2.1. install dokcer engine (Optional, only if not installed already)
 ```bash
-sudo ./ez docker:install
+sudo ./ez docker install
 ```
 
 3. deploy common service containers (nginx, mysql, pma, portainer)
 ```bash
-sudo ./ez all:deploy
+sudo ./ez all deploy
 ```
 
 
@@ -82,27 +82,27 @@ Nginx Proxymanager default login information:
 
 ## :eyes: Other Commands
 
-| Command | Description                                                                                                |
-|---|------------------------------------------------------------------------------------------------------------|
-| `sudo ./ez --help` | Shows all commands                                                                                         |
-| `sudo ./ez docker:install` | Adds the Docker repository to APT sources and then installs the Docker engine.                             |
-| `sudo ./ez docker:uninstall` | Uninstalls the Docker engine.                                                                              |
-| `sudo ./ez docker:remove` | Removes all images, containers, and volumes. (You have to delete any edited configuration files manually.) |
-| `sudo ./ez shared:deploy` | Builds and runs shared service containers (Nginx, MySQL, phpMyAdmin, Portainer).                           |
-| `sudo ./ez shared:start` | Starts shared service containers.                                                                          |
-| `sudo ./ez shared:stop` | Stops shared service containers.                                                                           |
-| `sudo ./ez shared:restart` | Restarts shared service containers.                                                                        |
-| `sudo ./ez shared:down` | Removes shared service containers.                                                                         |
-| `sudo ./ez laravel:deploy` | Clones your Laravel repository, builds its assets, configures it for production, and then starts it.       |
-| `sudo ./ez laravel:start` | Starts Laravel container.                                                                                  |
-| `sudo ./ez laravel:stop` | Stops Laravel container.                                                                                   |
-| `sudo ./ez laravel:restart` | Restarts Laravel container.                                                                                |
-| `sudo ./ez laravel:down` | Removes Laravel container.                                                                                 |
-| `sudo ./ez all:deploy` | Deploys all containers.                                                                                    |
-| `sudo ./ez all:start` | Starts all containers.                                                                                     |
-| `sudo ./ez all:stop` | Stops all containers.                                                                                      |
-| `sudo ./ez all:restart` | Restarts all containers.                                                                                   |
-| `sudo ./ez all:down` | Removes all containers.                                                                                    |
+| Command                      | Description                                                                                                |
+|------------------------------|------------------------------------------------------------------------------------------------------------|
+| `sudo ./ez --help`           | Shows all commands                                                                                         |
+| `sudo ./ez docker install`   | Adds the Docker repository to APT sources and then installs the Docker engine.                             |
+| `sudo ./ez docker uninstall` | Uninstalls the Docker engine.                                                                              |
+| `sudo ./ez docker remove`    | Removes all images, containers, and volumes. (You have to delete any edited configuration files manually.) |
+| `sudo ./ez shared deploy`    | Builds and runs shared service containers (Nginx, MySQL, phpMyAdmin, Portainer).                           |
+| `sudo ./ez shared start`     | Starts shared service containers.                                                                          |
+| `sudo ./ez shared stop`      | Stops shared service containers.                                                                           |
+| `sudo ./ez shared restart`   | Restarts shared service containers.                                                                        |
+| `sudo ./ez shared down`      | Removes shared service containers.                                                                         |
+| `sudo ./ez laravel deploy`   | Clones your Laravel repository, builds its assets, configures it for production, and then starts it.       |
+| `sudo ./ez laravel start`    | Starts Laravel container.                                                                                  |
+| `sudo ./ez laravel stop`     | Stops Laravel container.                                                                                   |
+| `sudo ./ez laravel restart`  | Restarts Laravel container.                                                                                |
+| `sudo ./ez laravel down`     | Removes Laravel container.                                                                                 |
+| `sudo ./ez all deploy`       | Deploys all containers.                                                                                    |
+| `sudo ./ez all start`        | Starts all containers.                                                                                     |
+| `sudo ./ez all stop`         | Stops all containers.                                                                                      |
+| `sudo ./ez all restart`      | Restarts all containers.                                                                                   |
+| `sudo ./ez all down`         | Removes all containers.                                                                                    |
 
 <!-- PHP Extensions -->
 
