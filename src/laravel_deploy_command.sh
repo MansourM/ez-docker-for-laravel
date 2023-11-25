@@ -3,21 +3,22 @@ echo "# code for 'ez laravel deploy' goes here"
 echo "# you can edit it freely and regenerate (it will not be overwritten)"
 inspect_args
 
-echo "remove existing laravel folder..."
-rm -rf laravel
+laravel_folder_name="laravel"
+echo "remove existing $laravel_folder_name folder..."
+rm -rf $laravel_folder_name
 
-#echo "cloning repository to laravel folder..."
-git clone -b $GIT_BRANCH $GIT_URL laravel
+#echo "cloning repository to $laravel_folder_name folder..."
+git clone -b $GIT_BRANCH $GIT_URL $laravel_folder_name
 
-echo "copying entrypoint-builder.sh file to laravel folder..."
-cp entrypoint-builder.sh laravel/entrypoint-builder.sh
-chmod +x laravel/entrypoint-builder.sh
+echo "copying entrypoint-builder.sh file to $laravel_folder_name folder..."
+cp entrypoint-builder.sh $laravel_folder_name/entrypoint-builder.sh
+chmod +x $laravel_folder_name/entrypoint-builder.sh
 
-echo "copying .env file to laravel folder..."
-cp .env laravel/.env
+echo "copying .env file to $laravel_folder_name folder..."
+cp .env $laravel_folder_name/.env
 
-echo "copying entrypoint-laravel.sh file to laravel folder..."
-cp entrypoint-laravel.sh src/entrypoint-laravel.sh
+echo "copying entrypoint-laravel.sh file to $laravel_folder_name folder..."
+cp entrypoint-laravel.sh $laravel_folder_name/entrypoint-laravel.sh
 chmod +x src/entrypoint-laravel.sh
 
 docker compose -f docker-compose-builder.yml up --build
