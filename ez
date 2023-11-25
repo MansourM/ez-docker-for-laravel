@@ -940,7 +940,7 @@ ez_shared_deploy_command() {
     fi
   fi
 
-  docker compose -f /path/to/docker-compose-shared.yml up --build -d
+  docker compose -f docker-compose-shared.yml up --build -d
   if [ $? -ne 0 ]; then
     echo "Failed to run Docker Compose"
     exit 1
