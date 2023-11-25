@@ -1,7 +1,4 @@
-echo "# this file is located in 'src/docker_install_command.sh'"
-echo "# code for 'ez docker install' goes here"
-echo "# you can edit it freely and regenerate (it will not be overwritten)"
-inspect_args
+#inspect_args
 
 sudo apt-get update
 sudo apt-get -y install ca-certificates curl gnupg
@@ -17,3 +14,9 @@ echo \
 sudo apt-get update
 
 sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# Validate the success of the installation
+if [ $? -ne 0 ]; then
+    echo "Failed to install Docker and related packages"
+    exit 1
+fi
