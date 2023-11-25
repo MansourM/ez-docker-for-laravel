@@ -878,10 +878,7 @@ read_env() {
 # :command.function
 ez_docker_install_command() {
   # src/docker_install_command.sh
-  echo "# this file is located in 'src/docker_install_command.sh'"
-  echo "# code for 'ez docker install' goes here"
-  echo "# you can edit it freely and regenerate (it will not be overwritten)"
-  inspect_args
+  #inspect_args
 
   sudo apt-get update
   sudo apt-get -y install ca-certificates curl gnupg
@@ -898,15 +895,18 @@ ez_docker_install_command() {
 
   sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
+  # Validate the success of the installation
+  if [ $? -ne 0 ]; then
+      echo "Failed to install Docker and related packages"
+      exit 1
+  fi
+
 }
 
 # :command.function
 ez_docker_uninstall_command() {
   # src/docker_uninstall_command.sh
-  echo "# this file is located in 'src/docker_uninstall_command.sh'"
-  echo "# code for 'ez docker uninstall' goes here"
-  echo "# you can edit it freely and regenerate (it will not be overwritten)"
-  inspect_args
+  #inspect_args
 
   sudo apt-get purge docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-ce-rootless-extras
 
@@ -915,10 +915,7 @@ ez_docker_uninstall_command() {
 # :command.function
 ez_docker_remove_command() {
   # src/docker_remove_command.sh
-  echo "# this file is located in 'src/docker_remove_command.sh'"
-  echo "# code for 'ez docker remove' goes here"
-  echo "# you can edit it freely and regenerate (it will not be overwritten)"
-  inspect_args
+  #inspect_args
 
   sudo rm -rf /var/lib/docker
   sudo rm -rf /var/lib/containerd
@@ -928,30 +925,33 @@ ez_docker_remove_command() {
 # :command.function
 ez_shared_deploy_command() {
   # src/shared_deploy_command.sh
-  echo "# this file is located in 'src/shared_deploy_command.sh'"
-  echo "# code for 'ez shared deploy' goes here"
-  echo "# you can edit it freely and regenerate (it will not be overwritten)"
-  inspect_args
+  #inspect_args
 
   # Check if the network already exists
   if docker network inspect "$SHARED_NETWORK_NAME" >/dev/null 2>&1; then
     echo "Network '$SHARED_NETWORK_NAME' already exists"
   else
-    # Create the network
     docker network create "$SHARED_NETWORK_NAME"
-    echo "Network '$SHARED_NETWORK_NAME' created"
+    if [ $? -eq 0 ]; then
+      echo "Network '$SHARED_NETWORK_NAME' created"
+    else
+      echo "Failed to create network '$SHARED_NETWORK_NAME'"
+      exit 1
+    fi
   fi
-  docker compose -f docker-compose-shared.yml up --build -d
+
+  docker compose -f /path/to/docker-compose-shared.yml up --build -d
+  if [ $? -ne 0 ]; then
+    echo "Failed to run Docker Compose"
+    exit 1
+  fi
 
 }
 
 # :command.function
 ez_shared_start_command() {
   # src/shared_start_command.sh
-  echo "# this file is located in 'src/shared_start_command.sh'"
-  echo "# code for 'ez shared start' goes here"
-  echo "# you can edit it freely and regenerate (it will not be overwritten)"
-  inspect_args
+  #inspect_args
 
   docker compose -f docker-compose-shared.yml start
 
@@ -960,10 +960,7 @@ ez_shared_start_command() {
 # :command.function
 ez_shared_stop_command() {
   # src/shared_stop_command.sh
-  echo "# this file is located in 'src/shared_stop_command.sh'"
-  echo "# code for 'ez shared stop' goes here"
-  echo "# you can edit it freely and regenerate (it will not be overwritten)"
-  inspect_args
+  #inspect_args
 
   docker compose -f docker-compose-shared.yml stop
 
@@ -972,10 +969,7 @@ ez_shared_stop_command() {
 # :command.function
 ez_shared_restart_command() {
   # src/shared_restart_command.sh
-  echo "# this file is located in 'src/shared_restart_command.sh'"
-  echo "# code for 'ez shared restart' goes here"
-  echo "# you can edit it freely and regenerate (it will not be overwritten)"
-  inspect_args
+  #inspect_args
 
   docker compose -f docker-compose-shared.yml restart
 
@@ -984,10 +978,7 @@ ez_shared_restart_command() {
 # :command.function
 ez_shared_down_command() {
   # src/shared_down_command.sh
-  echo "# this file is located in 'src/shared_down_command.sh'"
-  echo "# code for 'ez shared down' goes here"
-  echo "# you can edit it freely and regenerate (it will not be overwritten)"
-  inspect_args
+  #inspect_args
 
   docker compose -f docker-compose-shared.yml down
 
@@ -996,40 +987,56 @@ ez_shared_down_command() {
 # :command.function
 ez_laravel_deploy_command() {
   # src/laravel_deploy_command.sh
-  echo "# this file is located in 'src/laravel_deploy_command.sh'"
-  echo "# code for 'ez laravel deploy' goes here"
-  echo "# you can edit it freely and regenerate (it will not be overwritten)"
-  inspect_args
+  #inspect_args
 
-  echo "remove existing laravel folder..."
-  rm -rf laravel
+  laravel_folder_name="laravel"
+  echo "remove existing $laravel_folder_name folder..."
+  rm -rf "$laravel_folder_name"
 
-  #echo "cloning repository to laravel folder..."
-  git clone -b $GIT_BRANCH $GIT_URL laravel
+  #echo "cloning repository to $laravel_folder_name folder..."
+  git clone -b "$GIT_BRANCH" "$GIT_URL" "$laravel_folder_name"
 
-  echo "copying entrypoint-builder.sh file to laravel folder..."
-  cp entrypoint-builder.sh laravel/entrypoint-builder.sh
-  chmod +x laravel/entrypoint-builder.sh
+  # Check if cloning was successful
+  if [ $? -ne 0 ]; then
+      echo "Error: Git cloning failed."
+      exit 1
+  fi
 
-  echo "copying .env file to laravel folder..."
-  cp .env laravel/.env
+  echo "copying entrypoint-builder.sh file to $laravel_folder_name folder..."
+  if [ -f "entrypoint-builder.sh" ]; then
+      cp "entrypoint-builder.sh" "$laravel_folder_name/entrypoint-builder.sh"
+      chmod +x "$laravel_folder_name/entrypoint-builder.sh"
+  else
+      echo "Error: entrypoint-builder.sh file not found."
+      exit 1
+  fi
 
-  echo "copying entrypoint-laravel.sh file to laravel folder..."
-  cp entrypoint-laravel.sh src/entrypoint-laravel.sh
-  chmod +x src/entrypoint-laravel.sh
+  echo "copying .env file to $laravel_folder_name folder..."
+  if [ -f ".env" ]; then
+      cp ".env" "$laravel_folder_name/.env"
+  else
+      echo "Error: .env file not found."
+      exit 1
+  fi
 
-  docker compose -f docker-compose-builder.yml up --build
-  docker compose -f docker-compose-laravel.yml up --build -d
+  echo "copying entrypoint-laravel.sh file to $laravel_folder_name folder..."
+  if [ -f "entrypoint-laravel.sh" ]; then
+      cp "entrypoint-laravel.sh" "$laravel_folder_name/entrypoint-laravel.sh"
+      chmod +x "$laravel_folder_name/entrypoint-laravel.sh"
+  else
+      echo "Error: entrypoint-laravel.sh file not found."
+      exit 1
+  fi
+
+  docker-compose -f docker-compose-builder.yml up --build
+  docker-compose -f docker-compose-laravel.yml up --build -d
 
 }
 
 # :command.function
 ez_laravel_start_command() {
   # src/laravel_start_command.sh
-  echo "# this file is located in 'src/laravel_start_command.sh'"
-  echo "# code for 'ez laravel start' goes here"
-  echo "# you can edit it freely and regenerate (it will not be overwritten)"
-  inspect_args
+  #inspect_args
 
   docker compose -f docker-compose-laravel.yml start
 
@@ -1038,10 +1045,7 @@ ez_laravel_start_command() {
 # :command.function
 ez_laravel_stop_command() {
   # src/laravel_stop_command.sh
-  echo "# this file is located in 'src/laravel_stop_command.sh'"
-  echo "# code for 'ez laravel stop' goes here"
-  echo "# you can edit it freely and regenerate (it will not be overwritten)"
-  inspect_args
+  #inspect_args
 
   docker compose -f docker-compose-laravel.yml stop
 
@@ -1050,10 +1054,7 @@ ez_laravel_stop_command() {
 # :command.function
 ez_laravel_restart_command() {
   # src/laravel_restart_command.sh
-  echo "# this file is located in 'src/laravel_restart_command.sh'"
-  echo "# code for 'ez laravel restart' goes here"
-  echo "# you can edit it freely and regenerate (it will not be overwritten)"
-  inspect_args
+  #inspect_args
 
   docker compose -f docker-compose-laravel.yml restart
 
@@ -1062,10 +1063,7 @@ ez_laravel_restart_command() {
 # :command.function
 ez_laravel_down_command() {
   # src/laravel_down_command.sh
-  echo "# this file is located in 'src/laravel_down_command.sh'"
-  echo "# code for 'ez laravel down' goes here"
-  echo "# you can edit it freely and regenerate (it will not be overwritten)"
-  inspect_args
+  #inspect_args
 
   docker compose -f docker-compose-laravel.yml down
 
@@ -1074,10 +1072,7 @@ ez_laravel_down_command() {
 # :command.function
 ez_all_deploy_command() {
   # src/all_deploy_command.sh
-  echo "# this file is located in 'src/all_deploy_command.sh'"
-  echo "# code for 'ez all deploy' goes here"
-  echo "# you can edit it freely and regenerate (it will not be overwritten)"
-  inspect_args
+  #inspect_args
 
   ez_shared_deploy_command
   ez_laravel_deploy_command
@@ -1087,10 +1082,7 @@ ez_all_deploy_command() {
 # :command.function
 ez_all_start_command() {
   # src/all_start_command.sh
-  echo "# this file is located in 'src/all_start_command.sh'"
-  echo "# code for 'ez all start' goes here"
-  echo "# you can edit it freely and regenerate (it will not be overwritten)"
-  inspect_args
+  #inspect_args
 
   ez_shared_start_command
   ez_laravel_start_command
@@ -1100,10 +1092,7 @@ ez_all_start_command() {
 # :command.function
 ez_all_stop_command() {
   # src/all_stop_command.sh
-  echo "# this file is located in 'src/all_stop_command.sh'"
-  echo "# code for 'ez all stop' goes here"
-  echo "# you can edit it freely and regenerate (it will not be overwritten)"
-  inspect_args
+  #inspect_args
 
   ez_shared_stop_command
   ez_laravel_stop_command
@@ -1113,10 +1102,7 @@ ez_all_stop_command() {
 # :command.function
 ez_all_restart_command() {
   # src/all_restart_command.sh
-  echo "# this file is located in 'src/all_restart_command.sh'"
-  echo "# code for 'ez all restart' goes here"
-  echo "# you can edit it freely and regenerate (it will not be overwritten)"
-  inspect_args
+  #inspect_args
 
   ez_shared_restart_command
   ez_laravel_restart_command
@@ -1126,10 +1112,7 @@ ez_all_restart_command() {
 # :command.function
 ez_all_down_command() {
   # src/all_down_command.sh
-  echo "# this file is located in 'src/all_down_command.sh'"
-  echo "# code for 'ez all down' goes here"
-  echo "# you can edit it freely and regenerate (it will not be overwritten)"
-  inspect_args
+  #inspect_args
 
   ez_shared_down_command
   ez_laravel_down_command
