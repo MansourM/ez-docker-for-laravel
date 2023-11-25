@@ -3,7 +3,7 @@ echo "# code for 'ez laravel deploy' goes here"
 echo "# you can edit it freely and regenerate (it will not be overwritten)"
 inspect_args
 
-echo "remove existing src folder..."
+echo "remove existing laravel folder..."
 rm -rf laravel
 
 #echo "cloning repository to laravel folder..."
@@ -13,10 +13,10 @@ echo "copying entrypoint-builder.sh file to laravel folder..."
 cp entrypoint-builder.sh laravel/entrypoint-builder.sh
 chmod +x laravel/entrypoint-builder.sh
 
-echo "copying .env file to src folder..."
+echo "copying .env file to laravel folder..."
 cp .env laravel/.env
 
-echo "copying entrypoint-laravel.sh file to src folder..."
+echo "copying entrypoint-laravel.sh file to laravel folder..."
 cp entrypoint-laravel.sh src/entrypoint-laravel.sh
 chmod +x src/entrypoint-laravel.sh
 
