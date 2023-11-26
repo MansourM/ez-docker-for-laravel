@@ -1,5 +1,6 @@
 #inspect_args
 
+#careful with laravel_folder_name, it must be the same as laravel dockerfile and docker compose file
 laravel_folder_name="laravel"
 echo "remove existing $laravel_folder_name folder..."
 rm -rf "$laravel_folder_name"

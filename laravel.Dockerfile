@@ -1,7 +1,5 @@
 FROM ubuntu:22.04
 
-COPY ./src /usr/src
-
 ENV TZ=Asia/Tehran
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
@@ -17,6 +15,9 @@ RUN apt-get install -y php8.3-cli php8.3-xml php8.3-curl php8.3-mysql php8.3-mbs
 
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+#careful with laravel path, it must be the same as the one in the src/laravel_deploy_command.sh
+COPY ./laravel /usr/src
 
 WORKDIR /usr/src
 
