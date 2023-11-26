@@ -1,8 +1,11 @@
 #!/bin/bash
 
-if [[ "$APP_ENV" == "dev" || "$APP_ENV" == "staging" ]]; then
+app_env=${APP_ENV}
+if [[ "$app_env" == "dev" || "$app_env" == "staging" ]]; then
+    echo "fresh database + seed ..."
     php artisan migrate:fresh --seed
 else
+  echo "migrating database..."
     php artisan migrate
 fi
 
