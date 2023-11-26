@@ -13,8 +13,6 @@ services:
       - ./nginx-pm-data:/data
       - ./letsencrypt:/etc/letsencrypt
       - ./nginx-config:/etc/nginx
-    profiles:
-      - nginx-pm
 
 
   portainer:
@@ -28,8 +26,6 @@ services:
     volumes:
       - ./portainer-readonly/run/docker.sock:/var/run/docker.sock:ro
       - ./portainer-data:/data
-    profiles:
-      - portainer
 
 
   mysql8:
@@ -45,8 +41,6 @@ services:
       - ./mysql8-data:/var/lib/mysql
       - ./mysql8-config:/etc/mysql/conf.d
     restart: unless-stopped
-    profiles:
-      - mysql8
 
 
   phpmyadmin:
@@ -60,8 +54,6 @@ services:
       PMA_ARBITRARY: 0
     depends_on:
       - mysql8
-    profiles:
-      - phpmyadmin
 
 networks:
   default:
