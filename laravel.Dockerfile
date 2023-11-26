@@ -27,5 +27,3 @@ RUN php artisan config:cache
 RUN php artisan event:cache
 RUN php artisan route:cache
 RUN php artisan view:cache
-
-RUN php artisan migrate --seed
