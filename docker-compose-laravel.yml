@@ -15,7 +15,7 @@ services:
     ports:
       - ${PORT_LARAVEL}:80
     working_dir: /usr/src
-    entrypoint: entrypoint-laravel.sh
+    entrypoint: ./entrypoint-laravel.sh
 
 
 networks:
