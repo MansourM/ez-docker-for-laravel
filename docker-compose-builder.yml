@@ -7,4 +7,6 @@ services:
       context: .
       dockerfile: builder.Dockerfile
     volumes:
-      - ./src:/usr/src
+      - ./laravel:/usr/src #careful with laravel path, it must be the same as the one in the src/laravel_deploy_command.sh
+    working_dir: /usr/src
+    entrypoint: entrypoint-builder.sh

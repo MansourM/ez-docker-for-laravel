@@ -28,5 +28,3 @@ RUN php artisan route:cache
 RUN php artisan view:cache
 
 RUN php artisan migrate --seed
-
-ENTRYPOINT [ "./entrypoint-laravel.sh" ]
