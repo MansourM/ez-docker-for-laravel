@@ -14,7 +14,7 @@ services:
       - ./laravel-storage-app:/usr/src/storage/app
     restart: unless-stopped
     ports:
-      - ${PORT_LARAVEL}:80
+      - ${PORT_LARAVEL}:8000
     working_dir: /usr/src
     entrypoint: ./entrypoint-laravel.sh
 
