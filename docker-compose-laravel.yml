@@ -8,6 +8,7 @@ services:
       dockerfile: laravel.Dockerfile
     environment:
       - APP_ENV=${APP_ENV}
+      - APP_DEBUG=${APP_DEBUG}
     volumes:
       - ./laravel-php-config:/usr/local/etc/php/conf.d
       - ./laravel-storage-app:/usr/src/storage/app
