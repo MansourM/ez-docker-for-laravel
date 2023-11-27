@@ -12,7 +12,9 @@ services:
     volumes:
       - ./nginx-pm-data:/data
       - ./letsencrypt:/etc/letsencrypt
-      - ./nginx-config:/etc/nginx
+      #- /nginx-config/nginx.conf:/etc/nginx/nginx.conf
+      #- ./nginx-config/custom-config.conf:/etc/nginx/conf.d/custom-config.conf
+
 
 
   portainer:
@@ -26,6 +28,8 @@ services:
     volumes:
       - ./portainer-readonly/run/docker.sock:/var/run/docker.sock:ro
       - ./portainer-data:/data
+    profiles:
+      - portainer
 
 
   mysql8:
@@ -39,7 +43,7 @@ services:
       - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
     volumes:
       - ./mysql8-data:/var/lib/mysql
-      - ./mysql8-config:/etc/mysql/conf.d
+      - ./mysql-config/my.cnf:/etc/mysql/conf.d/my.cnf
     restart: unless-stopped
 
 
