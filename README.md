@@ -143,6 +143,7 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 ## :compass: Roadmap
 
 - [ ] profiles?
+- [ ] explain how to change scripts and generate new a `ez` script with bashly 
 - [ ] add CI/CD pipeline/hooks
 - [ ] warn if APP_DEBUG=true
 - [ ] add a production mode and a test (staging) mode based on APP_DEBUG value
@@ -159,7 +160,7 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 - [ ] Implement a GUI (optional dashboard).
 - [ ] Add more (modular) services (e.g., Redis, Memcached).
 - [ ] Integrate a DNS service.
-- [ ] Enhance shell with proper subcommands.
+- [x] Enhance shell with proper subcommands.
 
 
 <!-- Known Issues -->
@@ -193,3 +194,4 @@ Seyed Mansour Mirbehbahani - [sm.mirbehbahani@gmail.com](mailto:sm.mirbehbahani@
 ## :gem: Acknowledgements
 
 - [Awesome Readme Template](https://github.com/Louis3797/awesome-readme-template)
+- [Bashly](https://github.com/DannyBen/bashly)
