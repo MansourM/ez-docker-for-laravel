@@ -39,5 +39,5 @@ else
     exit 1
 fi
 
-docker compose -f docker-compose-builder.yml up --build
-docker compose -f docker-compose-laravel.yml up --build -d
+docker compose -f compose-builder.yml up --build
+docker compose -f compose-laravel.yml up --build -d
