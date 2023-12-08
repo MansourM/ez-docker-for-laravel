@@ -8,4 +8,4 @@ portainer-data/
 portainer-readonly/
 laravel/
 laravel-storage-app/
-test*
+test.sh
