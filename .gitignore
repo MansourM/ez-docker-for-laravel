@@ -8,6 +8,4 @@ portainer-data/
 portainer-readonly/
 laravel/
 laravel-storage-app/
-.env*
-!.env*.example
 test*
