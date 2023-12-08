@@ -23,7 +23,7 @@ merge_env() {
     exit 1
   fi
 
-  sort -u -t '=' -k 1,1 $file2 $file1 | grep -v '^$\|^\s*\#' >merged.env
+  sort -u -t '=' -k 1,1 $file2 $file1 | grep -v '^$\|^\s*\#' > $output
 
-  echo "Merged $file2 into $file1 file creating $output"
+  echo "Merged $file2 into $file1 file creating $output."
 }
