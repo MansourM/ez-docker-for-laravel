@@ -24,6 +24,8 @@ ez-docker-for-laravel-laravel-builder-1  | Script @php artisan package:discover 
 
 
 ### Useful commands
+------------
+git config --global http.postBuffer 157286400
 
 ```cli
 netstat -nlptu
