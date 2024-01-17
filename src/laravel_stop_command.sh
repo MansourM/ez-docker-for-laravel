@@ -1,3 +1,3 @@
 #inspect_args
 
-docker compose -f docker-compose-laravel.yml stop
+docker compose -f compose-laravel.yml stop

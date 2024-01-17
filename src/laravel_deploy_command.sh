@@ -5,7 +5,7 @@ laravel_folder_name="laravel"
 echo "remove existing $laravel_folder_name folder..."
 rm -rf "$laravel_folder_name"
 
-git clone -b "$GIT_BRANCH" "$GIT_URL" "$laravel_folder_name"
+git clone  --depth 1 -b "$GIT_BRANCH" "$GIT_URL" "$laravel_folder_name"
 
 # Check if cloning was successful
 if [ $? -ne 0 ]; then
@@ -39,5 +39,5 @@ else
     exit 1
 fi
 
-docker compose -f docker-compose-builder.yml up --build
-docker compose -f docker-compose-laravel.yml up --build -d
+docker compose -f compose-builder.yml up --build
+docker compose -f compose-laravel.yml up --build -d

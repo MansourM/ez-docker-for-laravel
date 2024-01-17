@@ -24,19 +24,70 @@ ez-docker-for-laravel-laravel-builder-1  | Script @php artisan package:discover 
 
 
 ### Useful commands
+------------
+git config --global http.postBuffer 157286400
 
 ```cli
 netstat -nlptu
 sudo su
 docker exec -t -i <containerId> /bin/bash
 sudo resolvectl status
+sudo resolvectl revert eth0
+sudo nano /etc/resolvconf/resolv.conf.d/head
 sudo resolvectl dns eth0 1.1.1.1 8.8.8.8
 sudo resolvectl dns eth0 10.202.10.202 10.202.10.102
+sudo resolvectl dns eth0 178.22.122.100 185.51.200.2
+sudo resolvectl dns eth0 178.22.122.100 10.202.10.202
 sudo resolvectl dns ens33 1.1.1.1 8.8.8.8
 sudo resolvectl dns ens33 10.202.10.202 10.202.10.102
 sudo resolvectl dns eth0 8.8.8.8 8.8.4.4 --set-dns
 
+-------------------
+sudo nano /etc/resolvconf/resolv.conf.d/head
+
+nameserver 178.22.122.100
+nameserver 185.51.200.2
+
+nameserver 10.202.10.202
+nameserver 10.202.10.102
+
+nameserver 185.55.225.25
+nameserver 185.55.226.26
+
+sudo systemctl stop resolvconf.service
+sudo systemctl start resolvconf.service
+
+sudo resolvconf --enable-updates
+sudo resolvconf -u
+-----------------------
+sudo apt update
+sudo apt install resolvconf
+
+sudo nano /etc/resolvconf/resolv.conf.d/head
+
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+
+sudo systemctl restart resolvconf.service
+sudo systemctl restart systemd-resolved.service
+
+sudo systemctl status resolvconf.service
+
+sudo resolvectl status
+
+
+
+
+---------------------------
+
 #ENTRYPOINT ["tail", "-f", "/dev/null"]
+
+----------------
+nameserver 178.22.122.100
+nameserver 185.51.200.2
+
+nameserver 10.202.10.202
+nameserver 10.202.10.102
 
 df -h
 sudo apt clean
@@ -47,6 +98,8 @@ docker image prune
 # add -f or --force to not prompt for confirmation
 docker container prune
 ```
+
+git clone -b "profiles" "https://MansourM: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@github.com/MansourM/digicontract.git" "laravel-test"
 
 
 ### better readme

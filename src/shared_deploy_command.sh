@@ -13,7 +13,7 @@ else
   fi
 fi
 
-docker compose -f docker-compose-shared.yml up --build -d
+docker compose -f compose-shared.yml up --build -d
 if [ $? -ne 0 ]; then
   echo "Failed to run Docker Compose"
   exit 1
