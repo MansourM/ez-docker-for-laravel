@@ -143,6 +143,7 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 ## :compass: Roadmap
 
 - [ ] profiles?
+- [ ] refactor file names group/start by env/type
 - [ ] add CI/CD pipeline/hooks
 - [ ] warn if APP_DEBUG=true
 - [ ] add a production mode and a test (staging) mode based on APP_DEBUG value

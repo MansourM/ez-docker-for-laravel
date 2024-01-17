@@ -82,6 +82,13 @@ sudo resolvectl status
 
 #ENTRYPOINT ["tail", "-f", "/dev/null"]
 
+----------------
+nameserver 178.22.122.100
+nameserver 185.51.200.2
+
+nameserver 10.202.10.202
+nameserver 10.202.10.102
+
 df -h
 sudo apt clean
 # which can show disk usage and size of 'Build Cache'
@@ -91,6 +98,8 @@ docker image prune
 # add -f or --force to not prompt for confirmation
 docker container prune
 ```
+
+git clone -b "profiles" "https://MansourM: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@github.com/MansourM/digicontract.git" "laravel-test"
 
 
 ### better readme
