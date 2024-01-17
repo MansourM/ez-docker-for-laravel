@@ -1,3 +1,3 @@
 #inspect_args
 
-docker compose -f docker-compose-shared.yml restart
+docker compose -f compose-shared.yml restart

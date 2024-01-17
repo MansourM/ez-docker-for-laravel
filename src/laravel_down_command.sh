@@ -1,3 +1,3 @@
 #inspect_args
 
-docker compose -f docker-compose-laravel.yml down
+docker compose -f compose-laravel.yml down
