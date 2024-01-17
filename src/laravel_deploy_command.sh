@@ -5,7 +5,7 @@ laravel_folder_name="laravel"
 echo "remove existing $laravel_folder_name folder..."
 rm -rf "$laravel_folder_name"
 
-git clone -b "$GIT_BRANCH" "$GIT_URL" "$laravel_folder_name"
+git clone  --depth 1 -b "$GIT_BRANCH" "$GIT_URL" "$laravel_folder_name"
 
 # Check if cloning was successful
 if [ $? -ne 0 ]; then
