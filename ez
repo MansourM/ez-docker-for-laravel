@@ -872,9 +872,9 @@ merge_env() {
     exit 1
   fi
 
-  sort -u -t '=' -k 1,1 $file2 $file1 | grep -v '^$\|^\s*\#' >merged.env
+  sort -u -t '=' -k 1,1 $file2 $file1 | grep -v '^$\|^\s*\#' > $output
 
-  echo "Merged $file2 into $file1 file creating $output"
+  echo "Merged $file2 into $file1 file creating $output."
 }
 
 # src/lib/read_env.sh
@@ -1015,7 +1015,7 @@ ez_laravel_deploy_command() {
   echo "remove existing $laravel_folder_name folder..."
   rm -rf "$laravel_folder_name"
 
-  git clone -b "$GIT_BRANCH" "$GIT_URL" "$laravel_folder_name"
+  git clone  --depth 1 -b "$GIT_BRANCH" "$GIT_URL" "$laravel_folder_name"
 
   # Check if cloning was successful
   if [ $? -ne 0 ]; then
