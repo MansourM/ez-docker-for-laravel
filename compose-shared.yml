@@ -3,6 +3,7 @@ version: '3.9'
 services:
 
   nginx-pm:
+    #TODO latest can b dangerous, should be a set build
     image: 'jc21/nginx-proxy-manager:latest'
     restart: unless-stopped
     ports:
@@ -14,9 +15,6 @@ services:
       - ./letsencrypt:/etc/letsencrypt
       #- /nginx-config/nginx.conf:/etc/nginx/nginx.conf
       #- ./nginx-config/custom-config.conf:/etc/nginx/conf.d/custom-config.conf
-    profiles:
-      - nginx-pm
-
 
 
   portainer:
@@ -36,8 +34,6 @@ services:
 
   mysql8:
     image: mysql:8.0
-    ports:
-      - ${DB_PORT}:3306
     environment:
       - MYSQL_DATABASE=${DB_DATABASE}
       - MYSQL_USER=${DB_USERNAME}
@@ -47,8 +43,6 @@ services:
       - ./mysql8-data:/var/lib/mysql
       - ./mysql-config/my.cnf:/etc/mysql/conf.d/my.cnf
     restart: unless-stopped
-    profiles:
-      - mysql8
 
 
   phpmyadmin:
@@ -62,8 +56,6 @@ services:
       PMA_ARBITRARY: 0
     depends_on:
       - mysql8
-    profiles:
-      - phpmyadmin
 
 networks:
   default:
