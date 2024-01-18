@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
 
-  laravel-server:
+  laravel-server-test:
     build:
       context: .
       dockerfile: laravel.Dockerfile
@@ -17,7 +17,24 @@ services:
       - ${PORT_LARAVEL}:8000
     working_dir: /usr/src
     entrypoint: ./entrypoint-laravel.sh
+    profiles:
+      - test
 
+  laravel-server-production:
+    build:
+      context: .
+      dockerfile: laravel.Dockerfile
+    environment:
+      - APP_ENV=${APP_ENV}
+      - APP_DEBUG=${APP_DEBUG}
+    volumes:
+      - ./laravel-php-config:/usr/local/etc/php/conf.d
+      - ./laravel-storage-app:/usr/src/storage/app
+    restart: unless-stopped
+    working_dir: /usr/src
+    entrypoint: ./entrypoint-laravel.sh
+    profiles:
+      - staging
 
 networks:
   default:
