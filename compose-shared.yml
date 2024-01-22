@@ -3,57 +3,19 @@ version: '3.9'
 services:
 
   nginx-pm:
-    #TODO latest can b dangerous, should be a set build
-    image: 'jc21/nginx-proxy-manager:latest'
-    restart: unless-stopped
-    ports:
-      - '80:80'
-      - ${PORT_NGINX_PM}:81  #web console
-      - '443:443'
-    volumes:
-      - ./nginx-pm-data:/data
-      - ./letsencrypt:/etc/letsencrypt
-      #- /nginx-config/nginx.conf:/etc/nginx/nginx.conf
-      #- ./nginx-config/custom-config.conf:/etc/nginx/conf.d/custom-config.conf
-
-
-  portainer:
-    image: portainer/portainer-ce:latest
-    container_name: portainer
-    restart: always
-    ports:
-      - ${PORT_PORTAINER}:9000 #web console
-    security_opt:
-      - no-new-privileges:true
-    volumes:
-      - ./portainer-readonly/run/docker.sock:/var/run/docker.sock:ro
-      - ./portainer-data:/data
-    profiles:
-      - portainer
-
+    extends:
+      file: common.yml
+      service: nginx-pm
 
   mysql8:
-    image: mysql:8.0
-    environment:
-      - MYSQL_DATABASE=${DB_DATABASE}
-      - MYSQL_USER=${DB_USERNAME}
-      - MYSQL_PASSWORD=${DB_PASSWORD}
-      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
-    volumes:
-      - ./mysql8-data:/var/lib/mysql
-      - ./mysql-config/my.cnf:/etc/mysql/conf.d/my.cnf
-    restart: unless-stopped
-
+    extends:
+      file: common.yml
+      service: mysql8
 
   phpmyadmin:
-    image: phpmyadmin
-    restart: always
-    ports:
-      - ${PORT_PMA}:80 #web console
-    environment:
-      PMA_HOST: ${DB_HOST}
-      PMA_PORT: ${DB_PORT}
-      PMA_ARBITRARY: 0
+    extends:
+      file: common.yml
+      service: mysql8
     depends_on:
       - mysql8
 
