@@ -28,7 +28,7 @@ git --version
 
 1. Clone the repository using the following command:
 ```bash 
-sudo git clone https://github.com/MansourM/ez-docker-for-laravel.git && cd ez-docker-for-laravel
+sudo git clone -b profiles https://github.com/MansourM/ez-docker-for-laravel.git && cd ez-docker-for-laravel
 sudo chmod +x ez
 ```
 

@@ -1,0 +1,71 @@
+version: '3.9'
+
+services:
+
+  nginx-pm:
+    #FIXME latest can b dangerous,have broken stuff b4, should be a set build
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+      - ${PORT_NGINX_PM}:81 #web console
+    volumes:
+      - ./letsencrypt:/etc/letsencrypt
+      - ./nginx-pm-data:/data
+      # add custom config in /data/nginx/custom
+      # https://nginxproxymanager.com/advanced-config/#custom-nginx-configurations
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: always
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - ./portainer-readonly/run/docker.sock:/var/run/docker.sock:ro
+      - ./portainer-data:/data
+
+  mysql8:
+    image: mysql:8.0
+    environment:
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+    volumes:
+      - ./mysql8-data:/var/lib/mysql
+      - ./mysql-config/my.cnf:/etc/mysql/conf.d/my.cnf
+    restart: unless-stopped
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: ${DB_HOST}
+      PMA_PORT: ${DB_PORT}
+      PMA_ARBITRARY: 0
+
+  laravel-builder:
+    build:
+      context: .
+      dockerfile: builder.Dockerfile
+    volumes:
+      - ./laravel-test:/usr/src
+      #careful with laravel path, it must be the same as the one in the src/laravel_deploy_command.sh
+    working_dir: /usr/src
+    entrypoint: ./entrypoint-builder.sh
+
+  laravel-server:
+    build:
+      context: .
+      dockerfile: laravel.Dockerfile
+    environment:
+      - APP_ENV=${APP_ENV}
+      - APP_DEBUG=${APP_DEBUG}
+    volumes:
+      - ./laravel-php-config:/usr/local/etc/php/conf.d
+      - ./laravel-storage-app:/usr/src/storage/app
+    restart: unless-stopped
+    working_dir: /usr/src
+    entrypoint: ./entrypoint-laravel.sh
