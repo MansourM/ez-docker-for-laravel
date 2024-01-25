@@ -13,7 +13,16 @@ else
   fi
 fi
 
-docker compose -f compose-shared.yml up --build -d
+#TODO read APP_ENV from cli args and ignore APP_ENV in .env?
+# Check if APP_ENV is set to dev, test, staging, or production
+if [[ "$APP_ENV" != "dev" && "$APP_ENV" != "test" && "$APP_ENV" != "staging" && "$APP_ENV" != "production" ]]; then
+    echo "Error: Invalid value for APP_ENV. It must be either dev, test, staging, or production."
+    exit 1
+fi
+
+echo "Preparing to deploy Laravel in $APP_ENV mode."
+
+docker compose -f compose-shared.yml --profile "$APP_ENV" up --build -d
 if [ $? -ne 0 ]; then
   echo "Failed to run Docker Compose"
   exit 1
