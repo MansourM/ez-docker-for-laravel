@@ -51,10 +51,13 @@ services:
       context: .
       dockerfile: builder.Dockerfile
     volumes:
-      - ./laravel-test:/usr/src
-      #careful with laravel path, it must be the same as the one in the src/laravel_deploy_command.sh
+      - ./laravel-${APP_ENV}:/usr/src
     working_dir: /usr/src
     entrypoint: ./entrypoint-builder.sh
+    profiles:
+      - test
+      - staging
+      - production
 
   laravel-server:
     build:
@@ -63,8 +66,6 @@ services:
     environment:
       - APP_ENV=${APP_ENV}
       - APP_DEBUG=${APP_DEBUG}
-    volumes:
-      - ./laravel-php-config:/usr/local/etc/php/conf.d
       - ./laravel-storage-app:/usr/src/storage/app
     restart: unless-stopped
     working_dir: /usr/src
