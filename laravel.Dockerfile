@@ -1,5 +1,6 @@
 FROM ubuntu:22.04
 
+ARG APP_ENV
 ENV TZ=Asia/Tehran
 ENV DEBIAN_FRONTEND noninteractive
 
