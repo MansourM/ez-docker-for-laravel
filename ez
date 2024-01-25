@@ -1006,7 +1006,7 @@ ez_shared_start_command() {
   # src/shared_start_command.sh
   #inspect_args
 
-  docker compose -f compose-shared.yml start
+  docker compose -f compose-shared.yml --profile "$APP_ENV" start
 
 }
 
@@ -1015,7 +1015,7 @@ ez_shared_stop_command() {
   # src/shared_stop_command.sh
   #inspect_args
 
-  docker compose -f compose-shared.yml stop
+  docker compose -f compose-shared.yml --profile "$APP_ENV" stop
 
 }
 
@@ -1024,7 +1024,7 @@ ez_shared_restart_command() {
   # src/shared_restart_command.sh
   #inspect_args
 
-  docker compose -f compose-shared.yml restart
+  docker compose -f compose-shared.yml --profile "$APP_ENV" restart
 
 }
 
@@ -1033,7 +1033,7 @@ ez_shared_down_command() {
   # src/shared_down_command.sh
   #inspect_args
 
-  docker compose -f compose-shared.yml down
+  docker compose -f compose-shared.yml --profile "$APP_ENV"  down
 
 }
 
@@ -1107,7 +1107,7 @@ ez_laravel_start_command() {
   # src/laravel_start_command.sh
   #inspect_args
 
-  docker compose -f compose-laravel.yml start
+  docker compose -f compose-laravel.yml --profile "$APP_ENV" start
 
 }
 
@@ -1116,7 +1116,7 @@ ez_laravel_stop_command() {
   # src/laravel_stop_command.sh
   #inspect_args
 
-  docker compose -f compose-laravel.yml stop
+  docker compose -f compose-laravel.yml --profile "$APP_ENV" stop
 
 }
 
@@ -1125,7 +1125,7 @@ ez_laravel_restart_command() {
   # src/laravel_restart_command.sh
   #inspect_args
 
-  docker compose -f compose-laravel.yml restart
+  docker compose -f compose-laravel.yml --profile "$APP_ENV" restart
 
 }
 
@@ -1134,7 +1134,7 @@ ez_laravel_down_command() {
   # src/laravel_down_command.sh
   #inspect_args
 
-  docker compose -f compose-laravel.yml down
+  docker compose -f compose-laravel.yml --profile "$APP_ENV" down
 
 }
 
