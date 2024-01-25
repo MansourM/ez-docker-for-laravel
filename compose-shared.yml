@@ -23,7 +23,7 @@ services:
     profiles:
       - test
 
-  phpmyadmin-production:
+  phpmyadmin:
     extends:
       file: common.yml
       service: phpmyadmin
