@@ -5,7 +5,7 @@ services:
   laravel-server-test:
     extends:
       file: common.yml
-      service: laravel-builder
+      service: laravel-server
     ports:
       - ${PORT_LARAVEL}:8000
     profiles:
@@ -14,9 +14,7 @@ services:
   laravel-server-production:
     extends:
       file: common.yml
-      service: laravel-builder
-    ports:
-      - ${PORT_LARAVEL}:8000
+      service: laravel-server
     profiles:
       - production
 
