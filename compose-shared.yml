@@ -15,7 +15,7 @@ services:
   phpmyadmin-test:
     extends:
       file: common.yml
-      service: mysql8
+      service: phpmyadmin
     ports:
       - ${PORT_PMA}:80 #web console
     depends_on:
@@ -26,7 +26,7 @@ services:
   phpmyadmin-production:
     extends:
       file: common.yml
-      service: mysql8
+      service: phpmyadmin
     depends_on:
       - mysql8
     profiles:
