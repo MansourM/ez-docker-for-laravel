@@ -2,25 +2,7 @@ version: '3.9'
 
 services:
 
-  laravel-builder-test:
-    build:
-      context: .
-      dockerfile: builder.Dockerfile
-    volumes:
-      - ./laravel-test:/usr/src #careful with laravel path, it must be the same as the one in the src/laravel_deploy_command.sh
-    working_dir: /usr/src
-    entrypoint: ./entrypoint-builder.sh
-    profiles:
-      - test
-
-  laravel-builder-production:
-    build:
-      context: .
-      dockerfile: builder.Dockerfile
-    volumes:
-      - ./laravel-test:/usr/src #careful with laravel path, it must be the same as the one in the src/laravel_deploy_command.sh
-    working_dir: /usr/src
-    entrypoint: ./entrypoint-builder.sh
-    profiles:
-      - staging
-      - production
+  laravel-builder:
+    extends:
+      file: common.yml
+      service: laravel-builder

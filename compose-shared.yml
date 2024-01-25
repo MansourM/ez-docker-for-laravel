@@ -16,8 +16,22 @@ services:
     extends:
       file: common.yml
       service: mysql8
+    ports:
+      - ${PORT_PMA}:80 #web console
     depends_on:
       - mysql8
+    profiles:
+      - test
+
+  phpmyadmin:
+    extends:
+      file: common.yml
+      service: mysql8
+    depends_on:
+      - mysql8
+    profiles:
+      - staging
+      - production
 
 networks:
   default:
