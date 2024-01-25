@@ -7,6 +7,8 @@ if [[ "$APP_ENV" != "dev" && "$APP_ENV" != "test" && "$APP_ENV" != "staging" && 
     exit 1
 fi
 
+echo "Preparing to deploy Laravel in $APP_ENV mode."
+
 #careful with laravel_folder_name, it must be the same as laravel dockerfile and docker compose file
 laravel_folder_name="laravel-$APP_ENV"
 
