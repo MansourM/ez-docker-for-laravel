@@ -12,13 +12,15 @@ RUN apt-get update \
     && echo "deb [signed-by=/etc/apt/keyrings/ppa_ondrej_php.gpg] https://ppa.launchpadcontent.net/ondrej/php/ubuntu jammy main" > /etc/apt/sources.list.d/ppa_ondrej_php.list \
     && apt-get update
 
-RUN apt-get install -y php8.3-cli php8.3-xml php8.3-curl php8.3-mysql php8.3-mbstring
+RUN apt-get install -y php8.3-cli php8.3-xml php8.3-curl php8.3-mysql php8.3-mbstring php8.3-zip
 
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 #careful with laravel path, it must be the same as the one in the src/laravel_deploy_command.sh
 COPY ./laravel /usr/src
+
+COPY ./config/99-php.ini /etc/php/8.3/cli/conf.d/99-php.ini
 
 WORKDIR /usr/src
 
