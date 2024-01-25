@@ -1,3 +1,3 @@
 #inspect_args
 
-docker compose -f compose-shared.yml down
+docker compose -f compose-shared.yml --profile "$APP_ENV"  down
