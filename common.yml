@@ -16,7 +16,7 @@ services:
       # add custom config in /data/nginx/custom
       # https://nginxproxymanager.com/advanced-config/#custom-nginx-configurations
 
-  portainer:
+  portainer: #inner port :9000
     image: portainer/portainer-ce:latest
     container_name: portainer
     restart: always
@@ -26,7 +26,7 @@ services:
       - ./portainer-readonly/run/docker.sock:/var/run/docker.sock:ro
       - ./portainer-data:/data
 
-  mysql8:
+  mysql8: #inner port :3306
     image: mysql:8.0
     environment:
       - MYSQL_DATABASE=${DB_DATABASE}
@@ -38,7 +38,7 @@ services:
       - ./mysql-config/my.cnf:/etc/mysql/conf.d/my.cnf
     restart: unless-stopped
 
-  phpmyadmin:
+  phpmyadmin: #inner port :80
     image: phpmyadmin
     restart: always
     environment:
@@ -59,7 +59,7 @@ services:
       - staging
       - production
 
-  laravel-server:
+  laravel-server: #inner port :8000
     build:
       context: .
       dockerfile: laravel.Dockerfile
