@@ -47,7 +47,7 @@ fi
 #TODO separate .env file for each environment?
 copy_file ".env" "$laravel_folder_name" ".env"
 copy_file "entrypoint-builder-$APP_ENV.sh" "$laravel_folder_name" "entrypoint-builder.sh"
-copy_file "entrypoint-laravel-$APP_ENV.sh" "$laravel_folder_name" "entrypoint-laravel.sh"
+copy_file "entrypoint-laravel.sh" "$laravel_folder_name" "entrypoint-laravel.sh"
 
 # Run Docker Compose
 echo "Running Docker Compose for builder..."
