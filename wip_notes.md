@@ -15,6 +15,12 @@ ez-docker-for-laravel-laravel-builder-1  | Script @php artisan package:discover 
 
 
 
+# Stop all running containers
+sudo docker stop $(sudo docker ps -q)
+
+# Remove all containers
+sudo docker rm $(sudo docker ps -aq)
+sudo docker ps -a
 
 ### Read
 
