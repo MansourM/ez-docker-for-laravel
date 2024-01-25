@@ -63,10 +63,13 @@ services:
     build:
       context: .
       dockerfile: laravel.Dockerfile
+      args:
+        - APP_ENV=${APP_ENV}
     environment:
       - APP_ENV=${APP_ENV}
       - APP_DEBUG=${APP_DEBUG}
       - ./laravel-storage-app:/usr/src/storage/app
+    arg
     restart: unless-stopped
     working_dir: /usr/src
     entrypoint: ./entrypoint-laravel.sh
