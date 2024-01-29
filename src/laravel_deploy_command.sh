@@ -17,8 +17,8 @@ if [ -d "$laravel_folder_name" ]; then
     echo "Updating existing $laravel_folder_name folder..."
 
     cd "$laravel_folder_name" || exit 1
-    echo "Remove previous build folders/configs..."
-    rm -rf "node_modules" "package-lock.json" "vendor" "composer.lock" "public/build"
+    echo "Remove previous build folders..."
+    rm -rf "node_modules" "vendor" "public/build"
 
     git pull origin "$APP_ENV"
 
