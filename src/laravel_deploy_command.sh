@@ -15,7 +15,11 @@ laravel_folder_name="laravel-$APP_ENV"
 # Check if the folder exists
 if [ -d "$laravel_folder_name" ]; then
     echo "Updating existing $laravel_folder_name folder..."
+
     cd "$laravel_folder_name" || exit 1
+    echo "Remove previous build folders/configs..."
+    rm -rf "node_modules" "package-lock.json" "vendor" "composer.lock" "public/build"
+
     git pull origin "$APP_ENV"
 
     # Check if the git operation was successful
@@ -23,9 +27,6 @@ if [ -d "$laravel_folder_name" ]; then
         echo "Error: Git pull failed."
         exit 1
     fi
-
-    echo "Remove previous build folders..."
-    rm -rf "node_modules" "vendor" "public/build"
 
     # Check if the directory removal was successful
     if [ $? -ne 0 ]; then
