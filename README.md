@@ -142,9 +142,10 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 
 ## :compass: Roadmap
 
-- [ ] profiles?
+- [x] profiles?
+- [ ] better handling of unused/dangling/orphan images/containers 
 - [ ] refactor file names group/start by env/type
-- [ ] explain how to change scripts and generate new a `ez` script with bashly 
+- [ ] explain how to change scripts and generate new a `ez` script with Bashly 
 - [ ] add CI/CD pipeline/hooks
 - [ ] warn if APP_DEBUG=true
 - [ ] add a production mode and a test (staging) mode based on APP_DEBUG value
