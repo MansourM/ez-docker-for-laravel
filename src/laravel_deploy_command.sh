@@ -19,7 +19,8 @@ if [ -d "$laravel_folder_name" ]; then
     cd "$laravel_folder_name" || exit 1
     echo "Remove previous build folders..."
     rm -rf "node_modules" "vendor" "public/build"
-
+    echo "Discard local changes"
+    git reset --hard
     git pull origin "$APP_ENV"
 
     # Check if the git operation was successful
