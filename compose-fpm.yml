@@ -2,10 +2,10 @@ version: '3.9'
 
 services:
 
-  laravel-fpm-server: #inner port :9000
+  laravel-fpm-nginx: #inner port :9000
     build:
       context: .
-      dockerfile: fpm.Dockerfile
+      dockerfile: fpm-nginx.Dockerfile
       args:
         - APP_ENV=test
     environment:
@@ -13,6 +13,7 @@ services:
       - APP_DEBUG=true
       - ./laravel-storage-app:/var/www/storage/app
     restart: unless-stopped
+    user: www-data
     ports:
       - 9011:9000
     working_dir: /var/www
