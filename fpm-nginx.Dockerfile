@@ -57,6 +57,9 @@ COPY config/supervisord.conf /etc/supervisor/supervisord.conf
 COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY config/nginx/default.conf /etc/nginx/conf.d/default.conf
 
+#careful with laravel path, it must be the same as the one in the src/laravel_deploy_command.sh
+COPY ./laravel-${APP_ENV} ${WORKDIR}
+
 
 RUN usermod -u ${USER_ID} ${USER_NAME}
 RUN groupmod -g ${USER_ID} ${GROUP_NAME}
@@ -78,9 +81,6 @@ RUN chown -R ${USER_NAME}:${GROUP_NAME} /var/www && \
   chown -R $USER_NAME:$USER_NAME /var/log/supervisor && \
   chown -R $USER_NAME:$USER_NAME /etc/nginx/conf.d/ && \
   chown -R ${USER_NAME}:${GROUP_NAME} /tmp
-
-#careful with laravel path, it must be the same as the one in the src/laravel_deploy_command.sh
-COPY ./laravel-${APP_ENV} ${WORKDIR}
 
 WORKDIR ${WORKDIR}
 
