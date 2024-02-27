@@ -3,6 +3,9 @@ FROM php:8.2-fpm
 ARG APP_ENV
 ENV TZ=Asia/Tehran
 ENV DEBIAN_FRONTEND noninteractive
+ARG USER_ID=1000
+ENV USER_NAME=www-data
+ARG WORKDIR=/var/www
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
@@ -30,29 +33,32 @@ RUN docker-php-ext-install sockets
 RUN docker-php-ext-install bcmath
 RUN apt install -y libgmp-dev
 
-#RUN apt-get install -y php8.3-cli php8.3-xml php8.3-curl php8.3-mysql php8.3-mbstring php8.3-zip
-
-# Import custom php.ini
-##COPY ./php.ini /usr/local/etc/php/
-#COPY ./config/php.ini /usr/local/etc/php/
-
-# Copy opcache configration
-#COPY ./opcache.ini /usr/local/etc/php/conf.d/opcache.ini
-
-# Install supervisor + Copy Config
-#RUN apt-get update && apt-get install -y --no-install-recommends supervisor
-#COPY ./supervisor/supervisord.conf /etc/supervisord.conf
-#COPY ./supervisor/supervisor.d /etc/supervisor/conf.d/
-
-RUN usermod -u 1000 www-data
+# Install nginx
+RUN apt-get update && apt-get install -y nginx
 
 #Clean apt
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-#careful with laravel path, it must be the same as the one in the src/laravel_deploy_command.sh
-COPY ./laravel-${APP_ENV} /var/www
+# Remove Default nginx cof
+RUN rm -rf /etc/nginx/conf.d/default.conf \
+    && rm -rf /etc/nginx/sites-enabled/default \
+    && rm -rf /etc/nginx/sites-available/default \
+    && rm -rf /etc/nginx/nginx.conf
 
-WORKDIR /var/www
+COPY config/php.ini /usr/local/etc/php/conf.d/
+COPY config/opcache.ini /usr/local/etc/php/conf.d/
+COPY config/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
+
+COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY config/nginx/default.conf /etc/nginx/conf.d/default.conf
+
+
+RUN usermod -u ${USER_ID} ${USER_NAME}
+
+#careful with laravel path, it must be the same as the one in the src/laravel_deploy_command.sh
+COPY ./laravel-${APP_ENV} ${WORKDIR}
+
+WORKDIR ${WORKDIR}
 
 # Generate Laravel key and cache configurations
 RUN php artisan key:generate \
