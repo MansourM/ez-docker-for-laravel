@@ -6,15 +6,6 @@ WARN[0066] Found orphan containers ([ez-docker-for-laravel-laravel-builder-1 por
 WARN[0000] Found orphan containers ([ez-docker-for-laravel-laravel-server-1 ez-docker-for-laravel-laravel-builder-1]) for this project. If you removed or renamed this service in your compose file, you can run this command with the --remove-orphans flag to clean it up.
 
 
-ez-docker-for-laravel-laravel-builder-1  | In ProviderRepository.php line 206:
-ez-docker-for-laravel-laravel-builder-1  |
-ez-docker-for-laravel-laravel-builder-1  |   Class "Barryvdh\Debugbar\ServiceProvider" not found
-ez-docker-for-laravel-laravel-builder-1  |
-ez-docker-for-laravel-laravel-builder-1  |
-ez-docker-for-laravel-laravel-builder-1  | Script @php artisan package:discover --ansi handling the post-autoload-dump event returned with error code 1
-
-
-
 # Stop all running containers
 sudo docker stop $(sudo docker ps -q)
 
@@ -36,7 +27,7 @@ git config --global http.postBuffer 157286400
 ```cli
 netstat -nlptu
 sudo su
-docker exec -t -i <containerId> /bin/bash
+docker exec -it <containerId> /bin/bash
 sudo resolvectl status
 sudo resolvectl revert eth0
 sudo nano /etc/resolvconf/resolv.conf.d/head
@@ -82,8 +73,6 @@ sudo systemctl status resolvconf.service
 sudo resolvectl status
 
 
-
-
 ---------------------------
 
 #ENTRYPOINT ["tail", "-f", "/dev/null"]
@@ -105,6 +94,7 @@ docker image prune
 docker container prune
 ```
 
+//LEAKED XD need to reset this
 git clone -b "profiles" "https://MansourM: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@github.com/MansourM/digicontract.git" "laravel-test"
 
 

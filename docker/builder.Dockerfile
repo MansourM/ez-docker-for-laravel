@@ -1,10 +1,7 @@
 FROM ubuntu:22.04
 
 ARG NODE_VERSION=20
-ENV TZ=Asia/Tehran
 ENV DEBIAN_FRONTEND noninteractive
-
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt-get update \
     && mkdir -p /etc/apt/keyrings \
