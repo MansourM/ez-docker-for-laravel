@@ -49,7 +49,7 @@ services:
   laravel-builder:
     build:
       context: .
-      dockerfile: builder.Dockerfile
+      dockerfile: docker/builder.Dockerfile
     volumes:
       - ./laravel-${APP_ENV}:/usr/src
     working_dir: /usr/src
@@ -62,7 +62,7 @@ services:
   laravel-server: #inner port :8000
     build:
       context: .
-      dockerfile: laravel.Dockerfile
+      dockerfile: docker/laravel.Dockerfile
       args:
         - APP_ENV=${APP_ENV}
     environment:

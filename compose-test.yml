@@ -35,7 +35,7 @@ services:
   laravel-test:
     build:
       context: .
-      dockerfile: test.Dockerfile
+      dockerfile: docker/test.Dockerfile
     environment:
       - APP_ENV=${APP_ENV}
       - APP_DEBUG=${APP_DEBUG}

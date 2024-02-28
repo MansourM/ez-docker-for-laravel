@@ -5,7 +5,7 @@ services:
   laravel-fpm-nginx: #inner port :80
     build:
       context: .
-      dockerfile: fpm-nginx.Dockerfile
+      dockerfile: docker/fpm-nginx.Dockerfile
       args:
         - APP_ENV=test
     environment:
