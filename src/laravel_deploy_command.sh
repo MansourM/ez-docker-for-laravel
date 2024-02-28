@@ -1,9 +1,8 @@
 #inspect_args
 
-#TODO read APP_ENV from cli args and ignore APP_ENV in .env?
-# Check if APP_ENV is set to dev, test, staging, or production
-if [[ "$APP_ENV" != "dev" && "$APP_ENV" != "test" && "$APP_ENV" != "staging" && "$APP_ENV" != "production" ]]; then
-    echo "Error: Invalid value for APP_ENV. It must be either dev, test, staging, or production."
+#TODO duplication read APP_ENV from cli args and ignore APP_ENV in .env?
+if [[ "$APP_ENV" != "test" && "$APP_ENV" != "staging" && "$APP_ENV" != "production" ]]; then
+    echo "Error: Invalid value for APP_ENV. It must be either test, staging, or production."
     exit 1
 fi
 
@@ -48,14 +47,25 @@ else
 fi
 
 # Copy necessary files to the Laravel folder
-#TODO separate .env file for each environment?
-copy_file ".env" "$laravel_folder_name" ".env"
-copy_file "entrypoint-builder-$APP_ENV.sh" "$laravel_folder_name" "entrypoint-builder.sh"
-copy_file "entrypoint-laravel.sh" "$laravel_folder_name" "entrypoint-laravel.sh"
+env_laravel="config/.env"
+entrypoint_laravel="entrypoint/nginx-fpm-laravel.sh"
+env_override="config/$APP_ENV.env"
+entrypoint_builder="entrypoint/builder-production.sh"
+if [[ "$APP_ENV" == "test" ]]; then
+    entrypoint_builder="entrypoint/builder-test.sh"
+fi
+
+cp "$env_laravel" "$laravel_folder_name/.env"
+
+cp "$entrypoint_builder" "$laravel_folder_name/entrypoint-builder.sh"
+chmod +x "$laravel_folder_name/entrypoint-builder.sh"
+
+cp "$entrypoint_laravel" "$laravel_folder_name/entrypoint.sh"
+chmod +x "$laravel_folder_name/entrypoint.sh"
 
 # Run Docker Compose
 echo "Running Docker Compose for builder..."
-docker compose -f compose-builder.yml --profile "$APP_ENV" up --build
+docker compose -f compose-builder.yml --profile "$APP_ENV" --env-file "$env_laravel" --env-file "$env_override" up --build
 
 echo "Running Docker Compose for Laravel in detached mode..."
-docker compose -f compose-laravel.yml --profile "$APP_ENV" up --build -d
+docker compose -f compose-laravel.yml --profile "$APP_ENV" --env-file "$env_laravel"--env-file "$env_override" up --build -d
