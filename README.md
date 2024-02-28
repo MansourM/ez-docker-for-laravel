@@ -28,7 +28,7 @@ git --version
 
 1. Clone the repository using the following command:
 ```bash 
-sudo git clone https://github.com/MansourM/ez-docker-for-laravel.git && cd ez-docker-for-laravel
+sudo git clone -b fpm https://github.com/MansourM/ez-docker-for-laravel.git && cd ez-docker-for-laravel
 sudo chmod +x ez
 ```
 
@@ -112,39 +112,41 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 
 |         | Name | Explanation |
 |---------|------|-------------|
-| ✔ | [php8.3-cli](https://www.php.net/manual/en/features.commandline.php) | Command-line interface for PHP. |
-| ✔ | [php8.3-curl](https://www.php.net/manual/en/book.curl.php) | cURL library support for PHP. |
-| ✔ | [php8.3-mysql](https://www.php.net/manual/en/book.mysql.php) | MySQL database support for PHP. |
-| ✔ | [php8.3-mbstring](https://www.php.net/manual/en/book.mbstring.php) | Multibyte string support for PHP. |
-| ✔ | [php8.3-xml](https://www.php.net/manual/en/book.xml.php) | XML support for PHP. |
-| &cross; | [php8.3-imap](https://www.php.net/manual/en/book.imap.php) | IMAP support for PHP. |
-| &cross; | [php8.3-dev](https://www.php.net/manual/en/intro.setup.php) | Development files for PHP. |
-| &cross; | [php8.3-pgsql](https://www.php.net/manual/en/book.pgsql.php) | PostgreSQL database support for PHP. |
-| &cross; | [php8.3-sqlite3](https://www.php.net/manual/en/book.sqlite3.php) | SQLite3 database support for PHP. |
-| &cross; | [php8.3-gd](https://www.php.net/manual/en/book.image.php) | GD library support for PHP. |
-| &cross; | [php8.3-zip](https://www.php.net/manual/en/book.zip.php) | ZIP archive support for PHP. |
-| &cross; | [php8.3-bcmath](https://www.php.net/manual/en/book.bc.php) | BCMath arbitrary precision mathematics support for PHP. |
-| &cross; | [php8.3-soap](https://www.php.net/manual/en/book.soap.php) | SOAP support for PHP. |
-| &cross; | [php8.3-intl](https://www.php.net/manual/en/book.intl.php) | Internationalization support for PHP. |
-| &cross; | [php8.3-readline](https://www.php.net/manual/en/book.readline.php) | Readline library support for PHP. |
-| &cross; | [php8.3-ldap](https://www.php.net/manual/en/book.ldap.php) | LDAP support for PHP. |
-| &cross; | [php8.3-msgpack](https://www.php.net/manual/en/book.msgpack.php) | MessagePack support for PHP. |
-| &cross; | [php8.3-igbinary](https://www.php.net/manual/en/book.igbinary.php) | Igbinary support for PHP. |
-| &cross; | [php8.3-redis](https://www.php.net/manual/en/book.redis.php) | Redis support for PHP. |
-| &cross; | [php8.3-swoole](https://www.php.net/manual/en/book.swoole.php) | Swoole extension for PHP. |
-| &cross; | [php8.3-memcached](https://www.php.net/manual/en/book.memcached.php) | Memcached support for PHP. |
-| &cross; | [php8.3-pcov](https://github.com/krakjoe/pcov) | Code coverage driver for PHP. |
-| &cross; | [php8.3-xdebug](https://xdebug.org/docs/) | Xdebug support for PHP. |
-| &cross; | [php8.3-imagick](https://www.php.net/manual/en/book.imagick.php) | ImageMagick extension for PHP. |
+| ✔ | [php8.2-cli](https://www.php.net/manual/en/features.commandline.php) | Command-line interface for PHP. |
+| ✔ | [php8.2-curl](https://www.php.net/manual/en/book.curl.php) | cURL library support for PHP. |
+| ✔ | [php8.2-mysql](https://www.php.net/manual/en/book.mysql.php) | MySQL database support for PHP. |
+| ✔ | [php8.2-mbstring](https://www.php.net/manual/en/book.mbstring.php) | Multibyte string support for PHP. |
+| ✔ | [php8.2-xml](https://www.php.net/manual/en/book.xml.php) | XML support for PHP. |
+| &cross; | [php8.2-imap](https://www.php.net/manual/en/book.imap.php) | IMAP support for PHP. |
+| &cross; | [php8.2-dev](https://www.php.net/manual/en/intro.setup.php) | Development files for PHP. |
+| &cross; | [php8.2-pgsql](https://www.php.net/manual/en/book.pgsql.php) | PostgreSQL database support for PHP. |
+| &cross; | [php8.2-sqlite3](https://www.php.net/manual/en/book.sqlite3.php) | SQLite3 database support for PHP. |
+| &cross; | [php8.2-gd](https://www.php.net/manual/en/book.image.php) | GD library support for PHP. |
+| &cross; | [php8.2-zip](https://www.php.net/manual/en/book.zip.php) | ZIP archive support for PHP. |
+| &cross; | [php8.2-bcmath](https://www.php.net/manual/en/book.bc.php) | BCMath arbitrary precision mathematics support for PHP. |
+| &cross; | [php8.2-soap](https://www.php.net/manual/en/book.soap.php) | SOAP support for PHP. |
+| &cross; | [php8.2-intl](https://www.php.net/manual/en/book.intl.php) | Internationalization support for PHP. |
+| &cross; | [php8.2-readline](https://www.php.net/manual/en/book.readline.php) | Readline library support for PHP. |
+| &cross; | [php8.2-ldap](https://www.php.net/manual/en/book.ldap.php) | LDAP support for PHP. |
+| &cross; | [php8.2-msgpack](https://www.php.net/manual/en/book.msgpack.php) | MessagePack support for PHP. |
+| &cross; | [php8.2-igbinary](https://www.php.net/manual/en/book.igbinary.php) | Igbinary support for PHP. |
+| &cross; | [php8.2-redis](https://www.php.net/manual/en/book.redis.php) | Redis support for PHP. |
+| &cross; | [php8.2-swoole](https://www.php.net/manual/en/book.swoole.php) | Swoole extension for PHP. |
+| &cross; | [php8.2-memcached](https://www.php.net/manual/en/book.memcached.php) | Memcached support for PHP. |
+| &cross; | [php8.2-pcov](https://github.com/krakjoe/pcov) | Code coverage driver for PHP. |
+| &cross; | [php8.2-xdebug](https://xdebug.org/docs/) | Xdebug support for PHP. |
+| &cross; | [php8.2-imagick](https://www.php.net/manual/en/book.imagick.php) | ImageMagick extension for PHP. |
 
 
 <!-- Roadmap -->
 
 ## :compass: Roadmap
 
+- [ ] multi-stage build for build portion instead of a different service
+- [ ] add user id on docker image on build step to avoid to have to chown later
 - [x] profiles?
 - [ ] better handling of unused/dangling/orphan images/containers 
-- [ ] refactor file names group/start by env/type
+- [x] refactor file names group/start by env/type
 - [ ] explain how to change scripts and generate new a `ez` script with Bashly 
 - [ ] add CI/CD pipeline/hooks
 - [ ] warn if APP_DEBUG=true
@@ -152,8 +154,7 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 - [ ] add merge/includes for compose file for different modes (production, staging, development, etc? )
 - [ ] mark project as production ready when 1 month of testing in production is done.
 - [ ] add local source (currently only git is supported)
-- [ ] add suggested configuration files (php, mysql, nginx, etc...)
-- [ ] explain http/https in nginxpm
+- [x] add suggested configuration files (php, mysql, nginx, etc...)\
 
 <!-- Maybe -->
 
