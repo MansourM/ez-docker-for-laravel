@@ -914,13 +914,16 @@ read_env() {
     exit 1
   fi
 
-  echo "reading $filePath file..."
+  echo "\n=-=-=-=-=-=-=-=-=-=-=-=-="
+  echo "reading $filePath:"
+  echo "=-=-=-=-=-=-=-=-=-=-=-=-=\n"
   while read -r LINE; do
     if [[ $LINE != '#'* ]] && [[ $LINE == *'='* ]]; then
       echo "$LINE"
       export "$LINE"
     fi
   done < "$filePath"
+  echo "\n"
 }
 
 # :command.command_functions
@@ -2307,9 +2310,9 @@ ez_all_deploy_parse_requirements() {
       *)
         # :command.parse_requirements_case
         # :command.parse_requirements_case_simple
-        if [[ -z ${args['app_env']+x} ]]; then
+        if [[ -z ${args['APP_ENV']+x} ]]; then
 
-          args['app_env']=$1
+          args['APP_ENV']=$1
           shift
         else
           printf "invalid argument: %s\n" "$key" >&2
@@ -2322,14 +2325,14 @@ ez_all_deploy_parse_requirements() {
   done
 
   # :command.required_args_filter
-  if [[ -z ${args['app_env']+x} ]]; then
+  if [[ -z ${args['APP_ENV']+x} ]]; then
     printf "missing required argument: APP_ENV\nusage: ez all deploy APP_ENV\n" >&2
     exit 1
   fi
 
   # :command.whitelist_filter
-  if [[ -n ${args['app_env']:-} ]] && [[ ! ${args['app_env']:-} =~ ^(test|staging|production)$ ]]; then
-    printf "%s\n" "app_env must be one of: test, staging, production" >&2
+  if [[ -n ${args['APP_ENV']:-} ]] && [[ ! ${args['APP_ENV']:-} =~ ^(test|staging|production)$ ]]; then
+    printf "%s\n" "APP_ENV must be one of: test, staging, production" >&2
     exit 1
   fi
 
@@ -2369,9 +2372,9 @@ ez_all_start_parse_requirements() {
       *)
         # :command.parse_requirements_case
         # :command.parse_requirements_case_simple
-        if [[ -z ${args['app_env']+x} ]]; then
+        if [[ -z ${args['APP_ENV']+x} ]]; then
 
-          args['app_env']=$1
+          args['APP_ENV']=$1
           shift
         else
           printf "invalid argument: %s\n" "$key" >&2
@@ -2384,14 +2387,14 @@ ez_all_start_parse_requirements() {
   done
 
   # :command.required_args_filter
-  if [[ -z ${args['app_env']+x} ]]; then
+  if [[ -z ${args['APP_ENV']+x} ]]; then
     printf "missing required argument: APP_ENV\nusage: ez all start APP_ENV\n" >&2
     exit 1
   fi
 
   # :command.whitelist_filter
-  if [[ -n ${args['app_env']:-} ]] && [[ ! ${args['app_env']:-} =~ ^(test|staging|production)$ ]]; then
-    printf "%s\n" "app_env must be one of: test, staging, production" >&2
+  if [[ -n ${args['APP_ENV']:-} ]] && [[ ! ${args['APP_ENV']:-} =~ ^(test|staging|production)$ ]]; then
+    printf "%s\n" "APP_ENV must be one of: test, staging, production" >&2
     exit 1
   fi
 
@@ -2538,8 +2541,13 @@ initialize() {
   # src/initialize.sh
 
   read_env "config/.env"
+
   #TODO improve here i have duplication in app_env arg and APP_ENV in .env files
-  read_env "config/${args[app_env]}.env"
+  if [[ -z "${args[APP_ENV]}" ]]; then
+          echo "Error: 'APP_ENV' is not set or empty. Please set a valid argument." >&2
+          exit 1
+  fi
+  read_env "config/${args[APP_ENV]}.env"
 
 }
 

@@ -16,11 +16,14 @@ read_env() {
     exit 1
   fi
 
-  echo "reading $filePath file..."
+  echo "\n=-=-=-=-=-=-=-=-=-=-=-=-="
+  echo "reading $filePath:"
+  echo "=-=-=-=-=-=-=-=-=-=-=-=-=\n"
   while read -r LINE; do
     if [[ $LINE != '#'* ]] && [[ $LINE == *'='* ]]; then
       echo "$LINE"
       export "$LINE"
     fi
   done < "$filePath"
+  echo "\n"
 }
