@@ -54,10 +54,6 @@ services:
       - ./laravel-${APP_ENV}:/usr/src
     working_dir: /usr/src
     entrypoint: ./entrypoint-builder.sh
-    profiles:
-      - test
-      - staging
-      - production
 
   nginx-fpm-laravel: #inner port :80
     build:
