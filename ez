@@ -907,19 +907,20 @@ merge_env() {
 
 # src/lib/read_env.sh
 read_env() {
-  local filename="${1:-.env}"
+  local filePath="${1:-.env}"
 
-  if [ ! -f "$filename" ]; then
-    echo "missing ${filename} file"
+  if [ ! -f "$filePath" ]; then
+    echo "missing ${filePath}"
     exit 1
   fi
 
-  echo "reading .env file..."
+  echo "reading $filePath file..."
   while read -r LINE; do
     if [[ $LINE != '#'* ]] && [[ $LINE == *'='* ]]; then
+      echo "$LINE"
       export "$LINE"
     fi
-  done < "$filename"
+  done < "$filePath"
 }
 
 # :command.command_functions
@@ -2536,7 +2537,9 @@ initialize() {
 
   # src/initialize.sh
 
-  read_env
+  read_env "config/.env"
+  #TODO improve here i have duplication in app_env arg and APP_ENV in .env files
+  read_env "config/${args[app_env]}.env"
 
 }
 

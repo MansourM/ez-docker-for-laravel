@@ -9,17 +9,18 @@
 ## to organize your code neatly.
 ##
 read_env() {
-  local filename="${1:-.env}"
+  local filePath="${1:-.env}"
 
-  if [ ! -f "$filename" ]; then
-    echo "missing ${filename} file"
+  if [ ! -f "$filePath" ]; then
+    echo "missing ${filePath}"
     exit 1
   fi
 
-  echo "reading .env file..."
+  echo "reading $filePath file..."
   while read -r LINE; do
     if [[ $LINE != '#'* ]] && [[ $LINE == *'='* ]]; then
+      echo "$LINE"
       export "$LINE"
     fi
-  done < "$filename"
+  done < "$filePath"
 }
