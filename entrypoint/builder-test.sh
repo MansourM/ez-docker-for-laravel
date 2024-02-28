@@ -1,6 +1,6 @@
 #!/bin/bash
 
-composer install --optimize-autoloader --no-dev
+composer install --optimize-autoloader
 
 npm install
 
