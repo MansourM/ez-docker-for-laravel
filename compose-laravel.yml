@@ -3,37 +3,22 @@ version: '3.9'
 services:
 
   nginx-fpm-laravel-test:
-    container_name: nfl-${APP_NAME}
-    build:
-      context: .
-      dockerfile: docker/nginx-fpm-laravel.Dockerfile
-      args:
-        - APP_ENV=${APP_ENV}
-    volumes:
-      - ./nfl-${APP_ENV}-storage:/var/www/storage/app
-    restart: unless-stopped
-    user: www-data
+    extends:
+      file: common.yml
+      service: nginx-fpm-laravel
     ports:
       - ${APP_PORT}:80
-    working_dir: /var/www
     profiles:
       - test
 
   nginx-fpm-laravel:
-    container_name: nfl-${APP_NAME}
-    build:
-      context: .
-      dockerfile: docker/nginx-fpm-laravel.Dockerfile
-      args:
-        - APP_ENV=${APP_ENV}
-    volumes:
-      - ./nfl-${APP_ENV}-storage:/var/www/storage/app
-    restart: unless-stopped
-    user: www-data
-    working_dir: /var/www
+    extends:
+      file: common.yml
+      service: nginx-fpm-laravel
     profiles:
       - staging
       - production
+
 
 networks:
   default:
