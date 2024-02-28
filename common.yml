@@ -59,7 +59,7 @@ services:
       - staging
       - production
 
-  laravel-server: #inner port :8000
+  nginx-fpm-laravel: #inner port :80
     build:
       context: .
       dockerfile: docker/nginx-fpm-laravel.Dockerfile
@@ -68,8 +68,6 @@ services:
     environment:
       - APP_ENV=${APP_ENV}
       - APP_DEBUG=${APP_DEBUG}
-    volumes:
-      - ./laravel-storage-app:/usr/src/storage/app #fixme need different storage for each env
     restart: unless-stopped
     working_dir: /var/www
     entrypoint: ./entrypoint.sh

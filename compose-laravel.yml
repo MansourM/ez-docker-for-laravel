@@ -2,17 +2,17 @@ version: '3.9'
 
 services:
 
-  laravel-fpm-nginx: #inner port :80
+  nginx-fpm-laravel:
     build:
       context: .
-      dockerfile: docker/fpm-nginx.Dockerfile
+      dockerfile: docker/nginx-fpm-laravel.Dockerfile
       args:
         - APP_ENV=test
     environment:
       - APP_ENV=test
       - APP_DEBUG=true
     volumes:
-      - ./laravel-storage-app:/var/www/storage/app
+      - ./laravel-${APP_ENV}-storage-app:/var/www/storage/app
     restart: unless-stopped
     user: www-data
     ports:
@@ -22,4 +22,4 @@ services:
 networks:
   default:
     external: true
-    name: ez-shared-network
+    name: ${SHARED_NETWORK_NAME}
