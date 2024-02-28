@@ -92,10 +92,8 @@ docker system df
 docker image prune
 # add -f or --force to not prompt for confirmation
 docker container prune
+docker system prune
 ```
-
-//LEAKED XD need to reset this
-git clone -b "profiles" "https://MansourM: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@github.com/MansourM/digicontract.git" "laravel-test"
 
 
 ### better readme

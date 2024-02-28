@@ -68,6 +68,7 @@ services:
     environment:
       - APP_ENV=${APP_ENV}
       - APP_DEBUG=${APP_DEBUG}
+    volumes:
       - ./laravel-storage-app:/usr/src/storage/app #fixme need different storage for each env
     restart: unless-stopped
     working_dir: /var/www
