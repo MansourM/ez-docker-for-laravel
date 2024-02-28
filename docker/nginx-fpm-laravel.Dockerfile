@@ -24,7 +24,8 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     libpq-dev \
     libicu-dev g++ \
-    libzip-dev
+    libzip-dev \
+    supervisor
 
 # Configure PHP extensions
 RUN docker-php-ext-configure gd --with-freetype=/usr/include/
@@ -50,12 +51,12 @@ RUN rm -rf /etc/nginx/conf.d/default.conf \
     && rm -rf /etc/nginx/sites-available/default \
     && rm -rf /etc/nginx/nginx.conf
 
-COPY ../config/php.ini /usr/local/etc/php/conf.d/
-COPY ../config/opcache.ini /usr/local/etc/php/conf.d/
-COPY ../config/supervisord.conf /etc/supervisor/supervisord.conf
+COPY ./config/php.ini /usr/local/etc/php/conf.d/
+COPY ./config/opcache.ini /usr/local/etc/php/conf.d/
+COPY ``./config/supervisord.conf /etc/supervisor/supervisord.conf
 
-COPY ../config/nginx/nginx.conf /etc/nginx/nginx.conf
-COPY ../config/nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY ./config/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY ./config/nginx/default.conf /etc/nginx/conf.d/default.conf
 
 #careful with laravel path, it must be the same as the one in the src/laravel_deploy_command.sh
 COPY ./laravel-${APP_ENV} ${WORKDIR}
@@ -91,4 +92,4 @@ RUN php artisan key:generate \
     && php artisan route:cache \
     && php artisan view:cache
 
-#CMD ["supervisord", "-n"]
+ENTRYPOINT ["entrypoint.sh"]

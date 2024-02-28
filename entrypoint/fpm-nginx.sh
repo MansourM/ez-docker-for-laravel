@@ -9,4 +9,5 @@ else # staging or production
     php artisan migrate
 fi
 
-/usr/sbin/nginx -g "daemon off;"
+
+supervisord -c /etc/supervisor/supervisord.conf
