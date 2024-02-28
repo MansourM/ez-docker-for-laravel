@@ -1,5 +1,3 @@
-#inspect_args
-
 #TODO duplication read APP_ENV from cli args and ignore APP_ENV in .env?
 if [[ "$APP_ENV" != "test" && "$APP_ENV" != "staging" && "$APP_ENV" != "production" ]]; then
     echo "Error: Invalid value for APP_ENV. It must be either test, staging, or production."
@@ -47,9 +45,9 @@ else
 fi
 
 # Copy necessary files to the Laravel folder
-env_laravel="config/.env"
+env_laravel="env/.env"
 entrypoint_laravel="entrypoint/nginx-fpm-laravel.sh"
-env_override="config/$APP_ENV.env"
+env_override="env/$APP_ENV.env"
 entrypoint_builder="entrypoint/builder-production.sh"
 if [[ "$APP_ENV" == "test" ]]; then
     entrypoint_builder="entrypoint/builder-test.sh"
