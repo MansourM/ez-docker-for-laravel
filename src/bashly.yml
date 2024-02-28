@@ -54,7 +54,7 @@ commands:
     alias: d
     help: build and start Laravel containers
     args:
-      - name: app_env
+      - name: APP_ENV
         help: Laravel app environment
         allowed: [ test, staging, production ]
         required: true
@@ -63,7 +63,7 @@ commands:
     alias : s
     help: start Laravel containers
     args:
-      - name: app_env
+      - name: APP_ENV
         help: Laravel app environment
         allowed: [ test, staging, production ]
         required: true
