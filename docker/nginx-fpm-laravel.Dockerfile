@@ -51,9 +51,9 @@ RUN rm -rf /etc/nginx/conf.d/default.conf \
     && rm -rf /etc/nginx/sites-available/default \
     && rm -rf /etc/nginx/nginx.conf
 
-COPY ./config/php.ini /usr/local/etc/php/conf.d/
-COPY ./config/opcache.ini /usr/local/etc/php/conf.d/
-COPY ``./config/supervisord.conf /etc/supervisor/supervisord.conf
+COPY ./config/php.ini /usr/local/etc/php/conf.d/php.ini
+COPY ./config/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
+COPY ./config/supervisord.conf /etc/supervisor/supervisord.conf
 
 COPY ./config/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./config/nginx/default.conf /etc/nginx/conf.d/default.conf
@@ -65,10 +65,10 @@ COPY ./laravel-${APP_ENV} ${WORKDIR}
 RUN usermod -u ${USER_ID} ${USER_NAME}
 RUN groupmod -g ${USER_ID} ${GROUP_NAME}
 
-RUN mkdir -p /var/log/supervisor
-RUN mkdir -p /var/log/nginx
-RUN mkdir -p /var/cache/nginx
-RUN mkdir -p /etc/supervisor/conf.d/
+RUN mkdir -p /var/log/supervisor \
+    && mkdir -p /var/log/nginx \
+    && mkdir -p /var/cache/nginx \
+    && mkdir -p /etc/supervisor/conf.d/
 
 RUN chown -R ${USER_NAME}:${GROUP_NAME} /var/www && \
   chown -R ${USER_NAME}:${GROUP_NAME} /var/log/ && \
