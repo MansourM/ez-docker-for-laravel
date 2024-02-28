@@ -56,6 +56,7 @@ services:
     entrypoint: ./entrypoint-builder.sh
 
   nginx-fpm-laravel: #inner port :80
+    container_name: nfl-${APP_NAME}
     build:
       context: .
       dockerfile: docker/nginx-fpm-laravel.Dockerfile
@@ -63,7 +64,9 @@ services:
         - APP_ENV=${APP_ENV}
     environment:
       - APP_ENV=${APP_ENV}
-      - APP_DEBUG=${APP_DEBUG}
     restart: unless-stopped
+    user: www-data
     working_dir: /var/www
     entrypoint: ./entrypoint.sh
+    volumes:
+      - ./nfl-${APP_ENV}-storage:/var/www/storage/app
