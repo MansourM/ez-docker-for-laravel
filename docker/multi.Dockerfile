@@ -4,12 +4,6 @@ FROM php:8.2-fpm AS builder
 ARG APP_ENV
 ENV DEBIAN_FRONTEND noninteractive
 
-ARG USER_ID=1000
-ENV USER_NAME=www-data
-
-ARG GROUP_ID=1000
-ARG GROUP_NAME=www-data
-
 ARG WORKDIR=/var/www
 
 ARG NODE_VERSION=20
@@ -61,6 +55,12 @@ FROM php:8.2-fpm
 
 ARG APP_ENV
 ENV DEBIAN_FRONTEND noninteractive
+
+ARG USER_ID=1000
+ENV USER_NAME=www-data
+
+ARG GROUP_ID=1000
+ARG GROUP_NAME=www-data
 
 ARG WORKDIR=/var/www
 
