@@ -49,18 +49,6 @@ services:
       PMA_PORT: ${DB_PORT}
       PMA_ARBITRARY: 0
 
-
-  laravel-builder:
-    build:
-      context: .
-      dockerfile: docker/builder.Dockerfile
-    volumes:
-      - ./laravel-${APP_ENV}:/usr/src
-    user: www-data
-    working_dir: /usr/src
-    entrypoint: ./entrypoint-builder.sh
-
-
   nginx-fpm-laravel: #inner port :80
     container_name: nfl-${APP_NAME}
     build:
@@ -72,7 +60,6 @@ services:
       - APP_ENV=${APP_ENV}
     restart: unless-stopped
     user: www-data
-    working_dir: /var/www
     entrypoint: ./entrypoint.sh
     volumes:
       - ./nfl-${APP_ENV}-storage:/var/www/storage/app

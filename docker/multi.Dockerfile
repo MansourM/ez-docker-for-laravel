@@ -10,6 +10,8 @@ ENV USER_NAME=www-data
 ARG GROUP_ID=1000
 ARG GROUP_NAME=www-data
 
+ARG WORKDIR=/var/www
+
 ARG NODE_VERSION=20
 
 # Install required librairies
@@ -42,7 +44,6 @@ RUN chmod +x ${WORKDIR}/entrypoint.sh
 
 WORKDIR ${WORKDIR}
 
-
 RUN npm install
 #TODO, Review if this line should exist here
 RUN npm audit fix
@@ -67,6 +68,7 @@ ENV USER_NAME=www-data
 ARG GROUP_ID=1000
 ARG GROUP_NAME=www-data
 
+ARG WORKDIR=/var/www
 
 ARG TZ=Asia/Tehran
 # Copy files from the builder stage
