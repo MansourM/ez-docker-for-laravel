@@ -1,6 +1,7 @@
 # === Stage 1: Builder ===
 FROM php:8.2-fpm AS builder
 
+ARG APP_ENV
 ENV DEBIAN_FRONTEND noninteractive
 
 ARG USER_ID=1000
@@ -53,6 +54,7 @@ RUN if [ "${APP_ENV}" = "test" ]; then \
 # === Stage 2: Final Image ===
 FROM php:8.2-fpm
 
+ARG APP_ENV
 ENV DEBIAN_FRONTEND noninteractive
 
 ARG USER_ID=1000
