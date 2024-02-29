@@ -3,6 +3,13 @@ FROM ubuntu:22.04
 ARG NODE_VERSION=20
 ENV DEBIAN_FRONTEND noninteractive
 
+ARG USER_ID=1000
+ENV USER_NAME=www-data
+
+ARG GROUP_ID=1000
+ARG GROUP_NAME=www-data
+
+
 RUN apt-get update \
     && mkdir -p /etc/apt/keyrings \
     && apt-get install -y gnupg curl zip unzip git \
@@ -22,5 +29,11 @@ RUN apt-get install -y nodejs \
     && npm install -g rtlcss
 
 
-#RUN apt-get clean \
-#    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN usermod -u ${USER_ID} ${USER_NAME} \
+    && groupmod -g ${USER_ID} ${GROUP_NAME}
+
+chown -R ${USER_NAME}:${GROUP_NAME} /var/www
+
