@@ -71,8 +71,6 @@ ARG GROUP_NAME=www-data
 ARG WORKDIR=/var/www
 
 ARG TZ=Asia/Tehran
-# Copy files from the builder stage
-COPY --from=builder /var/www /var/www
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
@@ -116,8 +114,9 @@ COPY ./config/supervisord.conf /etc/supervisor/supervisord.conf
 COPY ./config/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./config/nginx/default.conf /etc/nginx/conf.d/default.conf
 
-#careful with laravel path, it must be the same as the one in the src/laravel_deploy_command.sh
-COPY ./laravel-${APP_ENV} ${WORKDIR}
+
+# Copy files from the builder stage
+COPY --from=builder /var/www /var/www
 
 
 RUN usermod -u ${USER_ID} ${USER_NAME} \
