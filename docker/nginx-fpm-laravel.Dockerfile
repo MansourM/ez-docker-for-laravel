@@ -21,26 +21,22 @@ RUN apt-get update && apt-get install -y \
     zlib1g-dev \
     libjpeg-dev\
     libpng-dev\
+    libgmp-dev \
     libfreetype6-dev \
     libpq-dev \
     libicu-dev g++ \
     libzip-dev \
+    nginx \
     supervisor
 
 # Configure PHP extensions
 RUN docker-php-ext-configure gd --with-freetype=/usr/include/
 
 # Install PHP extensions
-RUN pecl install -o -f redis &&  rm -rf /tmp/pear &&  docker-php-ext-enable redis
-RUN docker-php-ext-install pdo pdo_mysql zip gd intl pcntl opcache
-RUN docker-php-ext-configure pcntl --enable-pcntl
-RUN docker-php-ext-enable opcache
-RUN docker-php-ext-install sockets
-RUN docker-php-ext-install bcmath
-RUN apt install -y libgmp-dev
-
-# Install nginx
-RUN apt-get update && apt-get install -y nginx
+# RUN pecl install -o -f redis &&  rm -rf /tmp/pear &&  docker-php-ext-enable redis
+RUN docker-php-ext-install pdo pdo_mysql zip gd intl pcntl opcache sockets bcmath \
+    && docker-php-ext-configure pcntl --enable-pcntl \
+    && docker-php-ext-enable opcache
 
 #Clean apt
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -62,16 +58,15 @@ COPY ./config/nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY ./laravel-${APP_ENV} ${WORKDIR}
 
 
-RUN usermod -u ${USER_ID} ${USER_NAME}
-RUN groupmod -g ${USER_ID} ${GROUP_NAME}
+RUN usermod -u ${USER_ID} ${USER_NAME} \
+    && groupmod -g ${USER_ID} ${GROUP_NAME}
 
 RUN mkdir -p /var/log/supervisor \
     && mkdir -p /var/log/nginx \
     && mkdir -p /var/cache/nginx \
     && mkdir -p /etc/supervisor/conf.d/
 
-RUN chown -R ${USER_NAME}:${GROUP_NAME} /var/www && \
-  chown -R ${USER_NAME}:${GROUP_NAME} /var/log/ && \
+RUN chown -R ${USER_NAME}:${GROUP_NAME} /var/log/ && \
   chown -R ${USER_NAME}:${GROUP_NAME} /etc/supervisor/conf.d/ && \
   chown -R ${USER_NAME}:${GROUP_NAME} $PHP_INI_DIR/conf.d/ && \
   touch /var/run/nginx.pid && \
@@ -80,8 +75,7 @@ RUN chown -R ${USER_NAME}:${GROUP_NAME} /var/www && \
   chown -R $USER_NAME:$USER_NAME /etc/nginx/nginx.conf && \
   chown -R $USER_NAME:$USER_NAME /var/run/nginx.pid && \
   chown -R $USER_NAME:$USER_NAME /var/log/supervisor && \
-  chown -R $USER_NAME:$USER_NAME /etc/nginx/conf.d/ && \
-  chown -R ${USER_NAME}:${GROUP_NAME} /tmp
+  chown -R $USER_NAME:$USER_NAME /etc/nginx/conf.d/ &&
 
 WORKDIR ${WORKDIR}
 
@@ -91,5 +85,3 @@ RUN php artisan key:generate \
     && php artisan event:cache \
     && php artisan route:cache \
     && php artisan view:cache
-
-ENTRYPOINT ["entrypoint.sh"]
