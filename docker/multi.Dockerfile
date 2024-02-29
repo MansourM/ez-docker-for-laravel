@@ -108,13 +108,12 @@ COPY ./config/supervisord.conf /etc/supervisor/supervisord.conf
 COPY ./config/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./config/nginx/default.conf /etc/nginx/conf.d/default.conf
 
+RUN usermod -u ${USER_ID} ${USER_NAME} \
+    && groupmod -g ${USER_ID} ${GROUP_NAME}
 
 # Copy files from the builder stage
 COPY --from=builder --chown=$USER_NAME:$GROUP_NAME /var/www /var/www
 
-
-RUN usermod -u ${USER_ID} ${USER_NAME} \
-    && groupmod -g ${USER_ID} ${GROUP_NAME}
 
 RUN mkdir -p /var/log/supervisor \
     && mkdir -p /var/log/nginx \
