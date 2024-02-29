@@ -10,8 +10,6 @@ ENV USER_NAME=www-data
 ARG GROUP_ID=1000
 ARG GROUP_NAME=www-data
 
-ARG WORKDIR=/var/www
-
 ARG NODE_VERSION=20
 
 # Install required librairies
@@ -42,7 +40,8 @@ WORKDIR ${WORKDIR}
 
 
 RUN npm install
-RUN npm audit fix
+#FIXME
+#RUN npm audit fix
 
 
 RUN if [ "${APP_ENV}" = "test" ]; then \
@@ -64,7 +63,6 @@ ENV USER_NAME=www-data
 ARG GROUP_ID=1000
 ARG GROUP_NAME=www-data
 
-ARG WORKDIR=/var/www
 
 ARG TZ=Asia/Tehran
 # Copy files from the builder stage
