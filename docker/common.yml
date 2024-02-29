@@ -53,7 +53,7 @@ services:
     container_name: nfl-${APP_NAME}
     build:
       context: .
-      dockerfile: docker/multi.Dockerfile
+      dockerfile: laravel.Dockerfile
       args:
         - APP_ENV=${APP_ENV}
     environment:

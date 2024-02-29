@@ -72,11 +72,6 @@ sudo systemctl status resolvconf.service
 
 sudo resolvectl status
 
-
----------------------------
-
-#ENTRYPOINT ["tail", "-f", "/dev/null"]
-
 ----------------
 nameserver 178.22.122.100
 nameserver 185.51.200.2
