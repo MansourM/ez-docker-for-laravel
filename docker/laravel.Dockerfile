@@ -32,7 +32,7 @@ RUN apt-get install -y nodejs \
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 COPY ./laravel-${APP_ENV} ${WORKDIR}
-COPY ./env/merged/${APP_ENV}.env ${WORKDIR}
+COPY ./env/merged/${APP_ENV}.env ${WORKDIR}/.env
 COPY ./docker/entrypoint.sh ${WORKDIR}/entrypoint.sh
 RUN chmod +x ${WORKDIR}/entrypoint.sh
 
