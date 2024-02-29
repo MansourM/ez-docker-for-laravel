@@ -60,6 +60,7 @@ services:
       - APP_ENV=${APP_ENV}
     restart: unless-stopped
     user: www-data
+    working_dir: /var/www
     entrypoint: ./entrypoint.sh
     volumes:
       - ./nfl-${APP_ENV}-storage:/var/www/storage/app

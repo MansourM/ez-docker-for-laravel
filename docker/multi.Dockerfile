@@ -62,12 +62,6 @@ FROM php:8.2-fpm
 ARG APP_ENV
 ENV DEBIAN_FRONTEND noninteractive
 
-ARG USER_ID=1000
-ENV USER_NAME=www-data
-
-ARG GROUP_ID=1000
-ARG GROUP_NAME=www-data
-
 ARG WORKDIR=/var/www
 
 ARG TZ=Asia/Tehran
@@ -116,7 +110,7 @@ COPY ./config/nginx/default.conf /etc/nginx/conf.d/default.conf
 
 
 # Copy files from the builder stage
-COPY --from=builder /var/www /var/www
+COPY --from=builder --chown=$USER_NAME:$GROUP_NAME /var/www /var/www
 
 
 RUN usermod -u ${USER_ID} ${USER_NAME} \
@@ -131,12 +125,12 @@ RUN chown -R ${USER_NAME}:${GROUP_NAME} /var/log/ && \
   chown -R ${USER_NAME}:${GROUP_NAME} /etc/supervisor/conf.d/ && \
   chown -R ${USER_NAME}:${GROUP_NAME} $PHP_INI_DIR/conf.d/ && \
   touch /var/run/nginx.pid && \
-  chown -R $USER_NAME:$USER_NAME /var/cache/nginx && \
-  chown -R $USER_NAME:$USER_NAME /var/lib/nginx/ && \
-  chown -R $USER_NAME:$USER_NAME /etc/nginx/nginx.conf && \
-  chown -R $USER_NAME:$USER_NAME /var/run/nginx.pid && \
-  chown -R $USER_NAME:$USER_NAME /var/log/supervisor && \
-  chown -R $USER_NAME:$USER_NAME /etc/nginx/conf.d/
+  chown -R $USER_NAME:$GROUP_NAME /var/cache/nginx && \
+  chown -R $USER_NAME:$GROUP_NAME /var/lib/nginx/ && \
+  chown -R $USER_NAME:$GROUP_NAME /etc/nginx/nginx.conf && \
+  chown -R $USER_NAME:$GROUP_NAME /var/run/nginx.pid && \
+  chown -R $USER_NAME:$GROUP_NAME /var/log/supervisor && \
+  chown -R $USER_NAME:$GROUP_NAME /etc/nginx/conf.d/
 
 WORKDIR ${WORKDIR}
 
