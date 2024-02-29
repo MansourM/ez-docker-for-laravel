@@ -43,7 +43,7 @@ fi
 base_env="env/.env"
 override_env="env/$APP_ENV.env"
 merged_env="env/merged/$APP_ENV.env"
-merge_env base_env override_env merged_env
+merge_env $base_env $override_env $merged_env
 
 echo -e "\n==[ Running Docker Compose for Laravel $APP_ENV ]==\n"
 docker compose -f compose-laravel.yml --profile "$APP_ENV" --env-file "$merged_env" up --build -d
