@@ -1,10 +1,6 @@
 name: ez
 help: easy to setup, robust and production ready environment for Laravel using Docker, Docker Compose and bash script.
-version: 0.1.0
-
-environment_variables:
-- name: api_key
-  help: Set your API key
+version: 0.2.0
 
 commands:
 - name: docker
@@ -57,10 +53,20 @@ commands:
   - name: deploy
     alias: d
     help: build and start Laravel containers
+    args:
+      - name: APP_ENV
+        help: Laravel app environment
+        allowed: [ test, staging, production ]
+        required: true
 
   - name: start
     alias : s
     help: start Laravel containers
+    args:
+      - name: APP_ENV
+        help: Laravel app environment
+        allowed: [ test, staging, production ]
+        required: true
 
   - name: stop
     alias: p
@@ -82,10 +88,20 @@ commands:
   - name: deploy
     alias: d
     help: build and start all containers
+    args:
+      - name: APP_ENV
+        help: Laravel app environment
+        allowed: [ test, staging, production ]
+        required: true
 
   - name: start
     alias : s
     help: start all containers
+    args:
+      - name: APP_ENV
+        help: Laravel app environment
+        allowed: [ test, staging, production ]
+        required: true
 
   - name: stop
     alias: p

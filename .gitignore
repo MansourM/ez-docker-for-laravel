@@ -8,4 +8,7 @@ portainer-data/
 portainer-readonly/
 laravel/
 laravel-storage-app/
-test.sh
+test/
+laravel-test/
+laravel-staging/
+laravel-production/

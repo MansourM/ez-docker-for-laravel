@@ -9,17 +9,20 @@
 ## to organize your code neatly.
 ##
 read_env() {
-  local filename="${1:-.env}"
+  local filePath="${1:-.env}"
 
-  if [ ! -f "$filename" ]; then
-    echo "missing ${filename} file"
+  if [ ! -f "$filePath" ]; then
+    echo "missing ${filePath}"
     exit 1
   fi
 
-  echo "reading .env file..."
+  echo -e "\n==[ Reading $filePath ]==\n"
   while read -r LINE; do
-    if [[ $LINE != '#'* ]] && [[ $LINE == *'='* ]]; then
-      export "$LINE"
+    # Remove leading and trailing whitespaces, and carriage return
+    CLEANED_LINE=$(echo "$LINE" | awk '{$1=$1};1' | tr -d '\r')
+
+    if [[ $CLEANED_LINE != '#'* ]] && [[ $CLEANED_LINE == *'='* ]]; then
+      export "$CLEANED_LINE"
     fi
-  done < "$filename"
+  done < "$filePath"
 }
