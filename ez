@@ -1001,7 +1001,7 @@ ez_shared_deploy_command() {
 
   echo -e "\n==[ Running Docker Compose for shared services ]==\n"
 
-  docker compose -f compose-shared.yml --profile "$APP_ENV" --env-file "env/shared.env" up --build -d
+  docker compose -f compose-shared.yml --env-file "env/.env" --env-file "env/shared.env" up --build -d
   if [ $? -ne 0 ]; then
     echo "Failed to run Docker Compose"
     exit 1
@@ -1089,12 +1089,10 @@ ez_laravel_deploy_command() {
       fi
   fi
 
-  #TODO check if these exist
-  env_laravel="env/.env"
-  env_override="env/$APP_ENV.env"
+  #TODO check if env files exist?
 
   echo -e "\n==[ Running Docker Compose for Laravel $APP_ENV ]==\n"
-  docker compose -f compose-laravel.yml --profile "$APP_ENV" --env-file "$env_laravel" --env-file "$env_override" up --build -d
+  docker compose -f compose-laravel.yml --profile "$APP_ENV" --env-file "env/.env" --env-file "env/$APP_ENV.env" up --build -d
 
 }
 

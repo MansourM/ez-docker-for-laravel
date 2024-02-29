@@ -23,8 +23,6 @@ services:
       - ${PORT_PMA}:80 #web console
     depends_on:
       - mysql8
-    profiles:
-      - test
 
   phpmyadmin:
     container_name: pma
@@ -33,9 +31,6 @@ services:
       service: phpmyadmin
     depends_on:
       - mysql8
-    profiles:
-      - staging
-      - production
 
 networks:
   default:
