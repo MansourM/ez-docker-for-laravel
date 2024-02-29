@@ -22,7 +22,7 @@ fi
 
 echo -e "\n==[ Running Docker Compose for shared services ]==\n"
 
-docker compose -f compose-shared.yml --profile "$APP_ENV" --env-file "env/shared.env" up --build -d
+docker compose -f compose-shared.yml --env-file "env/.env" --env-file "env/shared.env" up --build -d
 if [ $? -ne 0 ]; then
   echo "Failed to run Docker Compose"
   exit 1

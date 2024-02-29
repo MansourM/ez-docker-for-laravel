@@ -39,9 +39,7 @@ else
     fi
 fi
 
-#TODO check if these exist
-env_laravel="env/.env"
-env_override="env/$APP_ENV.env"
+#TODO check if env files exist?
 
 echo -e "\n==[ Running Docker Compose for Laravel $APP_ENV ]==\n"
-docker compose -f compose-laravel.yml --profile "$APP_ENV" --env-file "$env_laravel" --env-file "$env_override" up --build -d
+docker compose -f compose-laravel.yml --profile "$APP_ENV" --env-file "env/.env" --env-file "env/$APP_ENV.env" up --build -d
