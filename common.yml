@@ -16,6 +16,7 @@ services:
       # add custom config in /data/nginx/custom
       # https://nginxproxymanager.com/advanced-config/#custom-nginx-configurations
 
+
   portainer: #inner port :9000
     image: portainer/portainer-ce:latest
     container_name: portainer
@@ -25,6 +26,7 @@ services:
     volumes:
       - ./portainer-readonly/run/docker.sock:/var/run/docker.sock:ro
       - ./portainer-data:/data
+
 
   mysql8: #inner port :3306
     image: mysql:8.0
@@ -38,6 +40,7 @@ services:
       - ./mysql-config/my.cnf:/etc/mysql/conf.d/my.cnf
     restart: unless-stopped
 
+
   phpmyadmin: #inner port :80
     image: phpmyadmin
     restart: always
@@ -46,20 +49,11 @@ services:
       PMA_PORT: ${DB_PORT}
       PMA_ARBITRARY: 0
 
-  laravel-builder:
-    build:
-      context: .
-      dockerfile: docker/builder.Dockerfile
-    volumes:
-      - ./laravel-${APP_ENV}:/usr/src
-    working_dir: /usr/src
-    entrypoint: ./entrypoint-builder.sh
-
   nginx-fpm-laravel: #inner port :80
     container_name: nfl-${APP_NAME}
     build:
       context: .
-      dockerfile: docker/nginx-fpm-laravel.Dockerfile
+      dockerfile: docker/laravel.Dockerfile
       args:
         - APP_ENV=${APP_ENV}
     environment:
