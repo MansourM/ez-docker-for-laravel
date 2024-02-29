@@ -43,10 +43,7 @@ fi
 env_laravel="env/.env"
 entrypoint_laravel="entrypoint/nginx-fpm-laravel.sh"
 env_override="env/$APP_ENV.env"
-entrypoint_builder="entrypoint/builder-production.sh"
-if [[ "$APP_ENV" == "test" ]]; then
-    entrypoint_builder="entrypoint/builder-test.sh"
-fi
+entrypoint_builder="entrypoint/builder.sh"
 
 cp "$env_laravel" "$laravel_folder_name/.env"
 
