@@ -3,6 +3,7 @@ version: '3.9'
 services:
 
   nginx-pm:
+    container_name: nginx-pm
     extends:
       file: common.yml
       service: nginx-pm
@@ -13,6 +14,7 @@ services:
       service: mysql8
 
   phpmyadmin-test:
+    container_name: pma-test
     extends:
       file: common.yml
       service: phpmyadmin
@@ -24,6 +26,7 @@ services:
       - test
 
   phpmyadmin:
+    container_name: pma
     extends:
       file: common.yml
       service: phpmyadmin
