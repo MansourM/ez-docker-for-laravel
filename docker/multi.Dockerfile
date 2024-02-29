@@ -17,6 +17,7 @@ ARG NODE_VERSION=20
 # Install required librairies
 RUN apt-get update && apt-get install -y \
     git \
+    gnupg \
     unzip \
     libicu-dev \
     g++ \
