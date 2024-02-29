@@ -29,43 +29,37 @@ git --version
 1. Clone the repository using the following command:
 ```bash 
 sudo git clone https://github.com/MansourM/ez-docker-for-laravel.git && cd ez-docker-for-laravel
-sudo chmod +x ez
 ```
 
-2. create and edit your `.env` file
-```bash
-sudo cp .env.example .env
-sudo nano .env
-```
-
-2.1. install dokcer engine (Optional, only if not installed already)
+1.1. install docker engine (Optional, only if not installed already)
 ```bash
 sudo ./ez docker install
 ```
 
-3. deploy common service containers (nginx, mysql, pma, portainer)
+2. Create and fill in your configuration files located in the `env` folder:
+   - `.env` The main configuration file from your Laravel project.
+   - `shared.env` contains your shared configurations
+   - `test.env`, `staging.env` and `production.env` Configuration files for their respective environments.
+   - the `.env` files are loaded in the following order: `.env` --> `shared.env` --> `{environment}.env`, **Each subsequent file overrides duplicate keys from the previous file.**
+   - you can create your empty .env files from example templates
+        ```bash
+        sudo cp env/.env.example env/.env
+        sudo cp env/shared.env.example env/shared.env
+        sudo cp env/test.env.example env/test.env
+        sudo cp env/staging.env.example env/staging.env
+        sudo cp env/production.env.example env/production.env
+        ```
+
+3. deploy your project
 ```bash
-sudo ./ez all deploy
+sudo ./ez all deploy {environment}
 ```
 
+## :tada:
+* **now your website is running at `<your_ip_address>:<APP_PORT>`**
+* website is only exposed via `APP_PORT` in `test` `{environment}` to access the `staging` or `production` website you need to configure them on you domain using npm proxy manager
 
 
-:tada:
-**now your website is running at `<your_ip_address>:<laravel_port_in_env>`**
-
-## :memo: .env variables needed for deployment
-you need to add these to your laravel `.env` file
-```env
-PORT_LARAVEL=8000
-PORT_NGINX_PM=8011
-PORT_PMA=8022
-PORT_PORTAINER=8033
-ROOT_FOLDER_NAME=ez-docker-for-laravel
-GIT_URL=https://github.com/MansourM/example.git
-GIT_BRANCH=dev
-DB_ROOT_PASSWORD=
-SHARED_NETWORK_NAME=ez-shared-network
-```
 You can use this format to include your credentials directly in the URL, avoiding the need to enter them each time you clone the repository.
 ```env
 GIT_URL=https://username:password@github.com/MansourM/example.git
