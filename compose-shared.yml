@@ -9,6 +9,7 @@ services:
       service: nginx-pm
 
   mysql8:
+    container_name: mysql8
     extends:
       file: common.yml
       service: mysql8

@@ -35,5 +35,5 @@ RUN apt-get clean \
 RUN usermod -u ${USER_ID} ${USER_NAME} \
     && groupmod -g ${USER_ID} ${GROUP_NAME}
 
-chown -R ${USER_NAME}:${GROUP_NAME} /var/www
+RUN chown -R ${USER_NAME}:${GROUP_NAME} /var/www
 
