@@ -1,9 +1,4 @@
 #TODO duplication read APP_ENV from cli args and ignore APP_ENV in .env?
-if [[ "$APP_ENV" != "test" && "$APP_ENV" != "staging" && "$APP_ENV" != "production" ]]; then
-    echo "Error: Invalid value for APP_ENV. It must be either test, staging, or production."
-    exit 1
-fi
-
 echo "Preparing to deploy Laravel in $APP_ENV mode."
 
 #careful with laravel_folder_name, it must be the same as laravel dockerfile and docker compose file
