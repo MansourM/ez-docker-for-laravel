@@ -9,3 +9,6 @@ portainer-readonly/
 laravel/
 laravel-storage-app/
 test/
+laravel-test/
+laravel-staging/
+laravel-production/
