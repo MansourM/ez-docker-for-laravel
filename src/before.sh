@@ -7,6 +7,7 @@
 inspect_args
 
 read_env "env/.env"
+read_env "env/shared.env"
 
 #TODO improve here i have duplication in app_env arg and APP_ENV in .env files
 if [[ -z "${args[APP_ENV]}" ]]; then
