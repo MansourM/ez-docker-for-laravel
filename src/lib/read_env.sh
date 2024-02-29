@@ -18,10 +18,11 @@ read_env() {
 
   echo -e "\n==[ Reading $filePath ]==\n"
   while read -r LINE; do
-    if [[ $LINE != '#'* ]] && [[ $LINE == *'='* ]]; then
-      echo "$LINE"
-      export "$LINE"
+    # Remove leading and trailing whitespaces, and carriage return
+    CLEANED_LINE=$(echo "$LINE" | awk '{$1=$1};1' | tr -d '\r')
+
+    if [[ $CLEANED_LINE != '#'* ]] && [[ $CLEANED_LINE == *'='* ]]; then
+      export "$CLEANED_LINE"
     fi
   done < "$filePath"
-  echo ""
 }
