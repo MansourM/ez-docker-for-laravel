@@ -916,51 +916,13 @@ read_env() {
 
   echo -e "\n==[ Reading $filePath ]==\n"
   while read -r LINE; do
-    if [[ $LINE != '#'* ]] && [[ $LINE == *'='* ]]; then
-      echo "$LINE"
-      export "$LINE"
-    fi
-  done < "$filePath"
-  echo ""
-}
-
-# src/lib/read_env_ne.sh
-read_env_ne() {
-  local filePath="${1:-.env}"
-
-  if [ ! -f "$filePath" ]; then
-    echo "missing ${filePath}"
-    exit 1
-  fi
-
-  echo -e "\n==[ Reading $filePath ]==\n"
-  while IFS= read -r LINE; do
     # Remove leading and trailing whitespaces, and carriage return
     CLEANED_LINE=$(echo "$LINE" | awk '{$1=$1};1' | tr -d '\r')
 
     if [[ $CLEANED_LINE != '#'* ]] && [[ $CLEANED_LINE == *'='* ]]; then
-      echo "$CLEANED_LINE"
       export "$CLEANED_LINE"
     fi
   done < "$filePath"
-  echo ""
-}
-
-# src/lib/read_env_new.sh
-read_env_new() {
-
-  local filePath="${1:-.env}"
-
-  if [ ! -f "$filePath" ]; then
-    echo "missing ${filePath}"
-    exit 1
-  fi
-
-  echo -e "\n==[ Reading $filePath ]==\n"
-
-  awk -F= '/^[^#]/ && /=/ { gsub(/^[ \t]+|[ \t\r]+$/, "", $1); gsub(/^[ \t]+|[ \t\r]+$/, "", $2); export $1=$2 }' "$filePath"
-
-  echo ""
 }
 
 # :command.command_functions
@@ -2567,14 +2529,14 @@ before_hook() {
   # src/before.sh
   inspect_args
 
-  read_env_ne "env/.env"
+  read_env "env/.env"
 
   #TODO improve here i have duplication in app_env arg and APP_ENV in .env files
   if [[ -z "${args[APP_ENV]}" ]]; then
           echo "Error: 'APP_ENV' is not set or empty. Please set a valid argument." >&2
           exit 1
   fi
-  read_env_ne "env/${args[APP_ENV]}.env"
+  read_env "env/${args[APP_ENV]}.env"
 
 }
 
