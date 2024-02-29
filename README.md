@@ -28,7 +28,7 @@ git --version
 
 1. Clone the repository using the following command:
 ```bash 
-sudo git clone -b fpm https://github.com/MansourM/ez-docker-for-laravel.git && cd ez-docker-for-laravel
+sudo git clone https://github.com/MansourM/ez-docker-for-laravel.git && cd ez-docker-for-laravel
 sudo chmod +x ez
 ```
 
@@ -140,38 +140,30 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 
 <!-- Roadmap -->
 
-## :compass: Roadmap
+## :compass: TODOs
 
 - [ ] multi-stage build for build portion instead of a different service
 - [ ] add user id on docker image on build step to avoid to have to chown later
-- [x] profiles?
-- [ ] better handling of unused/dangling/orphan images/containers 
-- [x] refactor file names group/start by env/type
+- [ ] better handling of unused/dangling/orphan images/containers
 - [ ] explain how to change scripts and generate new a `ez` script with Bashly 
 - [ ] add CI/CD pipeline/hooks
-- [ ] warn if APP_DEBUG=true
-- [ ] add a production mode and a test (staging) mode based on APP_DEBUG value
-- [ ] add merge/includes for compose file for different modes (production, staging, development, etc? )
 - [ ] mark project as production ready when 1 month of testing in production is done.
 - [ ] add local source (currently only git is supported)
-- [x] add suggested configuration files (php, mysql, nginx, etc...)\
 
 <!-- Maybe -->
 
-## :compass: TODO (Maybe)
+## :compass: Maybe?
 
 - [ ] Implement a GUI (optional dashboard).
 - [ ] Add more (modular) services (e.g., Redis, Memcached).
 - [ ] Integrate a DNS service.
-- [ ] Enhance shell with proper subcommands.
 
 
 <!-- Known Issues -->
 
 ## :warning: Known Issues
 
-- While building node_modules (`npm i`) in the builder, a warning may appear: `MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 data listeners added to [TLSSocket]. Use emitter.setMaxListeners() to increase limit`. This warning does not seem to affect functionality.
-- Symbols in password like`()` seems to break .env reader function in the shell script
+- Currently, None :)
 
 <!-- Contributing -->
 
@@ -197,3 +189,5 @@ Seyed Mansour Mirbehbahani - [sm.mirbehbahani@gmail.com](mailto:sm.mirbehbahani@
 ## :gem: Acknowledgements
 
 - [Awesome Readme Template](https://github.com/Louis3797/awesome-readme-template)
+- [M.Mahdi Mahmoodian](https://github.com/MMMahmoodian) Help/Review Nginx/FPM setup
+- [nginx-php-fpm](https://github.com/jkaninda/nginx-php-fpm) nginx/fpm configuration and dockerfile
