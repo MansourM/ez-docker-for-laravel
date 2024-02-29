@@ -20,9 +20,9 @@ if [[ "$APP_ENV" != "dev" && "$APP_ENV" != "test" && "$APP_ENV" != "staging" && 
     exit 1
 fi
 
-echo "Preparing to deploy Laravel in $APP_ENV mode."
+echo -e "\n==[ Running Docker Compose for shared services ]==\n"
 
-docker compose -f compose-shared.yml --profile "$APP_ENV" up --build -d
+docker compose -f compose-shared.yml --profile "$APP_ENV" --env-file "env/shared.env" up --build -d
 if [ $? -ne 0 ]; then
   echo "Failed to run Docker Compose"
   exit 1

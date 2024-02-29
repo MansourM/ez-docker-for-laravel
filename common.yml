@@ -49,26 +49,24 @@ services:
   laravel-builder:
     build:
       context: .
-      dockerfile: builder.Dockerfile
+      dockerfile: docker/builder.Dockerfile
     volumes:
       - ./laravel-${APP_ENV}:/usr/src
     working_dir: /usr/src
     entrypoint: ./entrypoint-builder.sh
-    profiles:
-      - test
-      - staging
-      - production
 
-  laravel-server: #inner port :8000
+  nginx-fpm-laravel: #inner port :80
+    container_name: nfl-${APP_NAME}
     build:
       context: .
-      dockerfile: laravel.Dockerfile
+      dockerfile: docker/nginx-fpm-laravel.Dockerfile
       args:
         - APP_ENV=${APP_ENV}
     environment:
       - APP_ENV=${APP_ENV}
-      - APP_DEBUG=${APP_DEBUG}
-      - ./laravel-storage-app:/usr/src/storage/app #fixme need different storage for each env
     restart: unless-stopped
-    working_dir: /usr/src
-    entrypoint: ./entrypoint-laravel.sh
+    user: www-data
+    working_dir: /var/www
+    entrypoint: ./entrypoint.sh
+    volumes:
+      - ./nfl-${APP_ENV}-storage:/var/www/storage/app

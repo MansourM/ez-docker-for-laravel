@@ -1,10 +1,7 @@
 FROM ubuntu:22.04
 
 ARG NODE_VERSION=20
-ENV TZ=Asia/Tehran
 ENV DEBIAN_FRONTEND noninteractive
-
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt-get update \
     && mkdir -p /etc/apt/keyrings \
@@ -21,9 +18,9 @@ RUN curl -sLS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/
     && apt-get update
 
 RUN apt-get install -y nodejs \
-    && npm install -g npm
+    && npm install -g npm \
+    && npm install -g rtlcss
 
-RUN npm install -g rtlcss
 
-RUN apt-get clean
-RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+#RUN apt-get clean \
+#    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
