@@ -65,7 +65,7 @@ services:
     container_name: nfl-${APP_NAME}
     build:
       context: .
-      dockerfile: docker/nginx-fpm-laravel.Dockerfile
+      dockerfile: docker/multi.Dockerfile
       args:
         - APP_ENV=${APP_ENV}
     environment:

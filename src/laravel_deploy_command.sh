@@ -53,9 +53,5 @@ chmod +x "$laravel_folder_name/entrypoint-builder.sh"
 cp "$entrypoint_laravel" "$laravel_folder_name/entrypoint.sh"
 chmod +x "$laravel_folder_name/entrypoint.sh"
 
-# Run Docker Compose
-echo -e "\n==[ Running Docker Compose for builder ]==\n"
-docker compose -f compose-builder.yml --profile "$APP_ENV" --env-file "$env_laravel" --env-file "$env_override" up --build
-
 echo -e "\n==[ Running Docker Compose for Laravel $APP_ENV ]==\n"
 docker compose -f compose-laravel.yml --profile "$APP_ENV" --env-file "$env_laravel" --env-file "$env_override" up --build -d
