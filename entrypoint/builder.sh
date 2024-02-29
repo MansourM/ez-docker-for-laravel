@@ -1,13 +1,13 @@
 #!/bin/bash
 
-app_env=${APP_ENV}
+chown -R ${USER_NAME}:${GROUP_NAME} /var/www
 
 npm install
 
 #im not sure about this :)
 npm audit fix
 
-if [[ "$app_env" == "test" ]]; then
+if [[ "${APP_ENV}" == "test" ]]; then
   composer install --optimize-autoloader
   npm run build
 else # staging or production

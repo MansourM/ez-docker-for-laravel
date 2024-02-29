@@ -7,7 +7,7 @@ ARG USER_ID=1000
 ENV USER_NAME=www-data
 
 ARG GROUP_ID=1000
-ARG GROUP_NAME=www-data
+ENV GROUP_NAME=www-data
 
 
 RUN apt-get update \
@@ -34,6 +34,4 @@ RUN apt-get clean \
 
 RUN usermod -u ${USER_ID} ${USER_NAME} \
     && groupmod -g ${USER_ID} ${GROUP_NAME}
-
-RUN chown -R ${USER_NAME}:${GROUP_NAME} /var/www
 
