@@ -5,19 +5,19 @@ services:
   nginx-pm:
     container_name: nginx-pm
     extends:
-      file: common.yml
+      file: docker/common.yml
       service: nginx-pm
 
   mysql8:
     container_name: mysql8
     extends:
-      file: common.yml
+      file: docker/common.yml
       service: mysql8
 
   phpmyadmin-test:
     container_name: pma-test
     extends:
-      file: common.yml
+      file: docker/common.yml
       service: phpmyadmin
     ports:
       - ${PORT_PMA}:80 #web console
@@ -29,7 +29,7 @@ services:
   phpmyadmin:
     container_name: pma
     extends:
-      file: common.yml
+      file: docker/common.yml
       service: phpmyadmin
     depends_on:
       - mysql8

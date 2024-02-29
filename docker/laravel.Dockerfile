@@ -33,7 +33,7 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 COPY ./laravel-${APP_ENV} ${WORKDIR}
 COPY ./env/.env ${WORKDIR}
-COPY ./entrypoint/nginx-fpm-laravel.sh ${WORKDIR}/entrypoint.sh
+COPY docker/entrypoint.sh ${WORKDIR}/entrypoint.sh
 RUN chmod +x ${WORKDIR}/entrypoint.sh
 
 WORKDIR ${WORKDIR}
