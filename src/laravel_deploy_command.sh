@@ -1,12 +1,12 @@
 #TODO duplication read APP_ENV from cli args and ignore APP_ENV in .env?
-echo "Preparing to deploy Laravel in $APP_ENV mode."
+echo -e "\n==[ Preparing to deploy Laravel in $APP_ENV mode ]==\n"
 
 #careful with laravel_folder_name, it must be the same as laravel dockerfile and docker compose file
 laravel_folder_name="laravel-$APP_ENV"
 
 # Check if the folder exists
 if [ -d "$laravel_folder_name" ]; then
-    echo "Updating existing $laravel_folder_name folder..."
+    echo "==[ Updating existing $laravel_folder_name folder ]=="
 
     cd "$laravel_folder_name" || exit 1
     echo "Remove previous build folders..."
@@ -29,7 +29,7 @@ if [ -d "$laravel_folder_name" ]; then
 
     cd - || exit 1
 else
-    echo "Cloning new $laravel_folder_name folder..."
+    echo "==[ Cloning new $laravel_folder_name folder ]=="
     git clone --depth 1 -b "$APP_ENV" "$GIT_URL" "$laravel_folder_name"
 
     # Check if cloning was successful
@@ -57,8 +57,8 @@ cp "$entrypoint_laravel" "$laravel_folder_name/entrypoint.sh"
 chmod +x "$laravel_folder_name/entrypoint.sh"
 
 # Run Docker Compose
-echo "Running Docker Compose for builder..."
+echo -e "\n==[ Running Docker Compose for builder ]==\n"
 docker compose -f compose-builder.yml --profile "$APP_ENV" --env-file "$env_laravel" --env-file "$env_override" up --build
 
-echo "Running Docker Compose for Laravel in detached mode..."
-docker compose -f compose-laravel.yml --profile "$APP_ENV" --env-file "$env_laravel"--env-file "$env_override" up --build -d
+echo -e "\n==[ Running Docker Compose for Laravel $APP_ENV ]==\n"
+docker compose -f compose-laravel.yml --profile "$APP_ENV" --env-file "$env_laravel" --env-file "$env_override" up --build -d
