@@ -1,3 +1,6 @@
+# === Stage 1: Builder ===
+FROM php:8.2-fpm AS builder
+
 ENV DEBIAN_FRONTEND noninteractive
 
 ARG USER_ID=1000
@@ -7,9 +10,6 @@ ARG GROUP_ID=1000
 ARG GROUP_NAME=www-data
 
 ARG WORKDIR=/var/www
-
-# === Stage 1: Builder ===
-FROM php:8.2-fpm AS builder
 
 ARG NODE_VERSION=20
 
@@ -52,6 +52,16 @@ RUN if [ "${APP_ENV}" = "test" ]; then \
 
 # === Stage 2: Final Image ===
 FROM php:8.2-fpm
+
+ENV DEBIAN_FRONTEND noninteractive
+
+ARG USER_ID=1000
+ENV USER_NAME=www-data
+
+ARG GROUP_ID=1000
+ARG GROUP_NAME=www-data
+
+ARG WORKDIR=/var/www
 
 ARG TZ=Asia/Tehran
 # Copy files from the builder stage
