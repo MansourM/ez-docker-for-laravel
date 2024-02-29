@@ -1,6 +1,6 @@
 #!/bin/bash
 
-chown -R ${USER_NAME}:${GROUP_NAME} /var/www
+chown -R ${USER_NAME}:${GROUP_NAME} /usr/src
 
 npm install
 
