@@ -950,7 +950,7 @@ log() {
 }
 
 # src/lib/log_error.sh
-log() {
+log_error() {
   if [ "$#" -ne 1 ]; then
       echo -e "\nInvalid Arguments, Usage: $0 <message>\n"
       return 1
@@ -976,7 +976,7 @@ log_header() {
 }
 
 # src/lib/log_success.sh
-log() {
+log_success() {
   if [ "$#" -ne 1 ]; then
       echo -e "\nInvalid Arguments, Usage: $0 <message>\n"
       return 1
