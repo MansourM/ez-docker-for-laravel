@@ -38,10 +38,10 @@ create_new_database_and_user() {
   fi
 
   # Check if user exists (improve error handling)
-  if ! docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "SELECT user FROM mysql.user WHERE user=\`$NEW_USER_NAME\`;" --skip-column-names -B | grep -q "$NEW_USER_NAME"; then
+  if ! docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "SELECT user FROM mysql.user WHERE user='$NEW_USER_NAME';" --skip-column-names -B | grep -q "$NEW_USER_NAME"; then
     # Create user and grant privileges
-    if ! sudo docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "CREATE USER \`$NEW_USER_NAME\`@'localhost' IDENTIFIED BY \`$NEW_USER_PASSWORD\`;" || \
-       ! sudo docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON \`$NEW_DB_NAME\`.* TO \`$NEW_USER_NAME\`@'localhost';" || \
+    if ! sudo docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "CREATE USER '$NEW_USER_NAME'@'localhost' IDENTIFIED BY '$NEW_USER_PASSWORD';" || \
+       ! sudo docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON \`$NEW_DB_NAME\`.* TO '$NEW_USER_NAME'@'localhost';" || \
        ! sudo docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "FLUSH PRIVILEGES;"; then
       echo -e "\n==[ ERROR: Failed to create and grant privileges for user '$NEW_USER_NAME'. ]==\n"
       return 1
