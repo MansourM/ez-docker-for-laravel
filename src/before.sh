@@ -7,6 +7,7 @@
 inspect_args
 
 #TODO improve here i have duplication in app_env arg and APP_ENV in .env files
+log_header "Reading .env files"
 read_env "env/.env"
 read_env "env/shared.env"
 

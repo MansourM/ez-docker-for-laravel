@@ -888,7 +888,7 @@ inspect_args() {
 create_new_database_and_user() {
 
   if [ "$#" -ne 3 ]; then
-      echo -e "\nInvalid Arguments, Usage: $0 <new_db_name> <new_user_name> <new_user_password>\n"
+      log_error "Invalid Arguments, Usage: $0 <new_db_name> <new_user_name> <new_user_password>"
       return 1
   fi
 
@@ -915,20 +915,12 @@ create_new_database_and_user() {
     log "Database: $NEW_DB_NAME Already Exists";
   fi
 
-  PMA_CONTAINER_NAME="pma"
-  if [[ "$APP_ENV" = "test" ]]; then
-    PMA_CONTAINER_NAME="pma-test"
-  fi
-
+  #TODO how to give access to specific container instead of %?
   # Check if user exists (improve error handling)
   if ! docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "SELECT user FROM mysql.user WHERE user='$NEW_USER_NAME';" --skip-column-names -B | grep -q "$NEW_USER_NAME"; then
     # Create user and grant privileges
-    if ! sudo docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "CREATE USER '$NEW_USER_NAME'@'localhost' IDENTIFIED BY '$NEW_USER_PASSWORD';" || \
-       ! sudo docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "CREATE USER '$NEW_USER_NAME'@'$PMA_CONTAINER_NAME' IDENTIFIED BY '$NEW_USER_PASSWORD';" || \
-       ! sudo docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "CREATE USER '$NEW_USER_NAME'@'$LARAVEL_CONTAINER_NAME' IDENTIFIED BY '$NEW_USER_PASSWORD';" || \
-       ! sudo docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON \`$NEW_DB_NAME\`.* TO '$NEW_USER_NAME'@'localhost';" || \
-       ! sudo docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON \`$NEW_DB_NAME\`.* TO '$NEW_USER_NAME'@'$PMA_CONTAINER_NAME';" || \
-       ! sudo docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON \`$NEW_DB_NAME\`.* TO '$NEW_USER_NAME'@'$LARAVEL_CONTAINER_NAME';" || \
+    if ! sudo docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "CREATE USER '$NEW_USER_NAME'@'%' IDENTIFIED BY '$NEW_USER_PASSWORD';" || \
+       ! sudo docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON \`$NEW_DB_NAME\`.* TO '$NEW_USER_NAME'@'%';" || \
        ! sudo docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "FLUSH PRIVILEGES;"; then
       log_error "Failed to create and grant privileges for user '$NEW_USER_NAME'"
       return 1
@@ -995,18 +987,18 @@ merge_env() {
   local output="$3"
 
   if [ ! -e "$file1" ]; then
-    echo "$file1 does not exist!"
+    log_error "$file1 does not exist!"
     exit 1
   fi
 
   if [ ! -e "$file2" ]; then
-    echo "$file2 does not exist!"
+    log_error "$file2 does not exist!"
     exit 1
   fi
 
   sort -u -t '=' -k 1,1 $file2 $file1 | grep -v '^$\|^\s*\#' > $output
 
-  echo "Merged $file2 into $file1 file creating $output."
+  log_success "Merged $file2 into $file1 file creating $output."
 }
 
 # src/lib/read_env.sh
@@ -1018,7 +1010,7 @@ read_env() {
     exit 1
   fi
 
-  echo -e "\n==[ Reading $filePath ]==\n"
+  log "Reading $filePath"
   while read -r LINE; do
     # Remove leading and trailing whitespaces, and carriage return
     CLEANED_LINE=$(echo "$LINE" | awk '{$1=$1};1' | tr -d '\r')
@@ -1053,7 +1045,7 @@ ez_docker_install_command() {
 
   # Validate the success of the installation
   if [ $? -ne 0 ]; then
-      echo "Failed to install Docker and related packages"
+      log_error "Failed to install Docker and related packages"
       exit 1
   fi
 
@@ -1085,13 +1077,13 @@ ez_shared_deploy_command() {
 
   # Check if the network already exists
   if docker network inspect "$SHARED_NETWORK_NAME" >/dev/null 2>&1; then
-    echo "Network '$SHARED_NETWORK_NAME' already exists"
+    log "Network '$SHARED_NETWORK_NAME' already exists"
   else
     docker network create "$SHARED_NETWORK_NAME"
     if [ $? -eq 0 ]; then
-      echo "Network '$SHARED_NETWORK_NAME' created"
+      log_success "Network '$SHARED_NETWORK_NAME' created"
     else
-      echo "Failed to create network '$SHARED_NETWORK_NAME'"
+      log_error "Failed to create network '$SHARED_NETWORK_NAME'"
       exit 1
     fi
   fi
@@ -1099,7 +1091,7 @@ ez_shared_deploy_command() {
   #TODO read APP_ENV from cli args and ignore APP_ENV in .env?
   # Check if APP_ENV is set to dev, test, staging, or production
   if [[ "$APP_ENV" != "dev" && "$APP_ENV" != "test" && "$APP_ENV" != "staging" && "$APP_ENV" != "production" ]]; then
-      echo "Error: Invalid value for APP_ENV. It must be either dev, test, staging, or production."
+      log_error "Error: Invalid value for APP_ENV. It must be either dev, test, staging, or production."
       exit 1
   fi
 
@@ -1107,7 +1099,7 @@ ez_shared_deploy_command() {
 
   docker compose -f compose-shared.yml --env-file "env/.env" --env-file "env/shared.env" up --build -d
   if [ $? -ne 0 ]; then
-    echo "Failed to run Docker Compose"
+    log_error "Failed to run Docker Compose"
     exit 1
   fi
 
@@ -1157,38 +1149,39 @@ ez_laravel_deploy_command() {
 
   #careful with laravel_folder_name, it must be the same as laravel dockerfile and docker compose file
   laravel_folder_name="laravel-$APP_ENV"
-
+  #TODO maybe skip if nothing was changed?
   # Check if the folder exists
+  log_header "Preparing source code"
   if [ -d "$laravel_folder_name" ]; then
-      echo "==[ Updating existing $laravel_folder_name folder ]=="
+      log "Updating existing $laravel_folder_name folder"
 
       cd "$laravel_folder_name" || exit 1
-      echo "Remove previous build folders..."
+      log "Removing previous build folders..."
       rm -rf "node_modules" "vendor" "public/build"
-      echo "Discard local changes"
+      log "Discarding local changes"
       git reset --hard
       git pull origin "$GIT_BRANCH"
 
       # Check if the git operation was successful
       if [ $? -ne 0 ]; then
-          echo "Error: Git pull failed."
+          log_error "Error: Git pull failed."
           exit 1
       fi
 
       # Check if the directory removal was successful
       if [ $? -ne 0 ]; then
-          echo "Error: Failed to remove build folders."
+          log_error "Error: Failed to remove build folders."
           exit 1
       fi
 
       cd - || exit 1
   else
-      echo "==[ Cloning new $laravel_folder_name folder ]=="
+      log "Cloning new $laravel_folder_name folder"
       git clone --depth 1 -b "$GIT_BRANCH" "$GIT_URL" "$laravel_folder_name"
 
       # Check if cloning was successful
       if [ $? -ne 0 ]; then
-          echo "Error: Git cloning failed."
+          log_error "Error: Git cloning failed."
           exit 1
       fi
   fi
@@ -1202,7 +1195,7 @@ ez_laravel_deploy_command() {
 
   create_new_database_and_user $DB_DATABASE $DB_USERNAME $DB_PASSWORD
 
-  echo -e "\n==[ Running Docker Compose for Laravel $APP_ENV ]==\n"
+  log_header "Running Docker Compose for Laravel $APP_ENV"
   docker compose -f compose-laravel.yml --profile "$APP_ENV" --env-file "$merged_env" up --build -d
 
 }
@@ -2622,6 +2615,7 @@ before_hook() {
   inspect_args
 
   #TODO improve here i have duplication in app_env arg and APP_ENV in .env files
+  log_header "Reading .env files"
   read_env "env/.env"
   read_env "env/shared.env"
 

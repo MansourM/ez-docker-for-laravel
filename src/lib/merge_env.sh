@@ -14,16 +14,16 @@ merge_env() {
   local output="$3"
 
   if [ ! -e "$file1" ]; then
-    echo "$file1 does not exist!"
+    log_error "$file1 does not exist!"
     exit 1
   fi
 
   if [ ! -e "$file2" ]; then
-    echo "$file2 does not exist!"
+    log_error "$file2 does not exist!"
     exit 1
   fi
 
   sort -u -t '=' -k 1,1 $file2 $file1 | grep -v '^$\|^\s*\#' > $output
 
-  echo "Merged $file2 into $file1 file creating $output."
+  log_success "Merged $file2 into $file1 file creating $output."
 }
