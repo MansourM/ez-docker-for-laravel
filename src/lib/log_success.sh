@@ -17,5 +17,5 @@ log_success() {
   GREEN='\033[0;32m'
   NORMAL='\033[0m'
 
-  echo "${GREEN}-- $1${NORMAL}"
+  echo -e "${GREEN}-- $1${NORMAL}"
 }

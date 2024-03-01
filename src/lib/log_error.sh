@@ -17,5 +17,5 @@ log_error() {
   RED='\033[0;31m'
   NORMAL='\033[0m'
 
-  echo "${RED}-- $1${NORMAL}"
+  echo -e "${RED}-- $1${NORMAL}"
 }
