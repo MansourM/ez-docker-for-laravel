@@ -933,7 +933,7 @@ create_new_database_and_user() {
       log_error "Failed to create and grant privileges for user '$NEW_USER_NAME'"
       return 1
     fi
-    log_success -e "User: '$NEW_USER_NAME' created for DB: $NEW_DB_NAME with full privileges";
+    log_success "User: '$NEW_USER_NAME' created for DB: $NEW_DB_NAME with full privileges";
   else
     log "User '$NEW_USER_NAME' already exists";
   fi
