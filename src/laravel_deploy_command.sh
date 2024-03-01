@@ -3,7 +3,7 @@ echo -e "\n==[ Preparing to deploy Laravel in $APP_ENV mode ]==\n"
 
 #careful with laravel_folder_name, it must be the same as laravel dockerfile and docker compose file
 laravel_folder_name="laravel-$APP_ENV"
-
+#TODO maybe skip if nothing was changed?
 # Check if the folder exists
 if [ -d "$laravel_folder_name" ]; then
     echo "==[ Updating existing $laravel_folder_name folder ]=="
