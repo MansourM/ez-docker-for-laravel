@@ -20,6 +20,9 @@ create_new_database_and_user() {
   NEW_USER_NAME=$2
   NEW_USER_PASSWORD=$3
 
+  echo "NEW_DB_NAME $NEW_DB_NAME NEW_USER_NAME $NEW_USER_NAME NEW_USER_PASSWORD $NEW_USER_PASSWORD"
+  exit
+
   echo -e "\n==[ Creating Database: $NEW_DB_NAME with User: $NEW_USER_NAME ]==\n"
 
   MYSQL_USER="root"
