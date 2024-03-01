@@ -44,6 +44,9 @@ base_env="env/.env"
 override_env="env/$APP_ENV.env"
 merged_env="env/merged/$APP_ENV.env"
 merge_env $base_env $override_env $merged_env
+#TODO merge read_env and merge_env fn and process all env in before.sh?
+
+create_new_database_and_user $DB_DATABASE $DB_USERNAME $DB_PASSWORD
 
 echo -e "\n==[ Running Docker Compose for Laravel $APP_ENV ]==\n"
 docker compose -f compose-laravel.yml --profile "$APP_ENV" --env-file "$merged_env" up --build -d
