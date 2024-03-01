@@ -17,6 +17,6 @@ sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plug
 
 # Validate the success of the installation
 if [ $? -ne 0 ]; then
-    echo "Failed to install Docker and related packages"
+    log_error "Failed to install Docker and related packages"
     exit 1
 fi

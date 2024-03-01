@@ -11,7 +11,7 @@
 create_new_database_and_user() {
 
   if [ "$#" -ne 3 ]; then
-      echo -e "\nInvalid Arguments, Usage: $0 <new_db_name> <new_user_name> <new_user_password>\n"
+      log_error "Invalid Arguments, Usage: $0 <new_db_name> <new_user_name> <new_user_password>"
       return 1
   fi
 

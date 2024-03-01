@@ -16,7 +16,7 @@ read_env() {
     exit 1
   fi
 
-  echo -e "\n==[ Reading $filePath ]==\n"
+  log "Reading $filePath"
   while read -r LINE; do
     # Remove leading and trailing whitespaces, and carriage return
     CLEANED_LINE=$(echo "$LINE" | awk '{$1=$1};1' | tr -d '\r')
