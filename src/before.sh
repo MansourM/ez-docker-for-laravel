@@ -4,7 +4,7 @@
 ## before running any command (but after processing its arguments).
 ##
 ## You can safely delete this file if you do not need it.
-inspect_args
+#inspect_args
 
 #TODO improve here i have duplication in app_env arg and APP_ENV in .env files
 log_header "Reading .env files"
