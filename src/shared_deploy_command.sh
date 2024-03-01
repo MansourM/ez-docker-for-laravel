@@ -20,7 +20,7 @@ if [[ "$APP_ENV" != "dev" && "$APP_ENV" != "test" && "$APP_ENV" != "staging" && 
     exit 1
 fi
 
-echo -e "\n==[ Running Docker Compose for shared services ]==\n"
+log_header "Running Docker Compose for shared services"
 
 docker compose -f compose-shared.yml --env-file "env/.env" --env-file "env/shared.env" up --build -d
 if [ $? -ne 0 ]; then
