@@ -3,7 +3,7 @@ version: '3.9'
 services:
 
   nginx-fpm-laravel-test:
-    container_name: ${APP_NAME}-${APP_ENV}
+    container_name: ${LARAVEL_CONTAINER_NAME}
     extends:
       file: common.yml
       service: nginx-fpm-laravel
@@ -13,7 +13,7 @@ services:
       - test
 
   nginx-fpm-laravel:
-    container_name: ${APP_NAME}-${APP_ENV}
+    container_name: ${LARAVEL_CONTAINER_NAME}
     extends:
       file: common.yml
       service: nginx-fpm-laravel
