@@ -156,7 +156,7 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 
 ## :warning: Known Issues
 
-- Currently, None :)
+- [ ] you need to manually sudo chown -R <host_user> <laravel_storage_volume>
 
 <!-- Contributing -->
 
