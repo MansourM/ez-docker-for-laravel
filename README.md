@@ -136,11 +136,10 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 
 ## :compass: TODOs
 
-- [ ] multi-stage build for build portion instead of a different service
-- [ ] add user id on docker image on build step to avoid to have to chown later
+- [ ] do not npm i composer i if dependencies did not change
 - [ ] better handling of unused/dangling/orphan images/containers
 - [ ] explain how to change scripts and generate new a `ez` script with Bashly 
-- [ ] add CI/CD pipeline/hooks
+- [ ] explain how to setup github actions
 - [ ] mark project as production ready when 1 month of testing in production is done.
 - [ ] add local source (currently only git is supported)
 
