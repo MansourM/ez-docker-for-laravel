@@ -42,9 +42,9 @@ COPY ./laravel-${APP_ENV}/composer.json ${WORKDIR}
 COPY ./laravel-${APP_ENV}/composer.lock ${WORKDIR}
 
 RUN if [ "${APP_ENV}" = "test" ]; then \
-      composer install --optimize-autoloader \
+      composer install --optimize-autoloader; \
     else \
-      composer install --optimize-autoloader --no-dev \
+      composer install --optimize-autoloader --no-dev; \
     fi
 
 COPY ./laravel-${APP_ENV} ${WORKDIR}
