@@ -41,7 +41,11 @@ RUN npm audit fix
 COPY ./laravel-${APP_ENV}/composer.json ${WORKDIR}
 COPY ./laravel-${APP_ENV}/composer.lock ${WORKDIR}
 
-RUN composer install --no-dev;
+RUN if [ "${APP_ENV}" = "test" ]; then \
+      composer install  --no-scripts --no-autoloader; \
+    else \
+      composer install  --no-scripts --no-autoloader --no-dev; \
+    fi
 
 COPY ./laravel-${APP_ENV} ${WORKDIR}
 
