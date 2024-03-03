@@ -41,7 +41,7 @@ RUN npm audit fix
 COPY ./laravel-${APP_ENV}/composer.json ${WORKDIR}
 COPY ./laravel-${APP_ENV}/composer.lock ${WORKDIR}
 
-RUN composer install;
+RUN composer install --no-dev;
 
 COPY ./laravel-${APP_ENV} ${WORKDIR}
 
