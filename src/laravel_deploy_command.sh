@@ -1,4 +1,4 @@
-#TODO duplication read APP_ENV from cli args and ignore APP_ENV in .env?
+#TODO duplication, read APP_ENV from cli args and ignore APP_ENV in .env?
 echo -e "\n==[ Preparing to deploy Laravel in $APP_ENV mode ]==\n"
 
 #careful with laravel_folder_name, it must be the same as laravel dockerfile and docker compose file
