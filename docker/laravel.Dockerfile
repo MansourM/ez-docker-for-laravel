@@ -26,28 +26,38 @@ RUN curl -sLS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/
 
 RUN apt-get install -y nodejs \
     && npm install -g npm \
-    && npm install -g rtlcss
-
-#Clean apt
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-COPY ./laravel-${APP_ENV} ${WORKDIR}
-COPY ./env/merged/${APP_ENV}.env ${WORKDIR}/.env
-COPY ./docker/entrypoint.sh ${WORKDIR}/entrypoint.sh
-RUN chmod +x ${WORKDIR}/entrypoint.sh
+    && npm install -g rtlcss \
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 WORKDIR ${WORKDIR}
+
+COPY ./laravel-${APP_ENV}/package.json ${WORKDIR}
+COPY ./laravel-${APP_ENV}/package-lock.json ${WORKDIR}
 
 RUN npm install
 #TODO, Review if this line should exist here
 RUN npm audit fix
 
+COPY ./laravel-${APP_ENV}/composer.json ${WORKDIR}
+COPY ./laravel-${APP_ENV}/composer.lock ${WORKDIR}
 
 RUN if [ "${APP_ENV}" = "test" ]; then \
-      composer install --optimize-autoloader && npm run build; \
+      composer install --optimize-autoloader \
     else \
-      composer install --optimize-autoloader --no-dev && npm run production; \
+      composer install --optimize-autoloader --no-dev \
     fi
+
+COPY ./laravel-${APP_ENV} ${WORKDIR}
+
+RUN if [ "${APP_ENV}" = "test" ]; then \
+      npm run build; \
+    else \
+      npm run production; \
+    fi
+
+COPY ./env/merged/${APP_ENV}.env ${WORKDIR}/.env
+COPY ./docker/entrypoint.sh ${WORKDIR}/entrypoint.sh
+RUN chmod +x ${WORKDIR}/entrypoint.sh
 
 
 # === Stage 2: Final Image ===
