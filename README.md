@@ -138,7 +138,7 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 
 - [ ] add docker to sudoers
 - [ ] add tags to --build then remove orphanns
-- [ ] do not npm i composer i if dependencies did not change !!!! (copy composer/packake.lock first then et 1!!)
+- [ ] WIP: do not npm i composer i if dependencies did not change !!!! (copy composer/packake.lock first then etc)
 - [ ] better handling of unused/dangling/orphan images/containers
 - [ ] explain how to change scripts and generate new a `ez` script with Bashly 
 - [ ] explain how to setup github actions
