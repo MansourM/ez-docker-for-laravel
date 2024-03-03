@@ -137,6 +137,7 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 ## :compass: TODOs
 
 - [ ] add docker to sudoers
+- [ ] add readme adding foreign files in cloned dirs causes slow builds
 - [ ] add tags to --build then remove orphanns
 - [ ] WIP: do not npm i composer i if dependencies did not change !!!! (copy composer/packake.lock first then etc)
 - [ ] better handling of unused/dangling/orphan images/containers
