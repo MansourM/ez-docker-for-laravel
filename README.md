@@ -145,6 +145,7 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 - [ ] explain how to setup github actions
 - [ ] mark project as production ready when 1 month of testing in production is done.
 - [ ] add local source (currently only git is supported)
+- [ ] explain about app_env (.env and arg version) and the need to have build/production commands in package.json
 
 <!-- Maybe -->
 
