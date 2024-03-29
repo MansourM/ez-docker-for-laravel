@@ -47,6 +47,7 @@ merged_env="env/merged/$APP_ENV.env"
 merge_env $base_env $override_env $merged_env
 #TODO merge read_env and merge_env fn and process all env in before.sh?
 
+#FIXME on first run this will fail since db is not fully up and functional yet
 create_new_database_and_user $DB_DATABASE $DB_USERNAME $DB_PASSWORD
 
 log_header "Running Docker Compose for Laravel $APP_ENV"
