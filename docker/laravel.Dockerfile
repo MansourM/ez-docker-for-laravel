@@ -1,11 +1,10 @@
 # === Stage 1: Builder ===
 FROM php:8.2-fpm AS builder
 
-ARG APP_ENV
 ENV DEBIAN_FRONTEND noninteractive
 
+ARG APP_ENV
 ARG WORKDIR=/var/www
-
 ARG NODE_VERSION=20
 
 # Install required librairies
@@ -27,7 +26,8 @@ RUN curl -sLS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/
 RUN apt-get install -y nodejs \
     && npm install -g npm \
     && npm install -g rtlcss \
-    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    && apt-get clean  \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 WORKDIR ${WORKDIR}
 
@@ -69,9 +69,9 @@ RUN chmod +x ${WORKDIR}/entrypoint.sh
 # === Stage 2: Final Image ===
 FROM php:8.2-fpm
 
-ARG APP_ENV
 ENV DEBIAN_FRONTEND noninteractive
 
+ARG APP_ENV
 ARG USER_ID=1000
 ENV USER_NAME=www-data
 
@@ -79,7 +79,6 @@ ARG GROUP_ID=1000
 ARG GROUP_NAME=www-data
 
 ARG WORKDIR=/var/www
-
 ARG TZ=Asia/Tehran
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
@@ -129,7 +128,6 @@ RUN usermod -u ${USER_ID} ${USER_NAME} \
 
 # Copy files from the builder stage
 COPY --from=builder --chown=$USER_NAME:$GROUP_NAME /var/www /var/www
-
 
 RUN mkdir -p /var/log/supervisor \
     && mkdir -p /var/log/nginx \
