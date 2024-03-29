@@ -50,7 +50,6 @@ services:
       PMA_ARBITRARY: 0
 
   nginx-fpm-laravel: #inner port :80
-    container_name: nfl-${APP_NAME}
     build:
       context: .
       dockerfile: docker/laravel.Dockerfile
