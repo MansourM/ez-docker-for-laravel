@@ -97,7 +97,7 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     nginx \
     supervisor \
-    mysql-client #This is needed because we need `mysqldump` for `spatie/laravel-backup`
+    default-mysql-client #This is needed because we need `mysqldump` for `spatie/laravel-backup`
 
 # Configure PHP extensions
 RUN docker-php-ext-configure gd --with-freetype=/usr/include/
