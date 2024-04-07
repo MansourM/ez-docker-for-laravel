@@ -15,3 +15,8 @@ if [[ -n "${args[APP_ENV]}" ]]; then
   read_env "env/${args[APP_ENV]}.env"
 fi
 
+if [[ "$APP_ENV" != "${args[APP_ENV]}" ]]; then
+    log_error "Error: APP_ENV in 'env/${args[APP_ENV]}.env' does not match 'ez' command argument ('$APP_ENV'!='${args[APP_ENV]}')."
+    exit 1
+fi
+
