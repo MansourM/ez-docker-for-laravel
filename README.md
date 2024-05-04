@@ -139,6 +139,7 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 ## :compass: TODOs
 
 - [ ] add docker to sudoers
+- [ ] improve/customize entrypoint.sh for each environment maybe even separate them?
 - [ ] add to readme -> adding foreign files in cloned dirs causes slow builds
 - [ ] add tags to --build then remove orphans
 - [ ] dynamically handle the ubuntu (host) USER NAME & ID in dockerfiles
