@@ -49,21 +49,20 @@ sudo ./ez docker install
         sudo cp env/staging.env.example env/staging.env
         sudo cp env/production.env.example env/production.env
         ```
+     You can use this format to include your credentials directly in the URL, avoiding the need to enter them each time you clone the repository.
+      ```env
+      GIT_URL=https://username:password@github.com/MansourM/example.git
+      ```
 
 3. deploy your project
 ```bash
 sudo ./ez all deploy {environment}
 ```
 
-## :tada:
+## :tada: :tada: :tada:
 * **now your website is running at `<your_ip_address>:<APP_PORT>`**
 * website is only exposed via `APP_PORT` in `test` `{environment}` to access the `staging` or `production` website you need to configure them on you domain using npm proxy manager
 
-
-You can use this format to include your credentials directly in the URL, avoiding the need to enter them each time you clone the repository.
-```env
-GIT_URL=https://username:password@github.com/MansourM/example.git
-```
 
 ## :gear: Github actions
 You can find examples of GitHub Actions in the `.github.example/workflows` folder. Remember to remove the `.example` from the folder name before using the workflows.
