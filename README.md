@@ -8,7 +8,7 @@
 <!-- About the Project -->
 
 ## <h1>EZ Docker For Laravel</h1>
-EZ Docker For Laravel is a set of scripts designed to create an easy-to-set-up, robust, and production-ready environment for Laravel using Docker, Docker Compose, and bash scripts.
+EZ Docker For Laravel provides an easy-to-use, production-ready environment for running Laravel applications using Docker and Docker Compose. It simplifies the deployment process by offering a set of scripts to manage configurations, deploy, and maintain Laravel projects efficiently across various environments, such as test, staging, and production. The software streamlines server setup and management, offering features like support for Nginx, MySQL, and PHP, as well as additional services and extensions tailored to Laravel's requirements. By following the steps outlined in this readme, you can quickly set up your Laravel project and deploy it for reliable and scalable hosting.
 
 *Currently, the scripts are successfully working in test and staging environments, and I plan to deploy them in production soon.*
 
@@ -64,6 +64,9 @@ You can use this format to include your credentials directly in the URL, avoidin
 ```env
 GIT_URL=https://username:password@github.com/MansourM/example.git
 ```
+
+## :gear: Github actions
+You can find examples of GitHub Actions in the `.github.example/workflows` folder. Remember to remove the `.example` from the folder name before using the workflows.
 
 ## :bulb: Additional Info
 Nginx Proxymanager default login information:
@@ -137,15 +140,13 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 ## :compass: TODOs
 
 - [ ] add docker to sudoers
-- [ ] add readme adding foreign files in cloned dirs causes slow builds
-- [ ] add tags to --build then remove orphanns
-- [ ] WIP: do not npm i composer i if dependencies did not change !!!! (copy composer/packake.lock first then etc)
+- [ ] add to readme -> adding foreign files in cloned dirs causes slow builds
+- [ ] add tags to --build then remove orphans
+- [ ] dynamically handle the ubuntu (host) USER NAME & ID in dockerfiles
 - [ ] better handling of unused/dangling/orphan images/containers
 - [ ] explain how to change scripts and generate new a `ez` script with Bashly 
-- [ ] explain how to setup github actions
-- [ ] mark project as production ready when 1 month of testing in production is done.
-- [ ] add local source (currently only git is supported)
 - [ ] explain about app_env (.env and arg version) and the need to have build/production commands in package.json
+- [ ] mark project as production ready when 1 month of testing in production is done.
 
 <!-- Maybe -->
 
@@ -154,6 +155,7 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 - [ ] Implement a GUI (optional dashboard).
 - [ ] Add more (modular) services (e.g., Redis, Memcached).
 - [ ] Integrate a DNS service.
+- [ ] add local source (currently only git is supported)
 
 
 <!-- Known Issues -->
