@@ -11,7 +11,7 @@ services:
       - test
 
   nginx-fpm-laravel:
-    container_name: ${APP_NAME}
+    container_name: ${APP_NAME}_${APP_ENV}
     extends:
       file: common.yml
       service: nginx-fpm-laravel
