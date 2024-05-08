@@ -27,14 +27,14 @@ git --version
 
 
 1. Clone the repository using the following command:
-```bash 
-sudo git clone https://github.com/MansourM/ez-docker-for-laravel.git && cd ez-docker-for-laravel
-```
+   ```bash 
+   sudo git clone https://github.com/MansourM/ez-docker-for-laravel.git && cd ez-docker-for-laravel
+   ```
 
-1.1. install docker engine (Optional, only if not installed already)
-```bash
-sudo ./ez docker install
-```
+-  install docker engine (Optional, only if not installed already)
+   ```bash
+   sudo ./ez docker install
+   ```
 
 2. Create and fill in your configuration files located in the `env` folder:
    - `.env` The main configuration file from your Laravel project.
@@ -51,9 +51,9 @@ sudo ./ez docker install
         ```
 
 3. deploy your project
-```bash
-sudo ./ez all deploy {environment}
-```
+   ```bash
+   sudo ./ez all deploy {environment}
+   ```
 
 ## :tada:
 * **now your website is running at `<your_ip_address>:<APP_PORT>`**
