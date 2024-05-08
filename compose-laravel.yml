@@ -10,13 +10,20 @@ services:
     profiles:
       - test
 
-  nginx-fpm-laravel:
-    container_name: ${APP_NAME}
+  nginx-fpm-laravel-staging:
+    container_name: ${APP_NAME}_staging
     extends:
       file: common.yml
       service: nginx-fpm-laravel
     profiles:
       - staging
+
+  nginx-fpm-laravel-production:
+    container_name: ${APP_NAME}_production
+    extends:
+      file: common.yml
+      service: nginx-fpm-laravel
+    profiles:
       - production
 
 
