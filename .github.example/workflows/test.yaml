@@ -13,7 +13,8 @@ jobs:
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.KEY }}
+        password: ${{ secrets.PASSWORD }}
+        #key: ${{ secrets.KEY }}
         port: ${{ secrets.PORT }}
         script: |
           cd /home/ubuntu/ez-docker-for-laravel
