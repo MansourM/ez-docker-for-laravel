@@ -56,8 +56,11 @@ git --version
 
 3. deploy your project
    ```bash
-   sudo ./ez all deploy {environment}
-   ```
+   sudo ./ez shared deploy
+   ```````
+   ```bash
+   sudo ./ez laravel deploy {environment}
+   ```````
 
 ## :tada: :tada: :tada:
 * **now your website is running at `<your_ip_address>:<APP_PORT>`**
@@ -93,12 +96,7 @@ Nginx Proxymanager default login information:
 | `sudo ./ez laravel start`    | Starts Laravel container.                                                                                  |
 | `sudo ./ez laravel stop`     | Stops Laravel container.                                                                                   |
 | `sudo ./ez laravel restart`  | Restarts Laravel container.                                                                                |
-| `sudo ./ez laravel down`     | Removes Laravel container.                                                                                 |
-| `sudo ./ez all deploy`       | Deploys all containers.                                                                                    |
-| `sudo ./ez all start`        | Starts all containers.                                                                                     |
-| `sudo ./ez all stop`         | Stops all containers.                                                                                      |
-| `sudo ./ez all restart`      | Restarts all containers.                                                                                   |
-| `sudo ./ez all down`         | Removes all containers.                                                                                    |
+| `sudo ./ez laravel down`     | Removes Laravel container.                                                                                 | |
 
 <!-- PHP Extensions -->
 
