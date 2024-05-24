@@ -1,4 +1,0 @@
-#inspect_args
-
-ez_shared_stop_command
-ez_laravel_stop_command

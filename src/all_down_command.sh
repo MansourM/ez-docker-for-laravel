@@ -1,4 +1,0 @@
-#inspect_args
-
-ez_shared_down_command
-ez_laravel_down_command
