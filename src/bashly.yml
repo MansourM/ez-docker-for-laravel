@@ -80,41 +80,6 @@ commands:
     alias: n
     help: remove Laravel containers
 
-- name: all
-  alias: a
-  help: all containers Commands
-
-  commands:
-  - name: deploy
-    alias: d
-    help: build and start all containers
-    args:
-      - name: APP_ENV
-        help: Laravel app environment
-        allowed: [ test, staging, production ]
-        required: true
-
-  - name: start
-    alias : s
-    help: start all containers
-    args:
-      - name: APP_ENV
-        help: Laravel app environment
-        allowed: [ test, staging, production ]
-        required: true
-
-  - name: stop
-    alias: p
-    help: stop all containers
-
-  - name: restart
-    alias : r
-    help: restart all containers
-
-  - name: down
-    alias: n
-    help: remove all containers
-
 examples:
 - ez docker install
 - ez d i
