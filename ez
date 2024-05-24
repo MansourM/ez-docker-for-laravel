@@ -310,9 +310,6 @@ ez_shared_stop_usage() {
 
   fi
 
-  printf "Alias: p\n"
-  echo
-
   printf "%s\n" "Usage:"
   printf "  ez shared stop\n"
   printf "  ez shared stop --help | -h\n"
@@ -374,9 +371,6 @@ ez_shared_down_usage() {
 
   fi
 
-  printf "Alias: n\n"
-  echo
-
   printf "%s\n" "Usage:"
   printf "  ez shared down\n"
   printf "  ez shared down --help | -h\n"
@@ -420,6 +414,7 @@ ez_laravel_usage() {
   printf "  %s   stop Laravel containers\n" "stop   "
   printf "  %s   restart Laravel containers\n" "restart"
   printf "  %s   remove Laravel containers\n" "down   "
+  printf "  %s   remove Laravel containers\n" "new    "
   echo
 
   # :command.long_usage
@@ -528,9 +523,6 @@ ez_laravel_stop_usage() {
 
   fi
 
-  printf "Alias: p\n"
-  echo
-
   printf "%s\n" "Usage:"
   printf "  ez laravel stop\n"
   printf "  ez laravel stop --help | -h\n"
@@ -592,12 +584,41 @@ ez_laravel_down_usage() {
 
   fi
 
+  printf "%s\n" "Usage:"
+  printf "  ez laravel down\n"
+  printf "  ez laravel down --help | -h\n"
+  echo
+
+  # :command.long_usage
+  if [[ -n $long_usage ]]; then
+    printf "%s\n" "Options:"
+
+    # :command.usage_fixed_flags
+    printf "  %s\n" "--help, -h"
+    printf "    Show this help\n"
+    echo
+
+  fi
+}
+
+# :command.usage
+ez_laravel_new_usage() {
+  if [[ -n $long_usage ]]; then
+    printf "ez laravel new - remove Laravel containers\n"
+    echo
+
+  else
+    printf "ez laravel new - remove Laravel containers\n"
+    echo
+
+  fi
+
   printf "Alias: n\n"
   echo
 
   printf "%s\n" "Usage:"
-  printf "  ez laravel down\n"
-  printf "  ez laravel down --help | -h\n"
+  printf "  ez laravel new\n"
+  printf "  ez laravel new --help | -h\n"
   echo
 
   # :command.long_usage
@@ -685,6 +706,23 @@ inspect_args() {
 }
 
 # :command.user_lib
+# src/lib/ask_question.sh
+ask_question() {
+    local question=$1
+    local default=$2
+    local result
+
+    # Prompt the user with the question and default answer
+    read -p "$question [$default]: " result
+
+    # Use the default if the user presses Enter without typing anything
+    if [[ -z "$result" ]]; then
+        result=$default
+    fi
+
+    echo $result
+}
+
 # src/lib/create_new_database_and_user.sh
 create_new_database_and_user() {
 
@@ -1038,6 +1076,23 @@ ez_laravel_down_command() {
 
 }
 
+# :command.function
+ez_laravel_new_command() {
+  # src/laravel_new_command.sh
+  #inspect_args
+
+  DEFAULT_APP_NAME="my_app"
+  DEFAULT_APP_PORT="8080"
+
+  # Ask the user for the application name and port
+  APP_NAME=$(ask_question "Enter the application name" $DEFAULT_APP_NAME)
+  APP_PORT=$(ask_question "Enter the application port" $DEFAULT_APP_PORT)
+
+  echo $APP_NAME
+
+  echo $APP_PORT
+}
+
 # :command.parse_requirements
 parse_requirements() {
   # :command.fixed_flags_filter
@@ -1375,7 +1430,7 @@ ez_shared_parse_requirements() {
       shift $#
       ;;
 
-    stop | p)
+    stop)
       action="stop"
       shift
       ez_shared_stop_parse_requirements "$@"
@@ -1389,7 +1444,7 @@ ez_shared_parse_requirements() {
       shift $#
       ;;
 
-    down | n)
+    down)
       action="down"
       shift
       ez_shared_down_parse_requirements "$@"
@@ -1690,7 +1745,7 @@ ez_laravel_parse_requirements() {
       shift $#
       ;;
 
-    stop | p)
+    stop)
       action="stop"
       shift
       ez_laravel_stop_parse_requirements "$@"
@@ -1704,10 +1759,17 @@ ez_laravel_parse_requirements() {
       shift $#
       ;;
 
-    down | n)
+    down)
       action="down"
       shift
       ez_laravel_down_parse_requirements "$@"
+      shift $#
+      ;;
+
+    new | n)
+      action="new"
+      shift
+      ez_laravel_new_parse_requirements "$@"
       shift $#
       ;;
 
@@ -2003,6 +2065,50 @@ ez_laravel_down_parse_requirements() {
 
 }
 
+# :command.parse_requirements
+ez_laravel_new_parse_requirements() {
+  # :command.fixed_flags_filter
+  while [[ $# -gt 0 ]]; do
+    case "${1:-}" in
+      --help | -h)
+        long_usage=yes
+        ez_laravel_new_usage
+        exit
+        ;;
+
+      *)
+        break
+        ;;
+
+    esac
+  done
+
+  # :command.command_filter
+  action="laravel new"
+
+  # :command.parse_requirements_while
+  while [[ $# -gt 0 ]]; do
+    key="$1"
+    case "$key" in
+
+      -?*)
+        printf "invalid option: %s\n" "$key" >&2
+        exit 1
+        ;;
+
+      *)
+        # :command.parse_requirements_case
+        # :command.parse_requirements_case_simple
+        printf "invalid argument: %s\n" "$key" >&2
+        exit 1
+
+        ;;
+
+    esac
+  done
+
+}
+
 # :command.user_hooks
 before_hook() {
   # src/before.sh
@@ -2065,6 +2171,7 @@ run() {
     "laravel stop") ez_laravel_stop_command ;;
     "laravel restart") ez_laravel_restart_command ;;
     "laravel down") ez_laravel_down_command ;;
+    "laravel new") ez_laravel_new_command ;;
   esac
 }
 
