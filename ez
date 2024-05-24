@@ -706,7 +706,7 @@ create_new_database_and_user() {
   # Check if database exists (improve error handling)
   if ! docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "SELECT 1 FROM \`$NEW_DB_NAME\`;" > /dev/null 2>&1; then
     # Create database
-    if ! sudo docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "CREATE DATABASE IF NOT EXISTS \`$NEW_DB_NAME\`;"; then
+    if ! docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "CREATE DATABASE IF NOT EXISTS \`$NEW_DB_NAME\`;"; then
       log
       log_error "Failed to create database '$NEW_DB_NAME'"
       return 1
@@ -720,9 +720,9 @@ create_new_database_and_user() {
   # Check if user exists (improve error handling)
   if ! docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "SELECT user FROM mysql.user WHERE user='$NEW_USER_NAME';" --skip-column-names -B | grep -q "$NEW_USER_NAME"; then
     # Create user and grant privileges
-    if ! sudo docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "CREATE USER '$NEW_USER_NAME'@'%' IDENTIFIED BY '$NEW_USER_PASSWORD';" || \
-       ! sudo docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON \`$NEW_DB_NAME\`.* TO '$NEW_USER_NAME'@'%';" || \
-       ! sudo docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "FLUSH PRIVILEGES;"; then
+    if ! docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "CREATE USER '$NEW_USER_NAME'@'%' IDENTIFIED BY '$NEW_USER_PASSWORD';" || \
+       ! docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON \`$NEW_DB_NAME\`.* TO '$NEW_USER_NAME'@'%';" || \
+       ! docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "FLUSH PRIVILEGES;"; then
       log_error "Failed to create and grant privileges for user '$NEW_USER_NAME'"
       return 1
     fi
@@ -829,20 +829,20 @@ ez_docker_install_command() {
   # src/docker_install_command.sh
   #inspect_args
 
-  sudo apt-get update
-  sudo apt-get -y install ca-certificates curl gnupg
-  sudo install -m 0755 -d /etc/apt/keyrings
-  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-  sudo chmod a+r /etc/apt/keyrings/docker.gpg
+  apt-get update
+  apt-get -y install ca-certificates curl gnupg
+  install -m 0755 -d /etc/apt/keyrings
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+  chmod a+r /etc/apt/keyrings/docker.gpg
 
   # Add the repository to Apt sources:
   echo \
     "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
       "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" |
-    sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
-  sudo apt-get update
+    tee /etc/apt/sources.list.d/docker.list >/dev/null
+  apt-get update
 
-  sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+  apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
   # Validate the success of the installation
   if [ $? -ne 0 ]; then
@@ -857,7 +857,7 @@ ez_docker_uninstall_command() {
   # src/docker_uninstall_command.sh
   #inspect_args
 
-  sudo apt-get purge docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-ce-rootless-extras
+  apt-get purge docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-ce-rootless-extras
 
 }
 
@@ -866,8 +866,8 @@ ez_docker_remove_command() {
   # src/docker_remove_command.sh
   #inspect_args
 
-  sudo rm -rf /var/lib/docker
-  sudo rm -rf /var/lib/containerd
+  rm -rf /var/lib/docker
+  rm -rf /var/lib/containerd
 
 }
 
@@ -2007,6 +2007,11 @@ ez_laravel_down_parse_requirements() {
 before_hook() {
   # src/before.sh
   #inspect_args
+
+  if [[ $EUID -ne 0 ]]; then
+     log_error "This script must be run as root"
+     exit 1
+  fi
 
   #TODO improve here i have duplication in app_env arg and APP_ENV in .env files
   log_header "Reading .env files"
