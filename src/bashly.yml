@@ -34,7 +34,6 @@ commands:
     help: start shared containers
 
   - name: stop
-    alias: p
     help: stop shared containers
 
   - name: restart
@@ -42,7 +41,6 @@ commands:
     help: restart shared containers
 
   - name: down
-    alias: n
     help: remove shared containers
 
 - name: laravel
@@ -69,7 +67,6 @@ commands:
         required: true
 
   - name: stop
-    alias: p
     help: stop Laravel containers
 
   - name: restart
@@ -77,6 +74,9 @@ commands:
     help: restart Laravel containers
 
   - name: down
+    help: remove Laravel containers
+
+  - name: new
     alias: n
     help: remove Laravel containers
 
