@@ -9,8 +9,8 @@ services:
       - '443:443'
       - ${PORT_NGINX_PM}:81 #web console
     volumes:
-      - ./letsencrypt:/etc/letsencrypt
-      - ./nginx-pm-data:/data
+      - ./data/shared/letsencrypt:/etc/letsencrypt
+      - ./data/shared/nginx-pm:/data
       # add custom config in /data/nginx/custom
       # https://nginxproxymanager.com/advanced-config/#custom-nginx-configurations
 
@@ -23,7 +23,7 @@ services:
       - no-new-privileges:true
     volumes:
       - ./portainer-readonly/run/docker.sock:/var/run/docker.sock:ro
-      - ./portainer-data:/data
+      - ./data/shared/portainer:/data
 
 
   mysql8: #inner port :3306
@@ -34,8 +34,8 @@ services:
       - MYSQL_PASSWORD=${DB_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
     volumes:
-      - ./mysql8-data:/var/lib/mysql
-      - ./mysql-config/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./data/shared/data:/var/lib/mysql
+      - ./data/shared/config/my.cnf:/etc/mysql/conf.d/my.cnf
     restart: unless-stopped
 
 
@@ -60,4 +60,4 @@ services:
     working_dir: /var/www
     entrypoint: ./entrypoint.sh
     volumes:
-      - ./nfl-${APP_ENV}-storage:/var/www/storage/app
+      - ./${APP_NAME}_${APP_ENV}/storage:/var/www/storage/app
