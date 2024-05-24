@@ -1,4 +1,4 @@
 #inspect_args
 
-sudo rm -rf /var/lib/docker
-sudo rm -rf /var/lib/containerd
+rm -rf /var/lib/docker
+rm -rf /var/lib/containerd

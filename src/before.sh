@@ -6,6 +6,11 @@
 ## You can safely delete this file if you do not need it.
 #inspect_args
 
+if [[ $EUID -ne 0 ]]; then
+   log_error "This script must be run as root"
+   exit 1
+fi
+
 #TODO improve here i have duplication in app_env arg and APP_ENV in .env files
 log_header "Reading .env files"
 read_env "env/.env"
