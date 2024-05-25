@@ -2,7 +2,7 @@
 
 DELIMITER="exit"
 PROMPT=$(get_prompt_text "Please paste the content of your .env file, " "type $DELIMITER on a new line to finish")
-echo "$PROMPT"
+echo -e "$PROMPT"
 ENV_CONTENT=$(read_multi_line_input "$DELIMITER")
 
 APP_NAME=$(echo "$ENV_CONTENT" | grep -oP '^APP_NAME=\K.*')
