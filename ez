@@ -717,7 +717,7 @@ ask_question() {
     local NC='\033[0m' # No Color
 
     # Prompt the user with the question and default answer
-    echo -e -n "${GREEN}$question ${YELLOW}[$default]${NC}: "
+    read -p "$(echo -e "${GREEN}$question ${YELLOW}[$default]${NC}: ")" result
 
     # Use the default if the user presses Enter without typing anything
     if [[ -z "$result" ]]; then
