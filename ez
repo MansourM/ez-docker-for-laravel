@@ -709,6 +709,7 @@ inspect_args() {
 # src/lib/ask_question.sh
 #TODO add regex that should match result
 #TODO hide text if text is password?
+#TODO add required condition?
 ask_question() {
     local question=$1
     local default=$2
@@ -1107,7 +1108,10 @@ ez_laravel_new_command() {
   # src/laravel_new_command.sh
   #inspect_args
 
-  APP_NAME=$(ask_question "Enter the application name" "my_app")
+  ENV_CONTENT=$(ask_question "Please paste the content of your .env file " "required")
+  APP_NAME=$(echo "$ENV_CONTENT" | grep -oP '^APP_NAME=\K.*')
+  echo "$APP_NAME"
+  #APP_NAME=$(ask_question "Enter the application name" "my_app")
   GIT_URL=$(ask_question "Enter the application git url" "https://github.com/MansourM/ez-docker-for-laravel-example.git")
   SETUP_TEST_ENV=$(ask_question "Do you want to set up the test environment?" "yes")
 
