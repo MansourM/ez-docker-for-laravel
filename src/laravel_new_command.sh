@@ -1,6 +1,8 @@
 #inspect_args
 
-ENV_CONTENT=$(ask_question_multi_line_result "Please paste the content of your .env file")
+DELIMITER="exit"
+echo get_prompt_text "Please paste the content of your .env file, "type $DELIMITER on a new line to finish
+ENV_CONTENT=$(read_multi_line_input "$DELIMITER")
 
 APP_NAME=$(echo "$ENV_CONTENT" | grep -oP '^APP_NAME=\K.*')
 echo "$APP_NAME"
