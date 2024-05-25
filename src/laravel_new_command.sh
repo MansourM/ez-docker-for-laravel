@@ -1,14 +1,14 @@
 #inspect_args
 
 DEFAULT_APP_NAME="my_app"
-DEFAULT_APP_PORT="8080"
+DEFAULT_GIT_URL="https://github.com/MansourM/ez-docker-for-laravel-example.git"
 
 # Ask the user for the application name and port
 APP_NAME=$(ask_question "Enter the application name" $DEFAULT_APP_NAME)
-APP_PORT=$(ask_question "Enter the application port" $DEFAULT_APP_PORT)
+GIT_URL=$(ask_question "Enter the application git url" $DEFAULT_GIT_URL)
 
 echo "$APP_NAME"
-echo "$APP_PORT"
+echo "$GIT_URL"
 
 DATA_DIR="data/$APP_NAME"
 
