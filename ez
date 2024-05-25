@@ -778,7 +778,8 @@ create_new_database_and_user() {
 # src/lib/generate_password.sh
 generate_password() {
     local length=$1
-    tr -dc 'A-Za-z0-9!@#$%^&*()_+{}[]:;<>,.?/~`-=' </dev/urandom | head -c $length
+    local charset="A-Za-z0-9@#%&*"
+    tr -dc "$charset" </dev/urandom | head -c $length
 }
 
 # src/lib/load_env.sh
