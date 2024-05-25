@@ -8,6 +8,10 @@ ask_question_multi_line_result() {
 
     # Display the question to the user
     echo -e "${GREEN}$question (type '$delimiter' on a new line to finish)${NC}"
+
+    # Prompt the user to paste the content
+    echo "Paste your content here. Press Enter after the last line, then type '$delimiter' and press Enter again to finish."
+
     result=""
     while IFS= read -r line; do
         [[ $line == "$delimiter" ]] && break
