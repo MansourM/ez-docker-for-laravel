@@ -1,14 +1,29 @@
 #inspect_args
 
-DEFAULT_APP_NAME="my_app"
-DEFAULT_GIT_URL="https://github.com/MansourM/ez-docker-for-laravel-example.git"
-
-# Ask the user for the application name and port
-APP_NAME=$(ask_question "Enter the application name" $DEFAULT_APP_NAME)
-GIT_URL=$(ask_question "Enter the application git url" $DEFAULT_GIT_URL)
+APP_NAME=$(ask_question "Enter the application name" "my_app")
+GIT_URL=$(ask_question "Enter the application git url" "https://github.com/MansourM/ez-docker-for-laravel-example.git")
+SETUP_TEST_ENV=$(ask_yes_no "Do you want to set up the test environment?" "yes")
 
 echo "$APP_NAME"
 echo "$GIT_URL"
+echo "$SETUP_TEST_ENV"
+
+if [[ "$SETUP_TEST_ENV" == "yes" ]]; then
+
+    TEST_BRANCH_NAME=$(ask_question "Enter the test branch name" "test")
+
+    TEST_DB_NAME=$(ask_question "Enter the test database name" "${APP_NAME}_test")
+    TEST_DB_USERNAME=$(ask_question "Enter the test database username" "${APP_NAME}_test_user")
+    GENERATED_PASSWORD=$(generate_random_password 16)
+    TEST_DB_PASSWORD=$(ask_question "Enter the $TEST_DB_USERNAME 's password'" "$GENERATED_PASSWORD")
+
+    echo "$TEST_BRANCH_NAME"
+    echo "$TEST_DB_NAME"
+    echo "$TEST_DB_USERNAME"
+    echo "$TEST_DB_PASSWORD"
+fi
+
+
 
 DATA_DIR="data/$APP_NAME"
 

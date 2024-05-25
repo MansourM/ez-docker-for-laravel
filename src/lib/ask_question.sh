@@ -1,3 +1,4 @@
+#TODO add regex that should match result
 ask_question() {
     local question=$1
     local default=$2
