@@ -14,7 +14,7 @@ if [[ "$SETUP_TEST_ENV" == "yes" ]]; then
 
     TEST_DB_NAME=$(ask_question "Enter the test database name" "${APP_NAME}_test")
     TEST_DB_USERNAME=$(ask_question "Enter the test database username" "${APP_NAME}_test_user")
-    GENERATED_PASSWORD=$(generate_random_password 16)
+    GENERATED_PASSWORD=$(generate_password 16)
     TEST_DB_PASSWORD=$(ask_question "Enter the $TEST_DB_USERNAME 's password'" "$GENERATED_PASSWORD")
 
     echo "$TEST_BRANCH_NAME"
