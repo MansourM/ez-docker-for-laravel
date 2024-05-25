@@ -770,6 +770,26 @@ create_new_database_and_user() {
   fi
 }
 
+# src/lib/load_env.sh
+load_env() {
+  local filePath="${1:-.env}"
+
+  if [ ! -f "$filePath" ]; then
+    echo "missing ${filePath}"
+    exit 1
+  fi
+
+  log "Reading $filePath"
+  while read -r LINE; do
+    # Remove leading and trailing whitespaces, and carriage return
+    CLEANED_LINE=$(echo "$LINE" | awk '{$1=$1};1' | tr -d '\r')
+
+    if [[ $CLEANED_LINE != '#'* ]] && [[ $CLEANED_LINE == *'='* ]]; then
+      export "$CLEANED_LINE"
+    fi
+  done < "$filePath"
+}
+
 # src/lib/log.sh
 log() {
   if [ "$#" -ne 1 ]; then
@@ -838,26 +858,6 @@ merge_env() {
   sort -u -t '=' -k 1,1 $file2 $file1 | grep -v '^$\|^\s*\#' > $output
 
   log_success "Merged $file2 into $file1 file creating $output."
-}
-
-# src/lib/read_env.sh
-read_env() {
-  local filePath="${1:-.env}"
-
-  if [ ! -f "$filePath" ]; then
-    echo "missing ${filePath}"
-    exit 1
-  fi
-
-  log "Reading $filePath"
-  while read -r LINE; do
-    # Remove leading and trailing whitespaces, and carriage return
-    CLEANED_LINE=$(echo "$LINE" | awk '{$1=$1};1' | tr -d '\r')
-
-    if [[ $CLEANED_LINE != '#'* ]] && [[ $CLEANED_LINE == *'='* ]]; then
-      export "$CLEANED_LINE"
-    fi
-  done < "$filePath"
 }
 
 # :command.command_functions
@@ -2121,11 +2121,11 @@ before_hook() {
 
   #TODO improve here i have duplication in app_env arg and APP_ENV in .env files
   log_header "Reading .env files"
-  read_env "env/.env"
-  read_env "env/shared.env"
+  load_env "env/.env"
+  load_env "env/shared.env"
 
   if [[ -n "${args[APP_ENV]}" ]]; then
-    read_env "env/${args[APP_ENV]}.env"
+    load_env "env/${args[APP_ENV]}.env"
   fi
 
   if [[ "$APP_ENV" != "${args[APP_ENV]}" ]]; then

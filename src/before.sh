@@ -13,11 +13,11 @@ fi
 
 #TODO improve here i have duplication in app_env arg and APP_ENV in .env files
 log_header "Reading .env files"
-read_env "env/.env"
-read_env "env/shared.env"
+load_env "env/.env"
+load_env "env/shared.env"
 
 if [[ -n "${args[APP_ENV]}" ]]; then
-  read_env "env/${args[APP_ENV]}.env"
+  load_env "env/${args[APP_ENV]}.env"
 fi
 
 if [[ "$APP_ENV" != "${args[APP_ENV]}" ]]; then
