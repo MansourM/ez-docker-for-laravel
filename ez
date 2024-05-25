@@ -730,6 +730,22 @@ ask_question() {
     echo $result
 }
 
+# src/lib/ask_question_multi_line_result.sh
+ask_question_multi_line_result() {
+    local question=$1
+    local result
+
+    # Colors
+    local GREEN='\033[0;32m'
+    local NC='\033[0m' # No Color
+
+    # Prompt the user to enter the content of the .env file
+    echo -e "${GREEN}$question${NC}"
+    read -d '' -r result
+
+    echo "$result"
+}
+
 # src/lib/create_new_database_and_user.sh
 create_new_database_and_user() {
 
@@ -1108,7 +1124,7 @@ ez_laravel_new_command() {
   # src/laravel_new_command.sh
   #inspect_args
 
-  ENV_CONTENT=$(ask_question "Please paste the content of your .env file " "required")
+  ENV_CONTENT=$(ask_question_multi_line_result "Please paste the content of your .env file ")
   APP_NAME=$(echo "$ENV_CONTENT" | grep -oP '^APP_NAME=\K.*')
   echo "$APP_NAME"
   #APP_NAME=$(ask_question "Enter the application name" "my_app")

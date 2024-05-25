@@ -1,6 +1,6 @@
 #inspect_args
 
-ENV_CONTENT=$(ask_question "Please paste the content of your .env file " "required")
+ENV_CONTENT=$(ask_question_multi_line_result "Please paste the content of your .env file ")
 APP_NAME=$(echo "$ENV_CONTENT" | grep -oP '^APP_NAME=\K.*')
 echo "$APP_NAME"
 #APP_NAME=$(ask_question "Enter the application name" "my_app")
