@@ -8,7 +8,7 @@
 ## Subdirectories will also be scanned for *.sh, so you have no reason not
 ## to organize your code neatly.
 ##
-read_env() {
+load_env() {
   local filePath="${1:-.env}"
 
   if [ ! -f "$filePath" ]; then
