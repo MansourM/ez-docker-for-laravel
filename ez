@@ -730,29 +730,6 @@ ask_question() {
     echo $result
 }
 
-# src/lib/ask_question_multi_line_result.sh
-ask_question_multi_line_result() {
-    local question=$1
-    local delimiter="ez;"
-    local result
-
-    local GREEN='\033[0;32m'
-    local YELLOW='\033[0;33m'
-    local NC='\033[0m' # No Color
-
-    # Display the question to the user before starting the loop
-    echo -e "${GREEN}$question ${YELLOW}[type '$delimiter' on a new line to finish]${NC}"
-
-    result=""
-    while IFS= read -r line; do
-        [[ $line == "$delimiter" ]] && break
-        result+="$line"$'\n'
-    done
-
-    # Return the result
-    echo "$result"
-}
-
 # src/lib/create_new_database_and_user.sh
 create_new_database_and_user() {
 
@@ -805,6 +782,18 @@ generate_password() {
     local length=$1
     local charset="A-Za-z0-9@#%&*"
     tr -dc "$charset" </dev/urandom | head -c $length
+}
+
+# src/lib/get_prompt_text.sh
+get_prompt_text() {
+    local question=$1
+    local default=$2
+
+    local GREEN='\033[0;32m'
+    local YELLOW='\033[0;33m'
+    local NO_COLOR='\033[0m'
+
+    echo "${GREEN}$question ${YELLOW}[$default]${NO_COLOR}: "
 }
 
 # src/lib/load_env.sh
@@ -908,6 +897,20 @@ merge_env() {
   sort -u -t '=' -k 1,1 $file2 $file1 | grep -v '^$\|^\s*\#' > $output
 
   log_success "Merged $file2 into $file1 file creating $output."
+}
+
+# src/lib/read_multi_line_input.sh
+read_multi_line_input() {
+    local delimiter=$1
+    local result
+
+    result=""
+    while IFS= read -r line; do
+        [[ $line == "$delimiter" ]] && break
+        result+="$line"$'\n'
+    done
+
+    echo "$result"
 }
 
 # :command.command_functions
@@ -1131,7 +1134,9 @@ ez_laravel_new_command() {
   # src/laravel_new_command.sh
   #inspect_args
 
-  ENV_CONTENT=$(ask_question_multi_line_result "Please paste the content of your .env file")
+  DELIMITER="exit"
+  echo get_prompt_text "Please paste the content of your .env file, "type $DELIMITER on a new line to finish
+  ENV_CONTENT=$(read_multi_line_input "$DELIMITER")
 
   APP_NAME=$(echo "$ENV_CONTENT" | grep -oP '^APP_NAME=\K.*')
   echo "$APP_NAME"
