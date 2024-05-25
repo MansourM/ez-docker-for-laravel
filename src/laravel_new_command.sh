@@ -1,6 +1,9 @@
 #inspect_args
 
-APP_NAME=$(ask_question "Enter the application name" "my_app")
+ENV_CONTENT=$(ask_question "Please paste the content of your .env file " "required")
+APP_NAME=$(echo "$ENV_CONTENT" | grep -oP '^APP_NAME=\K.*')
+echo "$APP_NAME"
+#APP_NAME=$(ask_question "Enter the application name" "my_app")
 GIT_URL=$(ask_question "Enter the application git url" "https://github.com/MansourM/ez-docker-for-laravel-example.git")
 SETUP_TEST_ENV=$(ask_question "Do you want to set up the test environment?" "yes")
 
