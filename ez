@@ -736,11 +736,9 @@ ask_question_multi_line_result() {
     local delimiter="ez;"
     local result
 
-    # Colors
     local GREEN='\033[0;32m'
     local NC='\033[0m' # No Color
 
-    # Prompt the user to enter the content
     echo -e "${GREEN}$question (type '$delimiter' on a new line to finish)${NC}"
     result=""
     while IFS= read -r line; do
@@ -1129,9 +1127,11 @@ ez_laravel_new_command() {
   # src/laravel_new_command.sh
   #inspect_args
 
-  ENV_CONTENT=$(ask_question_multi_line_result "Please paste the content of your .env file, followed by 'ez;' on a new line to finish:")
+  ENV_CONTENT=$(ask_question_multi_line_result "Please paste the content of your .env file")
   APP_NAME=$(echo "$ENV_CONTENT" | grep -oP '^APP_NAME=\K.*')
   echo "$APP_NAME"
+  echo "////"
+  echo "$ENV_CONTENT"
   #APP_NAME=$(ask_question "Enter the application name" "my_app")
   GIT_URL=$(ask_question "Enter the application git url" "https://github.com/MansourM/ez-docker-for-laravel-example.git")
   SETUP_TEST_ENV=$(ask_question "Do you want to set up the test environment?" "yes")
