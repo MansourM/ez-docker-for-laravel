@@ -2,7 +2,7 @@
 
 APP_NAME=$(ask_question "Enter the application name" "my_app")
 GIT_URL=$(ask_question "Enter the application git url" "https://github.com/MansourM/ez-docker-for-laravel-example.git")
-SETUP_TEST_ENV=$(ask_yes_no "Do you want to set up the test environment?" "yes")
+SETUP_TEST_ENV=$(ask_question "Do you want to set up the test environment?" "yes")
 
 echo "$APP_NAME"
 echo "$GIT_URL"
