@@ -6,6 +6,7 @@ ask_question_multi_line_result() {
     local GREEN='\033[0;32m'
     local NC='\033[0m' # No Color
 
+    # Display the question to the user
     echo -e "${GREEN}$question (type '$delimiter' on a new line to finish)${NC}"
     result=""
     while IFS= read -r line; do
@@ -13,5 +14,6 @@ ask_question_multi_line_result() {
         result+="$line"$'\n'
     done
 
+    # Return the result
     echo "$result"
 }
