@@ -15,8 +15,6 @@ if [[ -d "$DATA_DIR" ]]; then
     exit 1
 fi
 
-
-
 GIT_URL=$(ask_question "Enter the application git url" "https://github.com/MansourM/ez-docker-for-laravel-example.git")
 SETUP_TEST_ENV=$(ask_question "Do you want to set up the test environment?" "yes")
 
