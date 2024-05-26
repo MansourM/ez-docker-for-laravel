@@ -1,30 +1,30 @@
 #TODO duplication, read APP_ENV from cli args and ignore APP_ENV in .env?
-echo -e "\n==[ Preparing to deploy Laravel in $APP_ENV mode ]==\n"
+log_header "Preparing to deploy Laravel in $APP_ENV mode"
 
 #careful with laravel_folder_name, it must be the same as laravel dockerfile and docker compose file
 laravel_folder_name="laravel-$APP_ENV"
 #TODO maybe skip if nothing was changed?
 # Check if the folder exists
+#TODO add a force clone config somewhere so user can choose to always clone instead of updating the repo
+##as updating might potentially not work in some projects
 log_header "Preparing source code"
 if [ -d "$laravel_folder_name" ]; then
     log "Updating existing $laravel_folder_name folder"
 
     cd "$laravel_folder_name" || exit 1
+
     log "Removing previous build folders..."
     rm -rf "node_modules" "vendor" "public/build"
-    log "Discarding local changes"
-    git reset --hard
-    git pull origin "$GIT_BRANCH"
-
-    # Check if the git operation was successful
     if [ $? -ne 0 ]; then
-        log_error "Error: Git pull failed."
+        log_error "Error: Failed to remove build folders."
         exit 1
     fi
 
-    # Check if the directory removal was successful
+    log "Discarding local changes"
+    git reset --hard
+    git pull origin "$GIT_BRANCH"
     if [ $? -ne 0 ]; then
-        log_error "Error: Failed to remove build folders."
+        log_error "Error: Git pull failed."
         exit 1
     fi
 
