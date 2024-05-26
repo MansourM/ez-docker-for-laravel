@@ -11,7 +11,7 @@ APP_NAME=$(ask_question "Enter the application name" "$APP_NAME")
 DATA_DIR="data/$APP_NAME"
 
 if [[ -d "$DATA_DIR" ]]; then
-    log_error "Directory $DATA_DIR already exists app_name must be unique. Exiting."
+    log_error "Directory $DATA_DIR already exists app_name must be unique."
     exit 1
 fi
 

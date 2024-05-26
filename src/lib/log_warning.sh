@@ -8,7 +8,7 @@
 ## Subdirectories will also be scanned for *.sh, so you have no reason not
 ## to organize your code neatly.
 ##
-log_error() {
+log_warning() {
   if [ "$#" -ne 1 ]; then
       echo -e "\nInvalid Arguments, Usage: $0 <message>\n"
       return 1
