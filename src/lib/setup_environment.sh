@@ -19,7 +19,7 @@ setup_environment() {
 
     data_dir="data/$app_name"
     log "Creating $data_dir directory"
-    mkdir -p "$data_dir/env"
+    mkdir -p "$data_dir/env/generated"
 
     cat <<EOL > "$data_dir/env/$environment.env"
 GIT_BRANCH=$branch_name
