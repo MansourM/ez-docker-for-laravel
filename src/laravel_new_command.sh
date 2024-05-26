@@ -6,7 +6,7 @@ echo -e "$PROMPT"
 ENV_CONTENT=$(read_multi_line_input "$DELIMITER")
 
 APP_NAME=$(echo "$ENV_CONTENT" | grep -oP '^APP_NAME=\K.*')
-APP_NAME=$(ask_question "is this you app name? app names on this machine must be unique" "my_app")
+APP_NAME=$(ask_question "is this you app name? app names on this machine must be unique" "$APP_NAME")
 GIT_URL=$(ask_question "Enter the application git url" "https://github.com/MansourM/ez-docker-for-laravel-example.git")
 SETUP_TEST_ENV=$(ask_question "Do you want to set up the test environment?" "yes")
 
