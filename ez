@@ -866,7 +866,7 @@ log_success() {
 }
 
 # src/lib/log_warning.sh
-log_error() {
+log_warning() {
   if [ "$#" -ne 1 ]; then
       echo -e "\nInvalid Arguments, Usage: $0 <message>\n"
       return 1
@@ -1177,7 +1177,7 @@ ez_laravel_new_command() {
   DATA_DIR="data/$APP_NAME"
 
   if [[ -d "$DATA_DIR" ]]; then
-      log_error "Directory $DATA_DIR already exists app_name must be unique. Exiting."
+      log_error "Directory $DATA_DIR already exists app_name must be unique."
       exit 1
   fi
 
