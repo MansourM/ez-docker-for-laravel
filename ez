@@ -1196,10 +1196,20 @@ ez_laravel_new_command() {
   log "Creating $DATA_DIR directory"
   mkdir -p "$DATA_DIR/env/generated"
 
-  log "saving .env file into $DATA_DIR/env/.env"
-  echo "$ENV_CONTENT" > "$DATA_DIR/env/.env"
+  COPY_ENV_TO="$DATA_DIR/env/laravel.env"
 
-  GIT_URL=$(ask_question "Enter the application git url" "https://github.com/MansourM/ez-docker-for-laravel-example.git")
+  log "saving .env file into $COPY_ENV_TO"
+  echo "$ENV_CONTENT" > "$COPY_ENV_TO"
+
+  log_info "Git url examples:"
+  log_info "normal git url (you get prompted for authorization): https://github.com/MansourM/ez-docker-for-laravel.git"
+  log_info "or this format: "
+  GIT_URL=$(ask_question "Enter the application git url" "https://<user>:<pass>@github.com/MansourM/ez-docker-for-laravel-example.git")
+
+  cat <<EOL > "$DATA_DIR/env/project.env"
+GIT_URL=$GIT_URL
+EOL
+
   SETUP_TEST_ENV=$(ask_question "Do you want to set up the test environment?" "yes")
 
   echo "$APP_NAME"
