@@ -23,7 +23,7 @@ create_new_database_and_user() {
   log_header "Creating Database: $NEW_DB_NAME with User: $NEW_USER_NAME"
 
   MYSQL_USER="root"
-  # DB_ROOT_PASSWORD is read from shared.env
+  # DB_ROOT_PASSWORD is read from docker.env
 
   # Check if database exists (improve error handling)
   if ! docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "SELECT 1 FROM \`$NEW_DB_NAME\`;" > /dev/null 2>&1; then

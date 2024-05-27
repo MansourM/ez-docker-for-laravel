@@ -12,3 +12,4 @@ test/
 laravel-test/
 laravel-staging/
 laravel-production/
+config/docker.env

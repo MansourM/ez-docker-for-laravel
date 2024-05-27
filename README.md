@@ -44,7 +44,7 @@ git --version
    - you can create your empty .env files from example templates
         ```bash
         sudo cp env/.env.example env/.env
-        sudo cp env/shared.env.example env/shared.env
+        sudo cp env/docker.env.example env/docker.env
         sudo cp env/test.env.example env/test.env
         sudo cp env/staging.env.example env/staging.env
         sudo cp env/production.env.example env/production.env
