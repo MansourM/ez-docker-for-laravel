@@ -1202,8 +1202,8 @@ ez_laravel_new_command() {
   echo "$ENV_CONTENT" > "$COPY_ENV_TO"
 
   log_info "Git url examples:"
-  log_info "normal git url (you get prompted for authorization): https://github.com/MansourM/ez-docker-for-laravel.git"
-  log_info "or this format: "
+  log "normal git url (you get prompted for authorization): https://github.com/MansourM/ez-docker-for-laravel.git"
+  log "or this format: https://<user>:<pass>@github.com/MansourM/ez-docker-for-laravel.git"
   GIT_URL=$(ask_question "Enter the application git url" "https://<user>:<pass>@github.com/MansourM/ez-docker-for-laravel-example.git")
 
   cat <<EOL > "$DATA_DIR/env/project.env"
@@ -1212,23 +1212,19 @@ EOL
 
   SETUP_TEST_ENV=$(ask_question "Do you want to set up the test environment?" "yes")
 
-  echo "$APP_NAME"
-  echo "$GIT_URL"
-  echo "$SETUP_TEST_ENV"
-
-  if [[ "$SETUP_TEST_ENV" == "yes" ]]; then
+  if [[ "$SETUP_TEST_ENV" == "yes" || "$SETUP_TEST_ENV" == "y" ]]; then
     setup_environment "$APP_NAME" "test"
   fi
 
   SETUP_STAGING_ENV=$(ask_question "Do you want to set up the staging environment?" "yes")
 
-  if [[ "$SETUP_STAGING_ENV" == "yes" ]]; then
+  if [[ "$SETUP_STAGING_ENV" == "yes" || "$SETUP_TEST_ENV" == "y" ]]; then
     setup_environment "$APP_NAME" "staging"
   fi
 
   SETUP_STAGING_ENV=$(ask_question "Do you want to set up the production environment?" "yes")
 
-  if [[ "$SETUP_STAGING_ENV" == "yes" ]]; then
+  if [[ "$SETUP_STAGING_ENV" == "yes" || "$SETUP_TEST_ENV" == "y" ]]; then
     setup_environment "$APP_NAME" "production"
   fi
 }
