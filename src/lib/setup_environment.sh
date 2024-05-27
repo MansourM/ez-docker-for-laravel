@@ -2,7 +2,7 @@ setup_environment() {
     local app_name=$1
     local environment=$2
 
-    local branch_name db_database db_username generated_password db_password data_dir app_debug
+    local branch_name db_database db_username generated_password db_password app_debug
 
     if [ "$environment" == "test" ]; then
       app_debug=true
@@ -17,11 +17,7 @@ setup_environment() {
     generated_password=$(generate_password 16)
     db_password=$(ask_question "Enter the $db_username's password" "$generated_password")
 
-    data_dir="data/$app_name"
-    log "Creating $data_dir directory"
-    mkdir -p "$data_dir/env/generated"
-
-    cat <<EOL > "$data_dir/env/$environment.env"
+    cat <<EOL > "data/$app_name/env/$environment.env"
 GIT_BRANCH=$branch_name
 APP_ENV=$environment
 APP_DEBUG=$app_debug
