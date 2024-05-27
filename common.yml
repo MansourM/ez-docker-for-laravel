@@ -13,6 +13,12 @@ services:
       - ./data/shared/nginx-pm:/data
       # add custom config in /data/nginx/custom
       # https://nginxproxymanager.com/advanced-config/#custom-nginx-configurations
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:80 || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
 
 
   portainer: #inner port :9000
@@ -37,6 +43,12 @@ services:
       - ./data/shared/data:/var/lib/mysql
       - ./data/shared/config/my.cnf:/etc/mysql/conf.d/my.cnf
     restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
 
 
   phpmyadmin: #inner port :80
@@ -46,6 +58,12 @@ services:
       PMA_HOST: ${DB_HOST}
       PMA_PORT: ${DB_PORT}
       PMA_ARBITRARY: 0
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:80 || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
 
   nginx-fpm-laravel: #inner port :80
     build:
@@ -61,3 +79,9 @@ services:
     entrypoint: ./entrypoint.sh
     volumes:
       - ./${APP_NAME}_${APP_ENV}/storage:/var/www/storage/app
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:80 || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
