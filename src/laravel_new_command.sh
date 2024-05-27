@@ -15,6 +15,12 @@ if [[ -d "$DATA_DIR" ]]; then
     exit 1
 fi
 
+log "Creating $DATA_DIR directory"
+mkdir -p "$DATA_DIR/env/generated"
+
+log "saving .env file into $DATA_DIR/env/.env"
+echo "$ENV_CONTENT" > "$DATA_DIR/env/.env"
+
 GIT_URL=$(ask_question "Enter the application git url" "https://github.com/MansourM/ez-docker-for-laravel-example.git")
 SETUP_TEST_ENV=$(ask_question "Do you want to set up the test environment?" "yes")
 
