@@ -1204,9 +1204,9 @@ ez_laravel_new_command() {
   log_info "Git url examples:"
   log "normal git url (you get prompted for authorization): https://github.com/MansourM/ez-docker-for-laravel.git"
   log "or this format: https://<user>:<pass>@github.com/MansourM/ez-docker-for-laravel.git"
-  GIT_URL=$(ask_question "Enter the application git url" "https://<user>:<pass>@github.com/MansourM/ez-docker-for-laravel-example.git")
+  GIT_URL=$(ask_question "Enter the application git url" "https://github.com/MansourM/ez-docker-for-laravel-example.git")
 
-  cat <<EOL > "$DATA_DIR/env/project.env"
+  cat <<EOL > "$DATA_DIR/env/app.env"
 GIT_URL=$GIT_URL
 EOL
 
