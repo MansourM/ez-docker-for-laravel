@@ -14,7 +14,7 @@ fi
 #TODO improve here i have duplication in app_env arg and APP_ENV in .env files
 #log_header "Reading .env files"
 #load_env "env/.env"
-#load_env "env/shared.env"
+#load_env "env/docker.env"
 
 #if [[ -n "${args[APP_ENV]}" ]]; then
 #  load_env "env/${args[APP_ENV]}.env"
