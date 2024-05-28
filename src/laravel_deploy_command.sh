@@ -1,5 +1,19 @@
-#TODO duplication, read APP_ENV from cli args and ignore APP_ENV in .env?
+inspect_args
+
 log_header "Preparing to deploy Laravel in $APP_ENV mode"
+
+#TODO improve here i have duplication in app_env arg and APP_ENV in .env files
+#load_env "env/.env"
+#load_env "env/docker.env"
+
+#if [[ -n "${args[APP_ENV]}" ]]; then
+#  load_env "env/${args[APP_ENV]}.env"
+#fi
+
+#if [[ "$APP_ENV" != "${args[APP_ENV]}" ]]; then
+#    log_error "Error: APP_ENV in 'env/${args[APP_ENV]}.env' does not match 'ez' command argument ('$APP_ENV'!='${args[APP_ENV]}')."
+#    exit 1
+#fi
 
 #careful with laravel_folder_name, it must be the same as laravel dockerfile and docker compose file
 laravel_folder_name="laravel-$APP_ENV"
