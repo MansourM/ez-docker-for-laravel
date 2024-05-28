@@ -1053,7 +1053,7 @@ EOL
 
   log_header "Running Docker Compose for shared services"
 
-  docker compose -f compose-shared.yml --env-file "config/docker.env" up --build -d
+  docker compose -f docker/compose-shared.yml --env-file "config/docker.env" up --build -d
   if [ $? -ne 0 ]; then
     log_error "Failed to run Docker Compose"
     exit 1
@@ -1068,7 +1068,7 @@ ez_shared_start_command() {
 
   load_env "config/docker.env"
 
-  docker compose -f compose-shared.yml start
+  docker compose -f docker/compose-shared.yml start
 
 }
 
@@ -1079,7 +1079,7 @@ ez_shared_stop_command() {
 
   load_env "config/docker.env"
 
-  docker compose -f compose-shared.yml stop
+  docker compose -f docker/compose-shared.yml stop
 
 }
 
@@ -1090,7 +1090,7 @@ ez_shared_restart_command() {
 
   load_env "config/docker.env"
 
-  docker compose -f compose-shared.yml restart
+  docker compose -f docker/compose-shared.yml restart
 
 }
 
@@ -1101,7 +1101,7 @@ ez_shared_down_command() {
 
   load_env "config/docker.env"
 
-  docker compose -f compose-shared.yml  down
+  docker compose -f docker/compose-shared.yml  down
 
 }
 
