@@ -1,4 +1,5 @@
 #inspect_args
+
 if [[ -f "config/docker.env" ]]; then
   load_env "config/docker.env"
 else
@@ -12,10 +13,14 @@ else
   # Save the user input to config/docker.env for future use
   mkdir -p config
   cat <<EOL > config/docker.env
+SHARED_NETWORK_NAME=$SHARED_NETWORK_NAME
+
 PORT_NGINX_PM=$PORT_NGINX_PM
 PORT_PMA=$PORT_PMA
+
+DB_HOST=mysql8
+DB_PORT=3306
 DB_ROOT_PASSWORD=$DB_ROOT_PASSWORD
-SHARED_NETWORK_NAME=$SHARED_NETWORK_NAME
 EOL
 
   log_success "Saved docker environment variables to config/docker.env"
@@ -34,16 +39,9 @@ else
   fi
 fi
 
-#TODO read APP_ENV from cli args and ignore APP_ENV in .env?
-# Check if APP_ENV is set to dev, test, staging, or production
-if [[ "$APP_ENV" != "dev" && "$APP_ENV" != "test" && "$APP_ENV" != "staging" && "$APP_ENV" != "production" ]]; then
-    log_error "Error: Invalid value for APP_ENV. It must be either dev, test, staging, or production."
-    exit 1
-fi
-
 log_header "Running Docker Compose for shared services"
 
-docker compose -f compose-shared.yml --env-file "env/.env" --env-file "env/shared.env" up --build -d
+docker compose -f compose-shared.yml --env-file "config/docker.env" up --build -d
 if [ $? -ne 0 ]; then
   log_error "Failed to run Docker Compose"
   exit 1
