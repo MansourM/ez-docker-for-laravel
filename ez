@@ -1268,6 +1268,8 @@ EOL
   if [[ "$SETUP_STAGING_ENV" == "yes" || "$SETUP_TEST_ENV" == "y" ]]; then
     setup_environment "$APP_NAME" "production"
   fi
+
+  cp "docker/compose-laravel.yml" "data/$APP_NAME/compose-laravel.yml"
 }
 
 # :command.parse_requirements
