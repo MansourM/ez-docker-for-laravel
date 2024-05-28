@@ -17,7 +17,7 @@ services:
     extends:
       file: common-shared.yml
       service: phpmyadmin
-    ports:
+    #ports:
       #- ${PORT_PMA}:80 #web console better to not expose this directly, route through nginx
     depends_on:
       - mysql8
