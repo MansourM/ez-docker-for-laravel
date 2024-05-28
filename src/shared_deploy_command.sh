@@ -18,7 +18,7 @@ DB_ROOT_PASSWORD=$DB_ROOT_PASSWORD
 SHARED_NETWORK_NAME=$SHARED_NETWORK_NAME
 EOL
 
-  log_success "Saved environment variables to config/docker.env"
+  log_success "Saved docker environment variables to config/docker.env"
 fi
 
 # Check if the network already exists
