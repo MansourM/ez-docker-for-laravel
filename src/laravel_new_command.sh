@@ -49,3 +49,5 @@ SETUP_STAGING_ENV=$(ask_question "Do you want to set up the production environme
 if [[ "$SETUP_STAGING_ENV" == "yes" || "$SETUP_TEST_ENV" == "y" ]]; then
   setup_environment "$APP_NAME" "production"
 fi
+
+cp "docker/compose-laravel.yml" "data/$APP_NAME/compose-laravel.yml"
