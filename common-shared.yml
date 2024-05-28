@@ -61,24 +61,3 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
-
-  nginx-fpm-laravel: #inner port :80
-    build:
-      context: .
-      dockerfile: docker/laravel.Dockerfile
-      args:
-        - APP_ENV=${APP_ENV}
-    environment:
-      - APP_ENV=${APP_ENV}
-    restart: unless-stopped
-    user: www-data
-    working_dir: /var/www
-    entrypoint: ./entrypoint.sh
-    volumes:
-      - ./${APP_NAME}_${APP_ENV}/storage:/var/www/storage/app
-    healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:80 || exit 1" ]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 30s
