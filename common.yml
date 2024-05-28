@@ -35,9 +35,6 @@ services:
   mysql8: #inner port :3306
     image: mysql:8.0
     environment:
-      - MYSQL_DATABASE=${DB_DATABASE}
-      - MYSQL_USER=${DB_USERNAME}
-      - MYSQL_PASSWORD=${DB_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
     volumes:
       - ./data/shared/data:/var/lib/mysql
@@ -55,8 +52,8 @@ services:
     image: phpmyadmin
     restart: always
     environment:
-      PMA_HOST: ${DB_HOST}
-      PMA_PORT: ${DB_PORT}
+      PMA_HOST: "mysql8"
+      PMA_PORT: "3306"
       PMA_ARBITRARY: 0
     healthcheck:
       test: [ "CMD-SHELL", "curl -f http://localhost:80 || exit 1" ]
