@@ -2,4 +2,4 @@
 
 load_env "config/docker.env"
 
-docker compose -f compose-shared.yml restart
+docker compose -f docker/compose-shared.yml restart
