@@ -16,26 +16,21 @@ merge_envs() {
 
   local output="$1"
   shift
-  local temp_output=$(mktemp)
 
-  # Verify that all input files exist
+  local merged_content
+
   for file in "$@"; do
     if [ ! -e "$file" ]; then
       log_error "$file does not exist!"
       exit 1
     fi
+
+    merged_content+="$(cat "$file")"$'\n'
   done
 
-  # Start with the first file
-  sort -u -t '=' -k 1,1 "$1" | grep -v '^$\|^\s*\#' > "$temp_output"
-  shift
+  # Sort, filter, and remove duplicates from merged content
+  merged_content=$(sort -u -t '=' -k 1,1 "$file" <(printf "%s" "$merged_content") | grep -v '^$\|^\s*\#')
 
-  # Merge remaining files
-  for file in "$@"; do
-    sort -u -t '=' -k 1,1 "$file" "$temp_output" | grep -v '^$\|^\s*\#' > "$output"
-    cp "$output" "$temp_output"
-  done
-
-  mv "$temp_output" "$output"
+  echo "$merged_content" > "$output"
   log_success "Merged files into $output."
 }
