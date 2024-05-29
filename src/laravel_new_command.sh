@@ -48,7 +48,7 @@ if [[ "$SETUP_STAGING_ENV" == "yes" || "$SETUP_TEST_ENV" == "y" ]]; then
   setup_environment "$APP_NAME" "production"
 fi
 
-cp "template/nginx" "$APP_DIR/nginx"
+cp -r "template/nginx" "$APP_DIR/nginx"
 cp "template/entrypoint.sh" "$APP_DIR/entrypoint.sh"
 cp "template/opcache.ini" "$APP_DIR/opcache.ini"
 cp "template/php.ini" "$APP_DIR/php.ini"
