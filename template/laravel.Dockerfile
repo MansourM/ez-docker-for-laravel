@@ -3,7 +3,6 @@ FROM php:8.2-fpm AS builder
 
 ENV DEBIAN_FRONTEND noninteractive
 
-ARG APP_NAME
 ARG APP_ENV
 ARG WORKDIR=/var/www
 ARG NODE_VERSION=20
@@ -32,15 +31,15 @@ RUN apt-get install -y nodejs \
 
 WORKDIR ${WORKDIR}
 
-COPY ./${APP_NAME}-${APP_ENV}/package.json ${WORKDIR}
-COPY ./${APP_NAME}-${APP_ENV}/package-lock.json ${WORKDIR}
+COPY ./src-${APP_ENV}/package.json ${WORKDIR}
+COPY ./src-${APP_ENV}/package-lock.json ${WORKDIR}
 
 RUN npm install
 #TODO, Review if this line should exist here
 RUN npm audit fix
 
-COPY ./${APP_NAME}-${APP_ENV}/composer.json ${WORKDIR}
-COPY ./${APP_NAME}-${APP_ENV}/composer.lock ${WORKDIR}
+COPY ./src-${APP_ENV}/composer.json ${WORKDIR}
+COPY ./src}-${APP_ENV}/composer.lock ${WORKDIR}
 
 RUN if [ "${APP_ENV}" = "test" ]; then \
       composer install  --no-scripts --no-autoloader; \
@@ -48,7 +47,7 @@ RUN if [ "${APP_ENV}" = "test" ]; then \
       composer install  --no-scripts --no-autoloader --no-dev; \
     fi
 
-COPY ./${APP_NAME}-${APP_ENV} ${WORKDIR}
+COPY ./src-${APP_ENV} ${WORKDIR}
 
 RUN if [ "${APP_ENV}" = "test" ]; then \
       composer install --optimize-autoloader; \
