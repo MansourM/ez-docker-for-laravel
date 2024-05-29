@@ -1,18 +1,17 @@
 #inspect_args
 
-if [[ -f "config/docker.env" ]]; then
-  load_env "config/docker.env"
+if [[ -f "docker/docker.env" ]]; then
+  load_env "docker/docker.env"
 else
-  log "config/docker.env not found."
+  log "docker/docker.env not found."
   PORT_NGINX_PM=$(ask_question "Enter the Nginx Proxy Manager port" "8011")
   PORT_PMA=$(ask_question "Enter the PhpMyAdmin port" "8022")
   GENERATED_PASSWORD=$(generate_password 24)
   DB_ROOT_PASSWORD=$(ask_question "Enter the database root password" "$GENERATED_PASSWORD" )
   SHARED_NETWORK_NAME=$(ask_question "Enter the docker network name" "ez-shared-network")
 
-  # Save the user input to config/docker.env for future use
   mkdir -p config
-  cat <<EOL > config/docker.env
+  cat <<EOL > docker/docker.env
 SHARED_NETWORK_NAME=$SHARED_NETWORK_NAME
 
 PORT_NGINX_PM=$PORT_NGINX_PM
