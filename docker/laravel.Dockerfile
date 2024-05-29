@@ -31,15 +31,15 @@ RUN apt-get install -y nodejs \
 
 WORKDIR ${WORKDIR}
 
-COPY ./laravel-${APP_ENV}/package.json ${WORKDIR}
-COPY ./laravel-${APP_ENV}/package-lock.json ${WORKDIR}
+COPY ./data/${APP_NAME}/laravel-${APP_ENV}/package.json ${WORKDIR}
+COPY ./data/${APP_NAME}/laravel-${APP_ENV}/package-lock.json ${WORKDIR}
 
 RUN npm install
 #TODO, Review if this line should exist here
 RUN npm audit fix
 
-COPY ./laravel-${APP_ENV}/composer.json ${WORKDIR}
-COPY ./laravel-${APP_ENV}/composer.lock ${WORKDIR}
+COPY ./data/${APP_NAME}/laravel-${APP_ENV}/composer.json ${WORKDIR}
+COPY ./data/${APP_NAME}/laravel-${APP_ENV}/composer.lock ${WORKDIR}
 
 RUN if [ "${APP_ENV}" = "test" ]; then \
       composer install  --no-scripts --no-autoloader; \
@@ -47,7 +47,7 @@ RUN if [ "${APP_ENV}" = "test" ]; then \
       composer install  --no-scripts --no-autoloader --no-dev; \
     fi
 
-COPY ./laravel-${APP_ENV} ${WORKDIR}
+COPY ./data/${APP_NAME}/laravel-${APP_ENV} ${WORKDIR}
 
 RUN if [ "${APP_ENV}" = "test" ]; then \
       composer install --optimize-autoloader; \
@@ -61,7 +61,7 @@ RUN if [ "${APP_ENV}" = "test" ]; then \
       npm run production; \
     fi
 
-COPY ./env/merged/${APP_ENV}.env ${WORKDIR}/.env
+COPY ./data/${APP_NAME}/env/generated/${APP_ENV}.env ${WORKDIR}/.env
 COPY ./docker/entrypoint.sh ${WORKDIR}/entrypoint.sh
 RUN chmod +x ${WORKDIR}/entrypoint.sh
 
