@@ -992,7 +992,7 @@ merge_envs() {
   local output="$1"
   shift
 
-  local merged_content
+  local merged_content=""
 
   for file in "$@"; do
     if [ ! -e "$file" ]; then
@@ -1000,11 +1000,9 @@ merge_envs() {
       exit 1
     fi
 
-    merged_content+="$(cat "$file")"$'\n'
+    # Sort, filter, and remove duplicates from merged content
+    merged_content=$(sort -u -t '=' -k 1,1 "$file" <(printf "%s" "$merged_content") | grep -v '^$\|^\s*\#')
   done
-
-  # Sort, filter, and remove duplicates from merged content
-  merged_content=$(sort -u -t '=' -k 1,1 "$file" <(printf "%s" "$merged_content") | grep -v '^$\|^\s*\#')
 
   echo "$merged_content" > "$output"
   log_success "Merged files into $output."
