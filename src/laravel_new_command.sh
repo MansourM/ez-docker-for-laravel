@@ -8,7 +8,7 @@ ENV_CONTENT=$(read_multi_line_input "$DELIMITER")
 APP_NAME=$(echo "$ENV_CONTENT" | grep -oP '^APP_NAME=\K.*')
 APP_NAME=$(ask_question "Enter the application name" "$APP_NAME")
 
-APP_DIR="data/$APP_NAME"
+APP_DIR="apps/$APP_NAME"
 
 if [[ -d "$APP_DIR" ]]; then
     log_error "Directory $APP_DIR already exists app_name must be unique."
@@ -48,4 +48,4 @@ if [[ "$SETUP_STAGING_ENV" == "yes" || "$SETUP_TEST_ENV" == "y" ]]; then
   setup_environment "$APP_NAME" "production"
 fi
 
-cp "docker/compose-laravel.yml" "data/$APP_NAME/compose-laravel.yml"
+cp "docker/compose-laravel.yml" "$APP_DIR/compose-laravel.yml"

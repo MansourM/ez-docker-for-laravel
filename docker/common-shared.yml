@@ -29,7 +29,7 @@ services:
       - no-new-privileges:true
     volumes:
       - ./portainer-readonly/run/docker.sock:/var/run/docker.sock:ro
-      - ./data/shared/portainer:/data
+      - ../shared/portainer:/data
 
 
   mysql8: #inner port :3306
@@ -37,8 +37,8 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
     volumes:
-      - ./data/shared/mysql:/var/lib/mysql
-      - ./data/shared/mysql.cnf:/etc/mysql/conf.d/my.cnf
+      - ../shared/mysql:/var/lib/mysql
+      - ./mysql.cnf:/etc/mysql/conf.d/my.cnf
     restart: unless-stopped
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
