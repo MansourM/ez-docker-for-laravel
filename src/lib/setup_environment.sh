@@ -6,6 +6,8 @@ setup_environment() {
 
     if [ "$environment" == "production" ]; then
       branch_name="main"
+    else
+      branch_name="$environment"
     fi
 
     branch_name=$(ask_question "Enter the test branch name" "$branch_name")
