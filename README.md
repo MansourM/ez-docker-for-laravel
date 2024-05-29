@@ -136,6 +136,7 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 
 ## :compass: TODOs
 
+- [ ] add flags like -d on laravel new to go with the default instead of prompting the user, etc
 - [ ] image/build cache seems to be effected when service/container name is changed -> research this
 - [ ] add docker to sudoers
 - [ ] improve/customize entrypoint.sh for each environment maybe even separate them?

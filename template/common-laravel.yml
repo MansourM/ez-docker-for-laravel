@@ -4,8 +4,6 @@ services:
     build:
       context: .
       dockerfile: laravel.Dockerfile
-      args:
-        - APP_NAME=${APP_NAME}
         - APP_ENV=${APP_ENV}
     restart: unless-stopped
     user: www-data
