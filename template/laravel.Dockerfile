@@ -31,15 +31,15 @@ RUN apt-get install -y nodejs \
 
 WORKDIR ${WORKDIR}
 
-COPY ./data/${APP_NAME}/laravel-${APP_ENV}/package.json ${WORKDIR}
-COPY ./data/${APP_NAME}/laravel-${APP_ENV}/package-lock.json ${WORKDIR}
+COPY ./${APP_NAME}-${APP_ENV}/package.json ${WORKDIR}
+COPY ./${APP_NAME}-${APP_ENV}/package-lock.json ${WORKDIR}
 
 RUN npm install
 #TODO, Review if this line should exist here
 RUN npm audit fix
 
-COPY ./data/${APP_NAME}/laravel-${APP_ENV}/composer.json ${WORKDIR}
-COPY ./data/${APP_NAME}/laravel-${APP_ENV}/composer.lock ${WORKDIR}
+COPY ./${APP_NAME}-${APP_ENV}/composer.json ${WORKDIR}
+COPY ./${APP_NAME}-${APP_ENV}/composer.lock ${WORKDIR}
 
 RUN if [ "${APP_ENV}" = "test" ]; then \
       composer install  --no-scripts --no-autoloader; \
@@ -47,7 +47,7 @@ RUN if [ "${APP_ENV}" = "test" ]; then \
       composer install  --no-scripts --no-autoloader --no-dev; \
     fi
 
-COPY ./data/${APP_NAME}/laravel-${APP_ENV} ${WORKDIR}
+COPY ./${APP_NAME}-${APP_ENV} ${WORKDIR}
 
 RUN if [ "${APP_ENV}" = "test" ]; then \
       composer install --optimize-autoloader; \
@@ -61,8 +61,8 @@ RUN if [ "${APP_ENV}" = "test" ]; then \
       npm run production; \
     fi
 
-COPY ./data/${APP_NAME}/env/generated/${APP_ENV}.env ${WORKDIR}/.env
-COPY ./docker/entrypoint.sh ${WORKDIR}/entrypoint.sh
+COPY ./env/generated/${APP_ENV}.env ${WORKDIR}/.env
+COPY ./entrypoint.sh ${WORKDIR}/entrypoint.sh
 RUN chmod +x ${WORKDIR}/entrypoint.sh
 
 
@@ -117,12 +117,12 @@ RUN rm -rf /etc/nginx/conf.d/default.conf \
     && rm -rf /etc/nginx/sites-available/default \
     && rm -rf /etc/nginx/nginx.conf
 
-COPY ./config/php.ini /usr/local/etc/php/conf.d/php.ini
-COPY ./config/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
-COPY ./config/supervisord.conf /etc/supervisor/supervisord.conf
+COPY ./php.ini /usr/local/etc/php/conf.d/php.ini
+COPY ./opcache.ini /usr/local/etc/php/conf.d/opcache.ini
+COPY ./supervisord.conf /etc/supervisor/supervisord.conf
 
-COPY ./config/nginx/nginx.conf /etc/nginx/nginx.conf
-COPY ./config/nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
+COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
 
 RUN usermod -u ${USER_ID} ${USER_NAME} \
     && groupmod -g ${USER_ID} ${GROUP_NAME}
