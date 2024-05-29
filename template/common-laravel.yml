@@ -6,6 +6,8 @@ services:
       dockerfile: laravel.Dockerfile
       args:
         - APP_ENV=${APP_ENV}
+    environment:
+      - APP_ENV=${APP_ENV}
     restart: unless-stopped
     user: www-data
     working_dir: /var/www
