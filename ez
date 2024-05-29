@@ -789,7 +789,7 @@ check_containers() {
 
     for container in "${containers[@]}"; do
         if is_container_running "$container"; then
-            log_success "Container '$container' is running, you can run shared container by './ez shared deploy'"
+            log_success "Container '$container' is running.'"
             if is_container_healthy "$container"; then
                 log_success "Container '$container' is healthy."
             else
@@ -797,7 +797,7 @@ check_containers() {
                 exit 1
             fi
         else
-            log_error "Container '$container' is not running."
+            log_error "Container '$container' is not running, you can run shared container by './ez shared deploy"
             exit 1
         fi
     done
@@ -1215,7 +1215,6 @@ ez_laravel_deploy_command() {
       exit 1
   fi
 
-  #TODO check if env files exist?
   laravel_env_path="$app_dir/env/laravel.env"
   app_env_path="$app_dir/env/app.env"
   override_env_path="$app_dir/env/${args[APP_ENV]}.env"
@@ -1361,6 +1360,7 @@ EOL
     setup_environment "$APP_NAME" "production"
   fi
 
+  cp "template/common-laravel.yml" "$APP_DIR/common-laravel.yml"
   cp "template/compose-laravel.yml" "$APP_DIR/compose-laravel.yml"
 }
 
