@@ -3,7 +3,7 @@ services:
   nginx-fpm-laravel: #inner port :80
     build:
       context: .
-      dockerfile: docker/laravel.Dockerfile
+      dockerfile: laravel.Dockerfile
       args:
         - APP_ENV=${APP_ENV}
     environment:
@@ -13,7 +13,7 @@ services:
     working_dir: /var/www
     entrypoint: ./entrypoint.sh
     volumes:
-      - ./${APP_NAME}_${APP_ENV}/storage:/var/www/storage/app
+      - ./storage_${APP_ENV}/storage:/var/www/storage/app
     healthcheck:
       test: [ "CMD-SHELL", "curl -f http://localhost:80 || exit 1" ]
       interval: 30s

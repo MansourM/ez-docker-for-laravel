@@ -52,6 +52,10 @@ commands:
     alias: d
     help: build and start Laravel containers
     args:
+      - name: APP_NAME
+        help: Laravel app name
+        required: true
+
       - name: APP_ENV
         help: Laravel app environment
         allowed: [ test, staging, production ]
@@ -61,6 +65,10 @@ commands:
     alias : s
     help: start Laravel containers
     args:
+      - name: APP_NAME
+        help: Laravel app name
+        required: true
+
       - name: APP_ENV
         help: Laravel app environment
         allowed: [ test, staging, production ]
@@ -68,13 +76,40 @@ commands:
 
   - name: stop
     help: stop Laravel containers
+    args:
+      - name: APP_NAME
+        help: Laravel app name
+        required: true
+
+      - name: APP_ENV
+        help: Laravel app environment
+        allowed: [ test, staging, production ]
+        required: true
 
   - name: restart
     alias : r
     help: restart Laravel containers
+    args:
+      - name: APP_NAME
+        help: Laravel app name
+        required: true
+
+      - name: APP_ENV
+        help: Laravel app environment
+        allowed: [ test, staging, production ]
+        required: true
 
   - name: down
     help: remove Laravel containers
+    args:
+      - name: APP_NAME
+        help: Laravel app name
+        required: true
+
+      - name: APP_ENV
+        help: Laravel app environment
+        allowed: [ test, staging, production ]
+        required: true
 
   - name: new
     alias: n

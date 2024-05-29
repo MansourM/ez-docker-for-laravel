@@ -1,31 +1,27 @@
 inspect_args
 
-log_header "Preparing to deploy Laravel in $APP_ENV mode"
+log_header "Preparing to deploy Laravel in ${args[APP_ENV]} mode"
 
-#TODO improve here i have duplication in app_env arg and APP_ENV in .env files
-#load_env "env/.env"
-#load_env "env/docker.env"
+#TODO check if env files exist?
+app_dir="data/${args[APP_NAME]}"
 
-#if [[ -n "${args[APP_ENV]}" ]]; then
-#  load_env "env/${args[APP_ENV]}.env"
-#fi
+laravel_env_path="$app_dir/env/laravel.env"
+override_env_path="$app_dir/env/${args[APP_ENV]}.env"
+merged_env_path="$app_dir/env/merged/${args[APP_ENV]}.env"
 
-#if [[ "$APP_ENV" != "${args[APP_ENV]}" ]]; then
-#    log_error "Error: APP_ENV in 'env/${args[APP_ENV]}.env' does not match 'ez' command argument ('$APP_ENV'!='${args[APP_ENV]}')."
-#    exit 1
-#fi
+merge_env "$laravel_env_path" "$override_env_path" "$merged_env_path"
 
-#careful with laravel_folder_name, it must be the same as laravel dockerfile and docker compose file
-laravel_folder_name="laravel-$APP_ENV"
+load_env "config/docker.env"
+load_env "$merged_env_path"
+
+SOURCE_CODE_DIR="$app_dir/src-$APP_ENV"
 #TODO maybe skip if nothing was changed?
-# Check if the folder exists
-#TODO add a force clone config somewhere so user can choose to always clone instead of updating the repo
-##as updating might potentially not work in some projects
+#TODO add a force clone config somewhere so user can choose to always clone instead of updating the repo?
 log_header "Preparing source code"
-if [ -d "$laravel_folder_name" ]; then
-    log "Updating existing $laravel_folder_name folder"
+if [ -d "$SOURCE_CODE_DIR" ]; then
+    log "Updating existing $SOURCE_CODE_DIR folder"
 
-    cd "$laravel_folder_name" || exit 1
+    cd "$SOURCE_CODE_DIR" || exit 1
 
     log "Removing previous build folders..."
     rm -rf "node_modules" "vendor" "public/build"
@@ -44,8 +40,8 @@ if [ -d "$laravel_folder_name" ]; then
 
     cd - || exit 1
 else
-    log "Cloning new $laravel_folder_name folder"
-    git clone --depth 1 -b "$GIT_BRANCH" "$GIT_URL" "$laravel_folder_name"
+    log "Cloning new $SOURCE_CODE_DIR folder"
+    git clone --depth 1 -b "$GIT_BRANCH" "$GIT_URL" "$SOURCE_CODE_DIR"
 
     # Check if cloning was successful
     if [ $? -ne 0 ]; then
@@ -54,15 +50,8 @@ else
     fi
 fi
 
-#TODO check if env files exist?
-base_env="env/.env"
-override_env="env/$APP_ENV.env"
-merged_env="env/merged/$APP_ENV.env"
-merge_env $base_env $override_env $merged_env
-#TODO merge read_env and merge_env fn and process all env in before.sh?
-
-#FIXME on first run this will fail since db is not fully up and functional yet
-create_new_database_and_user $DB_DATABASE $DB_USERNAME $DB_PASSWORD
+#FIXME on first run this will fail since db is not fully up and functional yet, fix with healthcheck?
+create_new_database_and_user "$DB_DATABASE" "$DB_USERNAME" "$DB_PASSWORD"
 
 log_header "Running Docker Compose for Laravel $APP_ENV"
-docker compose -f compose-laravel.yml --profile "$APP_ENV" --env-file "$merged_env" up --build -d
+docker compose -f compose-laravel.yml --profile "$APP_ENV" --env-file "$merged_env_path" up --build -d

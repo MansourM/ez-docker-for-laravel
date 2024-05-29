@@ -3,7 +3,7 @@ services:
   nginx-fpm-laravel-test:
     container_name: ${APP_NAME}_test
     extends:
-      file: common-laravel.yml
+      file: ../../docker/common-laravel.yml
       service: nginx-fpm-laravel
     ports:
       - ${APP_PORT}:80
@@ -13,7 +13,7 @@ services:
   nginx-fpm-laravel-staging:
     container_name: ${APP_NAME}_staging
     extends:
-      file: common-laravel.yml
+      file: ../../docker/common-laravel.yml
       service: nginx-fpm-laravel
     profiles:
       - staging
@@ -21,7 +21,7 @@ services:
   nginx-fpm-laravel-production:
     container_name: ${APP_NAME}_production
     extends:
-      file: common-laravel.yml
+      file: ../../docker/common-laravel.yml
       service: nginx-fpm-laravel
     profiles:
       - production
