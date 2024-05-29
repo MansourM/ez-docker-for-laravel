@@ -40,7 +40,7 @@ fi
 
 log_header "Running Docker Compose for shared services"
 
-docker compose -f docker/compose-shared.yml --env-file "config/docker.env" up --build -d
+docker compose -f docker/compose-shared.yml --env-file "docker/docker.env" up --build -d
 if [ $? -ne 0 ]; then
   log_error "Failed to run Docker Compose"
   exit 1
