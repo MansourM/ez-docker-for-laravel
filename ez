@@ -1041,7 +1041,7 @@ setup_environment() {
 
     db_database=$(ask_question "Enter the test database name" "${app_name}_${environment}")
     db_username=$(ask_question "Enter the ${environment} database username" "${app_name}_${environment}_user")
-    generated_password=$(generate_password 16)
+    generated_password=$(generate_password 20)
     db_password=$(ask_question "Enter the $db_username's password" "$generated_password")
 
     cat <<EOL > "apps/$app_name/env/$environment.env"
