@@ -943,25 +943,37 @@ log_warning() {
   echo -e "${YELLOW}-- $1${NORMAL}"
 }
 
-# src/lib/merge_env.sh
-merge_env() {
-  local file1="$1"
-  local file2="$2"
-  local output="$3"
-
-  if [ ! -e "$file1" ]; then
-    log_error "$file1 does not exist!"
+# src/lib/merge_envs.sh
+merge_envs() {
+  if [ "$#" -lt 3 ]; then
+    log_error "Usage: merge_env <output> <file1> <file2> [file3 ... fileN]"
     exit 1
   fi
 
-  if [ ! -e "$file2" ]; then
-    log_error "$file2 does not exist!"
-    exit 1
-  fi
+  local output="$1"
+  shift
+  local temp_output=$(mktemp)
 
-  sort -u -t '=' -k 1,1 $file2 $file1 | grep -v '^$\|^\s*\#' > $output
+  # Verify that all input files exist
+  for file in "$@"; do
+    if [ ! -e "$file" ]; then
+      log_error "$file does not exist!"
+      exit 1
+    fi
+  done
 
-  log_success "Merged $file2 into $file1 file creating $output."
+  # Start with the first file
+  sort -u -t '=' -k 1,1 "$1" | grep -v '^$\|^\s*\#' > "$temp_output"
+  shift
+
+  # Merge remaining files
+  for file in "$@"; do
+    sort -u -t '=' -k 1,1 "$file" "$temp_output" | grep -v '^$\|^\s*\#' > "$output"
+    cp "$output" "$temp_output"
+  done
+
+  mv "$temp_output" "$output"
+  log_success "Merged files into $output."
 }
 
 # src/lib/read_multi_line_input.sh
@@ -1175,9 +1187,8 @@ ez_laravel_deploy_command() {
   override_env_path="$app_dir/env/${args[APP_ENV]}.env"
   merged_env_path="$app_dir/env/merged/${args[APP_ENV]}.env"
 
-  merge_env "$laravel_env_path" "$override_env_path" "$merged_env_path"
+  merge_envs "$merged_env_path" "$laravel_env_path" "config/docker.env" "$override_env_path"
 
-  load_env "config/docker.env"
   load_env "$merged_env_path"
 
   SOURCE_CODE_DIR="$app_dir/src-$APP_ENV"

@@ -14,9 +14,8 @@ laravel_env_path="$app_dir/env/laravel.env"
 override_env_path="$app_dir/env/${args[APP_ENV]}.env"
 merged_env_path="$app_dir/env/merged/${args[APP_ENV]}.env"
 
-merge_env "$laravel_env_path" "$override_env_path" "$merged_env_path"
+merge_envs "$merged_env_path" "$laravel_env_path" "config/docker.env" "$override_env_path"
 
-load_env "config/docker.env"
 load_env "$merged_env_path"
 
 SOURCE_CODE_DIR="$app_dir/src-$APP_ENV"
