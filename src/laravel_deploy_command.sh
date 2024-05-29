@@ -2,9 +2,14 @@ inspect_args
 
 log_header "Preparing to deploy Laravel in ${args[APP_ENV]} mode"
 
-#TODO check if env files exist?
-app_dir="data/${args[APP_NAME]}"
 
+app_dir="data/${args[APP_NAME]}"
+if [[ ! -d "$app_dir" ]]; then
+    log_error "Directory $app_dir does not exist! you need to setup your app first, try './ez laravel new'"
+    exit 1
+fi
+
+#TODO check if env files exist?
 laravel_env_path="$app_dir/env/laravel.env"
 override_env_path="$app_dir/env/${args[APP_ENV]}.env"
 merged_env_path="$app_dir/env/merged/${args[APP_ENV]}.env"
