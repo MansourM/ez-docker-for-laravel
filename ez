@@ -1031,7 +1031,11 @@ setup_environment() {
 
     local branch_name db_database db_username generated_password db_password app_debug
 
-    branch_name=$(ask_question "Enter the test branch name" "$environment")
+    if [ "$environment" == "production" ]; then
+      branch_name="main"
+    fi
+
+    branch_name=$(ask_question "Enter the test branch name" "$branch_name")
 
     db_database=$(ask_question "Enter the test database name" "${app_name}_${environment}")
     db_username=$(ask_question "Enter the ${environment} database username" "${app_name}_${environment}_user")
