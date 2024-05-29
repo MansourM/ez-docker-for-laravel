@@ -3,7 +3,7 @@ inspect_args
 log_header "Preparing to deploy Laravel in ${args[APP_ENV]} mode"
 
 
-app_dir="data/${args[APP_NAME]}"
+app_dir="apps/${args[APP_NAME]}"
 if [[ ! -d "$app_dir" ]]; then
     log_error "Directory $app_dir does not exist! you need to setup your app first, try './ez laravel new'"
     exit 1
@@ -15,7 +15,7 @@ app_env_path="$app_dir/env/app.env"
 override_env_path="$app_dir/env/${args[APP_ENV]}.env"
 merged_env_path="$app_dir/env/generated/${args[APP_ENV]}.env"
 
-merge_envs "$merged_env_path" "$laravel_env_path" "config/docker.env" "$app_env_path" "$override_env_path"
+merge_envs "$merged_env_path" "$laravel_env_path" "docker/docker.env" "$app_env_path" "$override_env_path"
 
 load_env "$merged_env_path"
 
