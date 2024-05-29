@@ -39,7 +39,7 @@ RUN npm install
 RUN npm audit fix
 
 COPY ./src-${APP_ENV}/composer.json ${WORKDIR}
-COPY ./src}-${APP_ENV}/composer.lock ${WORKDIR}
+COPY ./src-${APP_ENV}/composer.lock ${WORKDIR}
 
 RUN if [ "${APP_ENV}" = "test" ]; then \
       composer install  --no-scripts --no-autoloader; \
