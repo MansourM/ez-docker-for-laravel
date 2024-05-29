@@ -3,6 +3,7 @@ FROM php:8.2-fpm AS builder
 
 ENV DEBIAN_FRONTEND noninteractive
 
+ARG APP_NAME
 ARG APP_ENV
 ARG WORKDIR=/var/www
 ARG NODE_VERSION=20
