@@ -30,13 +30,13 @@ cat <<EOL > "$APP_DIR/env/app.env"
 GIT_URL=$GIT_URL
 EOL
 
-SETUP_TEST_ENV=$(ask_question "Do you want to set up the test environment?" "no")
+SETUP_TEST_ENV=$(ask_question "Do you want to set up the test environment?" "yes")
 
 if [[ "$SETUP_TEST_ENV" == "yes" || "$SETUP_TEST_ENV" == "y" ]]; then
   setup_environment "$APP_NAME" "test"
 fi
 
-SETUP_STAGING_ENV=$(ask_question "Do you want to set up the staging environment?" "no")
+SETUP_STAGING_ENV=$(ask_question "Do you want to set up the staging environment?" "yes")
 
 if [[ "$SETUP_STAGING_ENV" == "yes" || "$SETUP_TEST_ENV" == "y" ]]; then
   setup_environment "$APP_NAME" "staging"
