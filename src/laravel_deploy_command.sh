@@ -12,7 +12,7 @@ fi
 #TODO check if env files exist?
 laravel_env_path="$app_dir/env/laravel.env"
 override_env_path="$app_dir/env/${args[APP_ENV]}.env"
-merged_env_path="$app_dir/env/merged/${args[APP_ENV]}.env"
+merged_env_path="$app_dir/env/generated/${args[APP_ENV]}.env"
 
 merge_envs "$merged_env_path" "$laravel_env_path" "config/docker.env" "$override_env_path"
 
