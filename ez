@@ -1172,7 +1172,7 @@ ez_shared_start_command() {
   # src/shared_start_command.sh
   #inspect_args
 
-  load_env "config/docker.env"
+  load_env "docker/docker.env"
 
   docker compose -f docker/compose-shared.yml start
 
@@ -1183,7 +1183,7 @@ ez_shared_stop_command() {
   # src/shared_stop_command.sh
   #inspect_args
 
-  load_env "config/docker.env"
+  load_env "docker/docker.env"
 
   docker compose -f docker/compose-shared.yml stop
 
@@ -1194,7 +1194,7 @@ ez_shared_restart_command() {
   # src/shared_restart_command.sh
   #inspect_args
 
-  load_env "config/docker.env"
+  load_env "docker/docker.env"
 
   docker compose -f docker/compose-shared.yml restart
 
@@ -1205,7 +1205,7 @@ ez_shared_down_command() {
   # src/shared_down_command.sh
   #inspect_args
 
-  load_env "config/docker.env"
+  load_env "docker/docker.env"
 
   docker compose -f docker/compose-shared.yml  down
 
