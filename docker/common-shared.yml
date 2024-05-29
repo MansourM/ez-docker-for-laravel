@@ -38,7 +38,7 @@ services:
       - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
     volumes:
       - ../shared/mysql:/var/lib/mysql
-      - ./mysql.cnf:/etc/mysql/conf.d/my.cnf
+      #- ./mysql.cnf:/etc/mysql/conf.d/my.cnf
     restart: unless-stopped
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]

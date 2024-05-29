@@ -1,6 +1,7 @@
-#this was copied from https://gist.github.com/fevangelou/fb72f36bbe333e059b66
-#innodb_buffer_pool_size was commented so 128MB (default) is used
-#changing this value based on your server needs is important for db performance!
+# fixme this currently breaks the db need to review and adjust it for docker environment
+# this was copied from https://gist.github.com/fevangelou/fb72f36bbe333e059b66
+# innodb_buffer_pool_size was commented so 128MB (default) is used
+# changing this value based on your server needs is important for db performance!
 
 
 # === Optimized my.cnf configuration for MySQL/MariaDB (on Ubuntu, CentOS, Almalinux etc. servers) ===
