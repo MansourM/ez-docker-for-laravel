@@ -55,11 +55,7 @@ RUN if [ "${APP_ENV}" = "test" ]; then \
       composer install --optimize-autoloader --no-dev; \
     fi
 
-RUN if [ "${APP_ENV}" = "test" ]; then \
-      npm run build; \
-    else \
-      npm run production; \
-    fi
+RUN npm run build;
 
 COPY ./env/generated/${APP_ENV}.env ${WORKDIR}/.env
 COPY ./entrypoint.sh ${WORKDIR}/entrypoint.sh
