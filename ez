@@ -784,11 +784,12 @@ ask_question() {
 
 # src/lib/check_containers.sh
 check_containers() {
+  log_info "Checking shared containers health before building the laravel container."
     local containers=("$@")
 
     for container in "${containers[@]}"; do
         if is_container_running "$container"; then
-            log_success "Container '$container' is running."
+            log_success "Container '$container' is running, you can run shared container by './ez shared deploy'"
             if is_container_healthy "$container"; then
                 log_success "Container '$container' is healthy."
             else
@@ -1268,7 +1269,7 @@ ez_laravel_deploy_command() {
   create_new_database_and_user "$DB_DATABASE" "$DB_USERNAME" "$DB_PASSWORD"
 
   log_header "Running Docker Compose for Laravel $APP_ENV"
-  docker compose -f compose-laravel.yml --profile "$APP_ENV" --env-file "$merged_env_path" up --build -d
+  docker compose -f "$app_dir/compose-laravel.yml" --profile "$APP_ENV" --env-file "$merged_env_path" up --build -d
 
 }
 
