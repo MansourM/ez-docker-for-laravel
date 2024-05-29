@@ -49,4 +49,5 @@ if [[ "$SETUP_STAGING_ENV" == "yes" || "$SETUP_TEST_ENV" == "y" ]]; then
 fi
 
 cp "template/common-laravel.yml" "$APP_DIR/common-laravel.yml"
+cp "template/laravel.Dockerfile" "$APP_DIR/laravel.Dockerfile"
 cp "template/compose-laravel.yml" "$APP_DIR/compose-laravel.yml"

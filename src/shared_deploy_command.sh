@@ -4,8 +4,8 @@ if [[ -f "docker/docker.env" ]]; then
   load_env "docker/docker.env"
 else
   log "docker/docker.env not found."
-  PORT_NGINX_PM=$(ask_question "Enter the Nginx Proxy Manager port" "8011")
-  PORT_PMA=$(ask_question "Enter the PhpMyAdmin port" "8022")
+  PORT_NGINX_PM=$(ask_question "Enter the Nginx Proxy Manager port" "7000")
+  PORT_PMA=$(ask_question "Enter the PhpMyAdmin port" "7001")
   GENERATED_PASSWORD=$(generate_password 24)
   DB_ROOT_PASSWORD=$(ask_question "Enter the database root password" "$GENERATED_PASSWORD" )
   SHARED_NETWORK_NAME=$(ask_question "Enter the docker network name" "ez-shared-network")

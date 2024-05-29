@@ -1031,12 +1031,6 @@ setup_environment() {
 
     local branch_name db_database db_username generated_password db_password app_debug
 
-    if [ "$environment" == "test" ]; then
-      app_debug=true
-    else
-      app_debug=false
-    fi
-
     branch_name=$(ask_question "Enter the test branch name" "$environment")
 
     db_database=$(ask_question "Enter the test database name" "${app_name}_${environment}")
@@ -1044,11 +1038,22 @@ setup_environment() {
     generated_password=$(generate_password 20)
     db_password=$(ask_question "Enter the $db_username's password" "$generated_password")
 
+    if [ "$environment" == "test" ]; then
+      app_debug=true
+      # Determine the test app port based on the number of folders in the apps directory
+      local num_apps=$(ls -l apps | grep -c '^d')
+      local default_port=$((7999 + num_apps))
+      app_port=$(ask_question "Enter the test app port" "$default_port")
+    else
+      app_debug=false
+    fi
+
     cat <<EOL > "apps/$app_name/env/$environment.env"
 GIT_BRANCH=$branch_name
 APP_ENV=$environment
 APP_DEBUG=$app_debug
 APP_URL=$environment.my.url
+APP_PORT=$app_port
 DB_DATABASE=$db_database
 DB_USERNAME=$db_username
 DB_PASSWORD=$db_password
@@ -1114,8 +1119,8 @@ ez_shared_deploy_command() {
     load_env "docker/docker.env"
   else
     log "docker/docker.env not found."
-    PORT_NGINX_PM=$(ask_question "Enter the Nginx Proxy Manager port" "8011")
-    PORT_PMA=$(ask_question "Enter the PhpMyAdmin port" "8022")
+    PORT_NGINX_PM=$(ask_question "Enter the Nginx Proxy Manager port" "7000")
+    PORT_PMA=$(ask_question "Enter the PhpMyAdmin port" "7001")
     GENERATED_PASSWORD=$(generate_password 24)
     DB_ROOT_PASSWORD=$(ask_question "Enter the database root password" "$GENERATED_PASSWORD" )
     SHARED_NETWORK_NAME=$(ask_question "Enter the docker network name" "ez-shared-network")
@@ -1361,6 +1366,7 @@ EOL
   fi
 
   cp "template/common-laravel.yml" "$APP_DIR/common-laravel.yml"
+  cp "template/laravel.Dockerfile" "$APP_DIR/laravel.Dockerfile"
   cp "template/compose-laravel.yml" "$APP_DIR/compose-laravel.yml"
 }
 
