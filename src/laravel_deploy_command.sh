@@ -62,4 +62,4 @@ check_containers "${containers[@]}"
 create_new_database_and_user "$DB_DATABASE" "$DB_USERNAME" "$DB_PASSWORD"
 
 log_header "Running Docker Compose for Laravel $APP_ENV"
-docker compose -f compose-laravel.yml --profile "$APP_ENV" --env-file "$merged_env_path" up --build -d
+docker compose -f "$app_dir/compose-laravel.yml" --profile "$APP_ENV" --env-file "$merged_env_path" up --build -d
