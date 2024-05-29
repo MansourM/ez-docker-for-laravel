@@ -1,5 +1,0 @@
-# Ignore all files and directories
-/*
-
-# Except for the mysql.cnf file
-!shared/mysql.cnf

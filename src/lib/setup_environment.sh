@@ -17,7 +17,7 @@ setup_environment() {
     generated_password=$(generate_password 16)
     db_password=$(ask_question "Enter the $db_username's password" "$generated_password")
 
-    cat <<EOL > "data/$app_name/env/$environment.env"
+    cat <<EOL > "apps/$app_name/env/$environment.env"
 GIT_BRANCH=$branch_name
 APP_ENV=$environment
 APP_DEBUG=$app_debug
