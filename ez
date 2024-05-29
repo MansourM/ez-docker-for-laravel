@@ -1365,6 +1365,12 @@ EOL
     setup_environment "$APP_NAME" "production"
   fi
 
+  cp "template/nginx" "$APP_DIR/nginx"
+  cp "template/entrypoint.sh" "$APP_DIR/entrypoint.sh"
+  cp "template/opcache.ini" "$APP_DIR/opcache.ini"
+  cp "template/php.ini" "$APP_DIR/php.ini"
+  cp "template/supervisord.conf" "$APP_DIR/supervisord.conf"
+
   cp "template/common-laravel.yml" "$APP_DIR/common-laravel.yml"
   cp "template/laravel.Dockerfile" "$APP_DIR/laravel.Dockerfile"
   cp "template/compose-laravel.yml" "$APP_DIR/compose-laravel.yml"
