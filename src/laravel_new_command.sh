@@ -48,4 +48,5 @@ if [[ "$SETUP_STAGING_ENV" == "yes" || "$SETUP_TEST_ENV" == "y" ]]; then
   setup_environment "$APP_NAME" "production"
 fi
 
+cp "template/common-laravel.yml" "$APP_DIR/common-laravel.yml"
 cp "template/compose-laravel.yml" "$APP_DIR/compose-laravel.yml"

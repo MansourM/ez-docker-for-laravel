@@ -4,7 +4,7 @@ check_containers() {
 
     for container in "${containers[@]}"; do
         if is_container_running "$container"; then
-            log_success "Container '$container' is running, you can run shared container by './ez shared deploy'"
+            log_success "Container '$container' is running.'"
             if is_container_healthy "$container"; then
                 log_success "Container '$container' is healthy."
             else
@@ -12,7 +12,7 @@ check_containers() {
                 exit 1
             fi
         else
-            log_error "Container '$container' is not running."
+            log_error "Container '$container' is not running, you can run shared container by './ez shared deploy"
             exit 1
         fi
     done

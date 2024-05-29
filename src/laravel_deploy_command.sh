@@ -9,7 +9,6 @@ if [[ ! -d "$app_dir" ]]; then
     exit 1
 fi
 
-#TODO check if env files exist?
 laravel_env_path="$app_dir/env/laravel.env"
 app_env_path="$app_dir/env/app.env"
 override_env_path="$app_dir/env/${args[APP_ENV]}.env"
