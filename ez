@@ -782,6 +782,26 @@ ask_question() {
     echo $result
 }
 
+# src/lib/check_containers.sh
+check_containers() {
+    local containers=("$@")
+
+    for container in "${containers[@]}"; do
+        if is_container_running "$container"; then
+            log_success "Container '$container' is running."
+            if is_container_healthy "$container"; then
+                log_success "Container '$container' is healthy."
+            else
+                log_error "Container '$container' is not healthy."
+                exit 1
+            fi
+        else
+            log_error "Container '$container' is not running."
+            exit 1
+        fi
+    done
+}
+
 # src/lib/create_new_database_and_user.sh
 create_new_database_and_user() {
 
@@ -846,6 +866,24 @@ get_prompt_text() {
     local NO_COLOR='\033[0m'
 
     echo "${GREEN}$question ${YELLOW}[$default]${NO_COLOR}: "
+}
+
+# src/lib/is_container_healthy.sh
+is_container_healthy() {
+    local container_name=$1
+    local health_status=$(docker inspect --format='{{.State.Health.Status}}' "$container_name")
+    if [ "$health_status" == "healthy" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# src/lib/is_container_running.sh
+is_container_running() {
+    local container_name=$1
+    docker ps --filter "name=$container_name" --filter "status=running" --format '{{.Names}}' | grep -w "$container_name" > /dev/null
+    return $?
 }
 
 # src/lib/load_env.sh
@@ -1222,6 +1260,9 @@ ez_laravel_deploy_command() {
           exit 1
       fi
   fi
+
+  containers=("nginx-pm" "mysql8")
+  check_containers "${containers[@]}"
 
   #FIXME on first run this will fail since db is not fully up and functional yet, fix with healthcheck?
   create_new_database_and_user "$DB_DATABASE" "$DB_USERNAME" "$DB_PASSWORD"
