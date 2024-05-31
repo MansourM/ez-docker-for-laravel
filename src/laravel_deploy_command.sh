@@ -21,7 +21,7 @@ load_env "$merged_env_path"
 SOURCE_CODE_DIR="$app_dir/src-$APP_ENV"
 #TODO maybe skip if nothing was changed?
 #TODO add a force clone config somewhere so user can choose to always clone instead of updating the repo?
-log_header "Preparing source code"
+log_info "Preparing source code"
 if [ -d "$SOURCE_CODE_DIR" ]; then
     log "Updating existing $SOURCE_CODE_DIR folder"
 
