@@ -36,7 +36,8 @@ if [ -d "$SOURCE_CODE_DIR" ]; then
 
     log "Discarding local changes"
     git reset --hard
-    git pull origin "$GIT_BRANCH"
+    git remote set-url origin
+    git pull origin "$GIT_BRANCH" "$GIT_URL"
     if [ $? -ne 0 ]; then
         log_error "Error: Git pull failed."
         exit 1
