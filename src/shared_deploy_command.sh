@@ -1,9 +1,10 @@
 #inspect_args
 
-if [[ -f "docker/docker.env" ]]; then
-  load_env "docker/docker.env"
+DOCKER_ENV_PATH="docker/docker.env"
+if [[ -f "$DOCKER_ENV_PATH" ]]; then
+  load_env "$DOCKER_ENV_PATH"
 else
-  log "docker/docker.env not found."
+  log "$DOCKER_ENV_PATH not found."
   PORT_NGINX_PM=$(ask_question "Enter the Nginx Proxy Manager port" "7000")
   PORT_PMA=$(ask_question "Enter the PhpMyAdmin port" "7001")
   GENERATED_PASSWORD=$(generate_password 24)
@@ -11,7 +12,7 @@ else
   SHARED_NETWORK_NAME=$(ask_question "Enter the docker network name" "ez-shared-network")
 
   mkdir -p config
-  cat <<EOL > docker/docker.env
+  cat <<EOL > "$DOCKER_ENV_PATH"
 SHARED_NETWORK_NAME=$SHARED_NETWORK_NAME
 
 PORT_NGINX_PM=$PORT_NGINX_PM
@@ -22,7 +23,7 @@ DB_PORT=3306
 DB_ROOT_PASSWORD=$DB_ROOT_PASSWORD
 EOL
 
-  log_success "Saved docker environment variables to config/docker.env"
+  log_success "Saved docker environment variables to $DOCKER_ENV_PATH"
 fi
 
 # Check if the network already exists
