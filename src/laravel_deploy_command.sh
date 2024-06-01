@@ -19,7 +19,6 @@ merge_envs "$merged_env_path" "$laravel_env_path" "docker/docker.env" "$app_env_
 load_env "$merged_env_path"
 
 SOURCE_CODE_DIR="$app_dir/src-$APP_ENV"
-#TODO maybe skip if nothing was changed?
 #TODO add a force clone config somewhere so user can choose to always clone instead of updating the repo?
 log_info "Preparing source code"
 if [ -d "$SOURCE_CODE_DIR" ]; then
@@ -56,7 +55,7 @@ else
 fi
 
 containers=("nginx-pm" "mysql8")
-check_containers "${containers[@]}"
+check_containers2 "${containers[@]}"
 
 #FIXME on first run this will fail since db is not fully up and functional yet, fix with healthcheck?
 create_new_database_and_user "$DB_DATABASE" "$DB_USERNAME" "$DB_PASSWORD"
