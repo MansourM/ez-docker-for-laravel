@@ -13,7 +13,7 @@ services:
     working_dir: /var/www
     entrypoint: ./entrypoint.sh
     volumes:
-      - ./storage_${APP_ENV}:/var/www/storage/app
+      - ./storage-${APP_ENV}:/var/www/storage/app
     healthcheck:
       test: [ "CMD-SHELL", "curl -f http://localhost:80 || exit 1" ]
       interval: 30s
