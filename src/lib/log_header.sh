@@ -17,5 +17,5 @@ log_header() {
   BOLD_CYAN='\033[1;36m'
   NORMAL='\033[0m'
 
-  echo -e "${BOLD_CYAN}==[ $1 ]==\n${NORMAL}"
+  echo -e "\n${BOLD_CYAN}==[ $1 ]==\n${NORMAL}"
 }
