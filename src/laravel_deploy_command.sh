@@ -55,7 +55,7 @@ else
 fi
 
 containers=("nginx-pm" "mysql8")
-check_containers2 "${containers[@]}"
+check_containers "${containers[@]}"
 
 #FIXME on first run this will fail since db is not fully up and functional yet, fix with healthcheck?
 create_new_database_and_user "$DB_DATABASE" "$DB_USERNAME" "$DB_PASSWORD"

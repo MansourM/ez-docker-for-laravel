@@ -784,27 +784,6 @@ ask_question() {
 
 # src/lib/check_containers.sh
 check_containers() {
-  log_info "Checking shared containers health before building the laravel container."
-    local containers=("$@")
-
-    for container in "${containers[@]}"; do
-        if is_container_running "$container"; then
-            log_success "Container '$container' is running.'"
-            if is_container_healthy "$container"; then
-                log_success "Container '$container' is healthy."
-            else
-                log_error "Container '$container' is not healthy."
-                exit 1
-            fi
-        else
-            log_error "Container '$container' is not running, you can run shared container by './ez shared deploy"
-            exit 1
-        fi
-    done
-}
-
-# src/lib/check_containers2.sh
-check_containers2() {
     log_info "Checking shared containers health before building the Laravel container."
     local containers=("$@")
     local retries=3
@@ -976,7 +955,7 @@ log_header() {
   BOLD_CYAN='\033[1;36m'
   NORMAL='\033[0m'
 
-  echo -e "${BOLD_CYAN}==[ $1 ]==\n${NORMAL}"
+  echo -e "\n${BOLD_CYAN}==[ $1 ]==\n${NORMAL}"
 }
 
 # src/lib/log_info.sh
@@ -1307,7 +1286,7 @@ ez_laravel_deploy_command() {
   fi
 
   containers=("nginx-pm" "mysql8")
-  check_containers2 "${containers[@]}"
+  check_containers "${containers[@]}"
 
   #FIXME on first run this will fail since db is not fully up and functional yet, fix with healthcheck?
   create_new_database_and_user "$DB_DATABASE" "$DB_USERNAME" "$DB_PASSWORD"
