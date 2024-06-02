@@ -1,4 +1,0 @@
-#inspect_args
-
-ez_shared_deploy_command
-ez_laravel_deploy_command

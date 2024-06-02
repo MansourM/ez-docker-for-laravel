@@ -1,5 +1,31 @@
 #inspect_args
 
+DOCKER_ENV_PATH="docker/docker.env"
+if [[ -f "$DOCKER_ENV_PATH" ]]; then
+  load_env "$DOCKER_ENV_PATH"
+else
+  log "$DOCKER_ENV_PATH not found."
+  PORT_NGINX_PM=$(ask_question "Enter the Nginx Proxy Manager port" "7000")
+  PORT_PMA=$(ask_question "Enter the PhpMyAdmin port" "7001")
+  GENERATED_PASSWORD=$(generate_password 24)
+  DB_ROOT_PASSWORD=$(ask_question "Enter the database root password" "$GENERATED_PASSWORD" )
+  SHARED_NETWORK_NAME=$(ask_question "Enter the docker network name" "ez-shared-network")
+
+  mkdir -p config
+  cat <<EOL > "$DOCKER_ENV_PATH"
+SHARED_NETWORK_NAME=$SHARED_NETWORK_NAME
+
+PORT_NGINX_PM=$PORT_NGINX_PM
+PORT_PMA=$PORT_PMA
+
+DB_HOST=mysql8
+DB_PORT=3306
+DB_ROOT_PASSWORD=$DB_ROOT_PASSWORD
+EOL
+
+  log_success "Saved docker environment variables to $DOCKER_ENV_PATH"
+fi
+
 # Check if the network already exists
 if docker network inspect "$SHARED_NETWORK_NAME" >/dev/null 2>&1; then
   log "Network '$SHARED_NETWORK_NAME' already exists"
@@ -13,16 +39,9 @@ else
   fi
 fi
 
-#TODO read APP_ENV from cli args and ignore APP_ENV in .env?
-# Check if APP_ENV is set to dev, test, staging, or production
-if [[ "$APP_ENV" != "dev" && "$APP_ENV" != "test" && "$APP_ENV" != "staging" && "$APP_ENV" != "production" ]]; then
-    log_error "Error: Invalid value for APP_ENV. It must be either dev, test, staging, or production."
-    exit 1
-fi
-
 log_header "Running Docker Compose for shared services"
 
-docker compose -f compose-shared.yml --env-file "env/.env" --env-file "env/shared.env" up --build -d
+docker compose -f docker/compose-shared.yml --env-file "docker/docker.env" up --build -d
 if [ $? -ne 0 ]; then
   log_error "Failed to run Docker Compose"
   exit 1

@@ -1,4 +1,0 @@
-#inspect_args
-
-ez_shared_restart_command
-ez_laravel_restart_command

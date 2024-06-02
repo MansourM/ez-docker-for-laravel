@@ -1,3 +1,1 @@
-#inspect_args
-
-docker compose -f compose-laravel.yml --profile "$APP_ENV" restart
+docker compose -f "apps/${args[APP_NAME]}/compose-laravel.yml" --profile "${args[APP_ENV]}" restart

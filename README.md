@@ -12,15 +12,6 @@ EZ Docker For Laravel provides an easy-to-use, production-ready environment for 
 
 *Currently, the scripts are successfully working in test and staging environments, and I plan to deploy them in production soon.*
 
-<!-- Prerequisites -->
-## :bangbang: Prerequisites
-
-Ensure that you have Ubuntu and Git installed:
-
-```bash
-git --version
-```
-
 <!-- Getting Started -->
 
 ## :toolbox: Getting Started
@@ -36,32 +27,23 @@ git --version
    sudo ./ez docker install
    ```
 
-2. Create and fill in your configuration files located in the `env` folder:
-   - `.env` The main configuration file from your Laravel project.
-   - `shared.env` contains your shared configurations
-   - `test.env`, `staging.env` and `production.env` Configuration files for their respective environments.
-   - the `.env` files are loaded in the following order: `.env` --> `shared.env` --> `{environment}.env`, **Each subsequent file overrides duplicate keys from the previous file.**
-   - you can create your empty .env files from example templates
-        ```bash
-        sudo cp env/.env.example env/.env
-        sudo cp env/shared.env.example env/shared.env
-        sudo cp env/test.env.example env/test.env
-        sudo cp env/staging.env.example env/staging.env
-        sudo cp env/production.env.example env/production.env
-        ```
-     You can use this format to include your credentials directly in the URL, avoiding the need to enter them each time you clone the repository.
-      ```env
-      GIT_URL=https://username:password@github.com/MansourM/example.git
-      ```
-
-3. deploy your project
+2. Initialize your Laravel app
    ```bash
-   sudo ./ez all deploy {environment}
+   sudo ./ez laravel new
+   ```
+
+3. deploy your shared containers (Nginx, Mysql, PhpMyAdmin)
+   ```bash
+   sudo ./ez shared deploy
+   
+4. deploy your laravel project
+   ```bash
+   sudo ./ez laravel deploy {app_name} {environment}
    ```
 
 ## :tada: :tada: :tada:
 * **now your website is running at `<your_ip_address>:<APP_PORT>`**
-* website is only exposed via `APP_PORT` in `test` `{environment}` to access the `staging` or `production` website you need to configure them on you domain using npm proxy manager
+* website is only exposed via `APP_PORT` in `test` `{environment}` to access the `staging` or `production` website you need to configure them on your domain using npm proxy manager
 
 
 ## :gear: Github actions
@@ -78,27 +60,22 @@ Nginx Proxymanager default login information:
 
 ## :eyes: Other Commands
 
-| Command                      | Description                                                                                                |
-|------------------------------|------------------------------------------------------------------------------------------------------------|
-| `sudo ./ez --help`           | Shows all commands                                                                                         |
-| `sudo ./ez docker install`   | Adds the Docker repository to APT sources and then installs the Docker engine.                             |
-| `sudo ./ez docker uninstall` | Uninstalls the Docker engine.                                                                              |
-| `sudo ./ez docker remove`    | Removes all images, containers, and volumes. (You have to delete any edited configuration files manually.) |
-| `sudo ./ez shared deploy`    | Builds and runs shared service containers (Nginx, MySQL, phpMyAdmin, Portainer).                           |
-| `sudo ./ez shared start`     | Starts shared service containers.                                                                          |
-| `sudo ./ez shared stop`      | Stops shared service containers.                                                                           |
-| `sudo ./ez shared restart`   | Restarts shared service containers.                                                                        |
-| `sudo ./ez shared down`      | Removes shared service containers.                                                                         |
-| `sudo ./ez laravel deploy`   | Clones your Laravel repository, builds its assets, configures it for production, and then starts it.       |
-| `sudo ./ez laravel start`    | Starts Laravel container.                                                                                  |
-| `sudo ./ez laravel stop`     | Stops Laravel container.                                                                                   |
-| `sudo ./ez laravel restart`  | Restarts Laravel container.                                                                                |
-| `sudo ./ez laravel down`     | Removes Laravel container.                                                                                 |
-| `sudo ./ez all deploy`       | Deploys all containers.                                                                                    |
-| `sudo ./ez all start`        | Starts all containers.                                                                                     |
-| `sudo ./ez all stop`         | Stops all containers.                                                                                      |
-| `sudo ./ez all restart`      | Restarts all containers.                                                                                   |
-| `sudo ./ez all down`         | Removes all containers.                                                                                    |
+| Command                                         | Description                                                                                                |
+|-------------------------------------------------|------------------------------------------------------------------------------------------------------------|
+| `sudo ./ez --help`                              | Shows all commands                                                                                         |
+| `sudo ./ez docker install`                      | Adds the Docker repository to APT sources and then installs the Docker engine.                             |
+| `sudo ./ez docker uninstall`                    | Uninstalls the Docker engine.                                                                              |
+| `sudo ./ez docker remove`                       | Removes all images, containers, and volumes. (You have to delete any edited configuration files manually.) |
+| `sudo ./ez shared deploy`                       | Builds and runs shared service containers (Nginx, MySQL, phpMyAdmin, Portainer).                           |
+| `sudo ./ez shared start`                        | Starts shared service containers.                                                                          |
+| `sudo ./ez shared stop`                         | Stops shared service containers.                                                                           |
+| `sudo ./ez shared restart`                      | Restarts shared service containers.                                                                        |
+| `sudo ./ez shared down`                         | Removes shared service containers.                                                                         |
+| `sudo ./ez laravel deploy <app_name> <app_env>` | Clones your Laravel repository, builds its assets, configures it for production, and then starts it.       |
+| `sudo ./ez laravel start <app_name> <app_env>`  | Starts Laravel container.                                                                                  |
+| `sudo ./ez laravel stop <app_name> <app_env>`   | Stops Laravel container.                                                                                   |
+| `sudo ./ez laravel restart <app_name> <app_env>`| Restarts Laravel container.                                                                                |
+| `sudo ./ez laravel down <app_name> <app_env>`   | Removes Laravel container.                                                                                 | |
 
 <!-- PHP Extensions -->
 
@@ -138,15 +115,15 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 
 ## :compass: TODOs
 
+- [ ] test user:pass format
+- [ ] add flags like -d on laravel new to go with the default instead of prompting the user, etc
 - [ ] image/build cache seems to be effected when service/container name is changed -> research this
 - [ ] add docker to sudoers
 - [ ] improve/customize entrypoint.sh for each environment maybe even separate them?
-- [ ] add to readme -> adding foreign files in cloned dirs causes slow builds
 - [ ] add tags to --build then remove orphans
 - [ ] dynamically handle the ubuntu (host) USER NAME & ID in dockerfiles
 - [ ] better handling of unused/dangling/orphan images/containers
 - [ ] explain how to change scripts and generate new a `ez` script with Bashly 
-- [ ] explain about app_env (.env and arg version) and the need to have build/production commands in package.json
 - [ ] mark project as production ready when 1 month of testing in production is done.
 
 <!-- Maybe -->
