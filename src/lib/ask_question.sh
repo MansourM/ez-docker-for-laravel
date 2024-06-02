@@ -1,6 +1,3 @@
-#TODO add regex that should match result
-#TODO hide text if text is password?
-#TODO add required condition?
 ask_question() {
     local question=$1
     local default=$2

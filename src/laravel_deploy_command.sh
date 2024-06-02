@@ -1,7 +1,4 @@
-inspect_args
-
 log_header "Preparing to deploy Laravel in ${args[APP_ENV]} mode"
-
 
 app_dir="apps/${args[APP_NAME]}"
 if [[ ! -d "$app_dir" ]]; then
@@ -57,7 +54,6 @@ fi
 containers=("nginx-pm" "mysql8")
 check_containers "${containers[@]}"
 
-#FIXME on first run this will fail since db is not fully up and functional yet, fix with healthcheck?
 create_new_database_and_user "$DB_DATABASE" "$DB_USERNAME" "$DB_PASSWORD"
 
 log_header "Running Docker Compose for Laravel $APP_ENV"
