@@ -1,4 +1,0 @@
-#inspect_args
-
-ez_shared_start_command
-ez_laravel_start_command
