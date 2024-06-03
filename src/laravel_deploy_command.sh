@@ -14,6 +14,7 @@ merged_env_path="$app_dir/env/generated/${args[APP_ENV]}.env"
 
 merge_envs "$merged_env_path" "$laravel_env_path" "$docker_env_path" "$app_env_path" "$override_env_path"
 
+load_env "$docker_env_path"
 load_env "$app_env_path"
 load_env "$merged_env_path"
 
