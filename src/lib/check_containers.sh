@@ -1,5 +1,5 @@
 check_containers() {
-    log_info "Checking shared containers health before building the Laravel container."
+    log_header "Checking shared containers health before building the Laravel container."
     local containers=("$@")
     local retries=3
     local delay=10
