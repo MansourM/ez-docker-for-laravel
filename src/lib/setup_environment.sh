@@ -27,6 +27,7 @@ setup_environment() {
       app_debug=false
     fi
 
+#FIXME do something for APP_URL
     cat <<EOL > "apps/$app_name/env/$environment.env"
 GIT_BRANCH=$branch_name
 APP_ENV=$environment
