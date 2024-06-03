@@ -1,6 +1,5 @@
-#inspect_args
-
 DOCKER_ENV_PATH="docker/docker.env"
+
 if [[ -f "$DOCKER_ENV_PATH" ]]; then
   load_env "$DOCKER_ENV_PATH"
 else

@@ -19,6 +19,9 @@ merge_envs() {
     merged_content=$(sort -u -t '=' -k 1,1 "$file" <(printf "%s" "$merged_content") | grep -v '^$\|^\s*\#')
   done
 
+  #Mask some vars from being merged into others, TODO improve this part
+  merged_content=$(echo "$merged_content" | grep -Ev '^(SHARED_NETWORK_NAME|PORT_NGINX_PM|PORT_PMA|DB_ROOT_PASSWORD)=')
+
   echo "$merged_content" > "$output"
   log_success "Merged files into $output."
 }
