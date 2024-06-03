@@ -7,12 +7,14 @@ if [[ ! -d "$app_dir" ]]; then
 fi
 
 laravel_env_path="$app_dir/env/laravel.env"
+docker_env_path="docker/docker.env"
 app_env_path="$app_dir/env/app.env"
 override_env_path="$app_dir/env/${args[APP_ENV]}.env"
 merged_env_path="$app_dir/env/generated/${args[APP_ENV]}.env"
 
-merge_envs "$merged_env_path" "$laravel_env_path" "docker/docker.env" "$app_env_path" "$override_env_path"
+merge_envs "$merged_env_path" "$laravel_env_path" "$docker_env_path" "$app_env_path" "$override_env_path"
 
+load_env "$docker_env_path"
 load_env "$merged_env_path"
 
 SOURCE_CODE_DIR="$app_dir/src-$APP_ENV"
