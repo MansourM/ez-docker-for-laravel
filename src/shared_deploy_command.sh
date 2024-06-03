@@ -3,7 +3,9 @@ DOCKER_ENV_PATH="docker/docker.env"
 if [[ -f "$DOCKER_ENV_PATH" ]]; then
   load_env "$DOCKER_ENV_PATH"
 else
-  log "$DOCKER_ENV_PATH not found."
+  log_warning "$DOCKER_ENV_PATH not found."
+  log_info "Creating new '$DOCKER_ENV_PATH' file."
+
   PORT_NGINX_PM=$(ask_question "Enter the Nginx Proxy Manager port" "7000")
   PORT_PMA=$(ask_question "Enter the PhpMyAdmin port" "7001")
   GENERATED_PASSWORD=$(generate_password 24)
