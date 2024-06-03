@@ -20,7 +20,7 @@ merge_envs() {
   done
 
   #Mask some vars from being merged into others, TODO improve this part
-  merged_content=$(echo "$merged_content" | grep -Ev '^(SHARED_NETWORK_NAME|DB_ROOT_PASSWORD)=')
+  merged_content=$(echo "$merged_content" | grep -Ev '^(SHARED_NETWORK_NAME|DB_ROOT_PASSWORD|GIT_URL)=')
 
   echo "$merged_content" > "$output"
   log_success "Merged files into $output."

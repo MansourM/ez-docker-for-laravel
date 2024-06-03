@@ -14,10 +14,10 @@ merged_env_path="$app_dir/env/generated/${args[APP_ENV]}.env"
 
 merge_envs "$merged_env_path" "$laravel_env_path" "$docker_env_path" "$app_env_path" "$override_env_path"
 
-load_env "$docker_env_path"
+load_env "$app_env_path"
 load_env "$merged_env_path"
 
-SOURCE_CODE_DIR="$app_dir/src-$APP_ENV"
+SOURCE_CODE_DIR="$app_dir/src-${args[APP_ENV]}"
 #TODO add a force clone config somewhere so user can choose to always clone instead of updating the repo?
 log_info "Preparing source code"
 if [ -d "$SOURCE_CODE_DIR" ]; then
@@ -58,5 +58,5 @@ check_containers "${containers[@]}"
 
 create_new_database_and_user "$DB_DATABASE" "$DB_USERNAME" "$DB_PASSWORD"
 
-log_header "Running Docker Compose for Laravel $APP_ENV"
-docker compose -f "$app_dir/compose-laravel.yml" --profile "$APP_ENV" --env-file "$merged_env_path" up --build -d
+log_header "Running Docker Compose for Laravel ${args[APP_ENV]}"
+docker compose -f "$app_dir/compose-laravel.yml" --profile "${args[APP_ENV]}" --env-file "$merged_env_path" up --build -d
