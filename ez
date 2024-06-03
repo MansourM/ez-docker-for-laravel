@@ -1065,7 +1065,7 @@ merge_envs() {
   done
 
   #Mask some vars from being merged into others, TODO improve this part
-  merged_content=$(echo "$merged_content" | grep -Ev '^(SHARED_NETWORK_NAME|PORT_NGINX_PM|PORT_PMA|DB_ROOT_PASSWORD)=')
+  merged_content=$(echo "$merged_content" | grep -Ev '^(SHARED_NETWORK_NAME|DB_ROOT_PASSWORD)=')
 
   echo "$merged_content" > "$output"
   log_success "Merged files into $output."
@@ -1286,12 +1286,14 @@ ez_laravel_deploy_command() {
   fi
 
   laravel_env_path="$app_dir/env/laravel.env"
+  docker_env_path="docker/docker.env"
   app_env_path="$app_dir/env/app.env"
   override_env_path="$app_dir/env/${args[APP_ENV]}.env"
   merged_env_path="$app_dir/env/generated/${args[APP_ENV]}.env"
 
-  merge_envs "$merged_env_path" "$laravel_env_path" "docker/docker.env" "$app_env_path" "$override_env_path"
+  merge_envs "$merged_env_path" "$laravel_env_path" "$docker_env_path" "$app_env_path" "$override_env_path"
 
+  load_env "$docker_env_path"
   load_env "$merged_env_path"
 
   SOURCE_CODE_DIR="$app_dir/src-$APP_ENV"
