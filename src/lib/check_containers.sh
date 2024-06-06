@@ -1,7 +1,7 @@
 check_containers() {
     log_header "Checking shared containers health before building the Laravel container."
     local containers=("$@")
-    local retries=3
+    local retries=4
     local delay=10
 
     for container in "${containers[@]}"; do
@@ -12,10 +12,10 @@ check_containers() {
                     log_success "Container '$container' is healthy."
                     break
                 else
-                    log_warning "Container '$container' is not healthy. Attempt $((attempt-1))/$retries."
+                    log_warning "Container '$container' is not healthy. Attempt $((attempt))/$retries."
                 fi
             else
-                log_warning "Container '$container' is not running. Attempt $((attempt-1))/$retries. You can run shared container by './ez shared deploy'"
+                log_warning "Container '$container' is not running. Attempt $((attempt))/$retries. You can run shared container by './ez shared deploy'"
             fi
 
             if [ $attempt -gt $retries ]; then
