@@ -1083,36 +1083,36 @@ read_multi_line_input() {
 
 # src/lib/setup_environment.sh
 setup_environment() {
-    local app_name=$1
-    local environment=$2
+  local app_name=$1
+  local environment=$2
 
-    local branch_name db_database db_username generated_password db_password app_debug
+  local branch_name db_database db_username generated_password db_password app_debug
 
-    if [ "$environment" == "production" ]; then
-      branch_name="main"
-    else
-      branch_name="$environment"
-    fi
+  if [ "$environment" == "production" ]; then
+    branch_name="main"
+  else
+    branch_name="$environment"
+  fi
 
-    branch_name=$(ask_question "Enter the ${environment} branch name" "$branch_name")
+  branch_name=$(ask_question "Enter the ${environment} branch name" "$branch_name")
 
-    db_database=$(ask_question "Enter the ${environment} database name" "${app_name}_${environment}")
-    db_username=$(ask_question "Enter the ${environment} database username" "${app_name}_${environment}_user")
-    generated_password=$(generate_password 20)
-    db_password=$(ask_question "Enter the $db_username's password" "$generated_password")
+  db_database=$(ask_question "Enter the ${environment} database name" "${app_name}_${environment}")
+  db_username=$(ask_question "Enter the ${environment} database username" "${app_name}_${environment}_user")
+  generated_password=$(generate_password 20)
+  db_password=$(ask_question "Enter the $db_username's password" "$generated_password")
 
-    if [ "$environment" == "test" ]; then
-      app_debug=true
-      # Determine the test app port based on the number of folders in the apps directory
-      local num_apps=$(ls -l apps | grep -c '^d')
-      local default_port=$((7999 + num_apps))
-      app_port=$(ask_question "Enter the test app port" "$default_port")
-    else
-      app_debug=false
-    fi
+  if [ "$environment" == "test" ]; then
+    app_debug=true
+    # Determine the test app port based on the number of folders in the apps directory
+    local num_apps=$(ls -l apps | grep -c '^d')
+    local default_port=$((7999 + num_apps))
+    app_port=$(ask_question "Enter the test app port" "$default_port")
+  else
+    app_debug=false
+  fi
 
-#FIXME do something for APP_URL
-    cat <<EOL > "apps/$app_name/env/$environment.env"
+  #FIXME do something for APP_URL
+  cat <<EOL > "apps/$app_name/env/$environment.env"
 GIT_BRANCH=$branch_name
 APP_ENV=$environment
 APP_DEBUG=$app_debug
@@ -1191,7 +1191,18 @@ ez_shared_deploy_command() {
     DB_ROOT_PASSWORD=$(ask_question "Enter the database root password" "$GENERATED_PASSWORD" )
     SHARED_NETWORK_NAME=$(ask_question "Enter the docker network name" "ez-shared-network")
 
-    create_docker_env
+    cat <<EOL > "$DOCKER_ENV_PATH"
+    SHARED_NETWORK_NAME=$SHARED_NETWORK_NAME
+
+    PORT_NGINX_PM=$PORT_NGINX_PM
+    PORT_PMA=$PORT_PMA
+
+    DB_HOST=mysql8
+    DB_PORT=3306
+    DB_ROOT_PASSWORD=$DB_ROOT_PASSWORD
+  EOL
+
+    log_success "Saved docker environment variables to $DOCKER_ENV_PATH"
   fi
 
   # Check if the network already exists
@@ -1376,8 +1387,6 @@ ez_laravel_down_command() {
 # :command.function
 ez_laravel_new_command() {
   # src/laravel_new_command.sh
-  #inspect_args
-
   DELIMITER="exit"
   PROMPT=$(get_prompt_text "Please paste the content of your .env file, " "type '$DELIMITER' on a new line and press enter to finish")
   echo -e "$PROMPT"
@@ -1435,6 +1444,7 @@ ez_laravel_new_command() {
   cp "template/common-laravel.yml" "$APP_DIR/common-laravel.yml"
   cp "template/laravel.Dockerfile" "$APP_DIR/laravel.Dockerfile"
   cp "template/compose-laravel.yml" "$APP_DIR/compose-laravel.yml"
+
 }
 
 # :command.parse_requirements
