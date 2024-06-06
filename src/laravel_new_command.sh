@@ -1,5 +1,3 @@
-#inspect_args
-
 DELIMITER="exit"
 PROMPT=$(get_prompt_text "Please paste the content of your .env file, " "type '$DELIMITER' on a new line and press enter to finish")
 echo -e "$PROMPT"
