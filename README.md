@@ -115,7 +115,7 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 
 ## :compass: TODOs
 
-- [ ] APP_ENV in laravel.dockerfile is affecting build cache when building different env after each other
+- [ ] APP_ENV in laravel.dockerfile is affecting build cache when building different env after each other ----> or not!!!?
 - [ ] test user:pass format
 - [ ] add flags like -d on laravel new to go with the default instead of prompting the user, etc
 - [ ] image/build cache seems to be effected when service/container name is changed -> research this
