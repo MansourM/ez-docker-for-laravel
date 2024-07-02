@@ -31,6 +31,10 @@ RUN apt-get install -y nodejs \
 
 WORKDIR ${WORKDIR}
 
+#TODO use workdir relative pathing to shorten the path
+COPY ./entrypoint.sh ${WORKDIR}/entrypoint.sh
+RUN chmod +x ${WORKDIR}/entrypoint.sh
+
 COPY ./src-${APP_ENV}/package.json ${WORKDIR}
 COPY ./src-${APP_ENV}/package-lock.json ${WORKDIR}
 
@@ -48,6 +52,7 @@ RUN if [ "${APP_ENV}" = "test" ]; then \
     fi
 
 COPY ./src-${APP_ENV} ${WORKDIR}
+COPY ./env/generated/${APP_ENV}.env ${WORKDIR}/.env
 
 RUN if [ "${APP_ENV}" = "test" ]; then \
       composer install --optimize-autoloader; \
@@ -56,10 +61,6 @@ RUN if [ "${APP_ENV}" = "test" ]; then \
     fi
 
 RUN npm run build;
-
-COPY ./env/generated/${APP_ENV}.env ${WORKDIR}/.env
-COPY ./entrypoint.sh ${WORKDIR}/entrypoint.sh
-RUN chmod +x ${WORKDIR}/entrypoint.sh
 
 
 # === Stage 2: Final Image ===
@@ -123,9 +124,6 @@ COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
 RUN usermod -u ${USER_ID} ${USER_NAME} \
     && groupmod -g ${USER_ID} ${GROUP_NAME}
 
-# Copy files from the builder stage
-COPY --from=builder --chown=$USER_NAME:$GROUP_NAME /var/www /var/www
-
 RUN mkdir -p /var/log/supervisor \
     && mkdir -p /var/log/nginx \
     && mkdir -p /var/cache/nginx \
@@ -141,6 +139,9 @@ RUN chown -R ${USER_NAME}:${GROUP_NAME} /var/log/ && \
   chown -R $USER_NAME:$GROUP_NAME /var/run/nginx.pid && \
   chown -R $USER_NAME:$GROUP_NAME /var/log/supervisor && \
   chown -R $USER_NAME:$GROUP_NAME /etc/nginx/conf.d/
+
+# Copy files from the builder stage
+COPY --from=builder --chown=$USER_NAME:$GROUP_NAME /var/www /var/www
 
 WORKDIR ${WORKDIR}
 
