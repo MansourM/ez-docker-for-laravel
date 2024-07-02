@@ -1323,16 +1323,6 @@ ez_laravel_deploy_command() {
 
       cd "$SOURCE_CODE_DIR" || exit 1
 
-      log "Removing previous build folders..."
-      rm -rf "node_modules" "vendor" "public/build"
-      if [ $? -ne 0 ]; then
-          log_error "Error: Failed to remove build folders."
-          exit 1
-      fi
-
-      log "Discarding local changes"
-      git reset --hard
-      git remote set-url origin "$GIT_URL"
       git pull origin "$GIT_BRANCH"
       if [ $? -ne 0 ]; then
           log_error "Error: Git pull failed."
