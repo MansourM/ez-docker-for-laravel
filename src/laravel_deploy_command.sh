@@ -70,8 +70,10 @@ fi
 log_success "Server running on [${args[APP_NAME]}_${args[APP_ENV]}] container with 'inner' port 80."
 log_info "You can connect your website to a domain using Nginx Proxy Manager at [<your_ip>:$PORT_NGINX_PM]."
 
-if [[ "${args[APP_ENV]}" == "test" && -n "$APP_PORT" ]]; then
-  log_success "Server running on [http://<your_ip>:$APP_PORT]."
-else
+if [[ "${args[APP_ENV]}" == "test" ]]; then
+  if [[ -n "$APP_PORT" ]]; then
+    log_success "Server running on [http://<your_ip>:$APP_PORT]."
+  else
   log_warning "APP_PORT not set for test environment. Set it in 'apps/${args[APP_NAME]}/env/test.env'."
+  fi
 fi
