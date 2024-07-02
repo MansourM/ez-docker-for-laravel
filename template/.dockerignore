@@ -1,0 +1,8 @@
+.git
+.idea
+.github
+.editorconfig
+.env.example
+storage/app
+vendor
+node_modules
