@@ -68,7 +68,6 @@ FROM php:8.2-fpm
 
 ENV DEBIAN_FRONTEND noninteractive
 
-ARG APP_ENV
 ARG USER_ID=1000
 ENV USER_NAME=www-data
 
