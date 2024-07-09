@@ -1053,7 +1053,7 @@ log_warning() {
       return 1
   fi
 
-  local YELLOW='\033[0;33m'
+  YELLOW='\033[0;33m'
   NORMAL='\033[0m'
 
   echo -e "${YELLOW}-- $1${NORMAL}"
