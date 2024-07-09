@@ -904,8 +904,9 @@ create_new_database_and_user() {
       log
       log_error "Failed to create database '$NEW_DB_NAME'"
       exit 1
+    else
+      log_success "Created Database: $NEW_DB_NAME";
     fi
-    log_success "Created Database: $NEW_DB_NAME";
   else
     log "Database: $NEW_DB_NAME Already Exists";
   fi
