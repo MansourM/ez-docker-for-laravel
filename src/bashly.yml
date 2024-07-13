@@ -3,6 +3,18 @@ help: easy to setup, robust and production ready environment for Laravel using D
 version: 0.2.0
 
 commands:
+- name: test
+  alias: t
+  help: test cmd
+
+  commands:
+  - name: install
+    alias: i
+    help: add docker repository to apt sources, then install docker engine
+    completions:
+      - $(ls -d apps/*/ 2>/dev/null | xargs -n 1 basename)
+
+
 - name: docker
   alias: d
   help: Docker Commands
