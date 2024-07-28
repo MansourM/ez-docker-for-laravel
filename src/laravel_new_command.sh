@@ -59,5 +59,6 @@ cp "template/php.ini" "$APP_DIR/php.ini"
 cp "template/supervisord.conf" "$APP_DIR/supervisord.conf"
 
 cp "template/common-laravel.yml" "$APP_DIR/common-laravel.yml"
+cp "template/laravel-dev.Dockerfile" "$APP_DIR/laravel-dev.Dockerfile"
 cp "template/laravel.Dockerfile" "$APP_DIR/laravel.Dockerfile"
 cp "template/compose-laravel.yml" "$APP_DIR/compose-laravel.yml"
