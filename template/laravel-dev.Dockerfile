@@ -90,6 +90,6 @@ RUN chown -R ${USER_NAME}:${GROUP_NAME} /var/log/ && \
 
 COPY ./entrypoint-dev.sh /usr/local/bin/entrypoint-dev.sh
 
-RUN chmod +x /usr/local/bin/start-container
+RUN chmod +x /usr/local/bin/entrypoint-dev.sh
 
 ENTRYPOINT ["entrypoint-dev.sh"]
