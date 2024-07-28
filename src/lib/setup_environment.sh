@@ -21,6 +21,7 @@ setup_environment() {
     app_debug=true
     # Determine the dev/test app port based on the number of folders in the apps directory
     local num_apps=$(ls -l apps | grep -c '^d')
+    # fixme now that we have dev, dev and test need to both have ports (now both use same port)
     local default_port=$((7999 + num_apps))
     app_port=$(ask_question "Enter the ${environment} app port" "$default_port")
   else

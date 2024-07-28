@@ -19,6 +19,8 @@ services:
       service: nginx-fpm-laravel
     ports:
       - ${APP_PORT}:80
+    volumes:
+      - ./storage-${APP_ENV}:/var/www/storage/app
     profiles:
       - test
 
@@ -27,6 +29,8 @@ services:
     extends:
       file: common-laravel.yml
       service: nginx-fpm-laravel
+    volumes:
+      - ./storage-${APP_ENV}:/var/www/storage/app
     profiles:
       - staging
 
@@ -35,6 +39,8 @@ services:
     extends:
       file: common-laravel.yml
       service: nginx-fpm-laravel
+    volumes:
+      - ./storage-${APP_ENV}:/var/www/storage/app
     profiles:
       - production
 

@@ -1126,6 +1126,7 @@ setup_environment() {
     app_debug=true
     # Determine the dev/test app port based on the number of folders in the apps directory
     local num_apps=$(ls -l apps | grep -c '^d')
+    # fixme now that we have dev, dev and test need to both have ports (now both use same port)
     local default_port=$((7999 + num_apps))
     app_port=$(ask_question "Enter the ${environment} app port" "$default_port")
   else
@@ -1296,6 +1297,7 @@ ez_shared_down_command() {
 # :command.function
 ez_laravel_deploy_command() {
   # src/laravel_deploy_command.sh
+  inspect_args
   log_header "Preparing to deploy Laravel in ${args[APP_ENV]} mode"
 
   app_dir="apps/${args[APP_NAME]}"
