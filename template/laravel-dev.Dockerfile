@@ -89,23 +89,13 @@ RUN chown -R ${USER_NAME}:${GROUP_NAME} /var/log/ && \
 
 WORKDIR ${WORKDIR}
 
-#TODO use workdir relative pathing to shorten the path
-COPY ./entrypoint.sh ./entrypoint.sh
 RUN chmod +x ./entrypoint.sh
 
-COPY ./src-dev/package.json ./
-COPY ./src-dev/package-lock.json ./
 
 RUN npm install
 #TODO, Review if this line should exist here
 RUN npm audit fix
 
-COPY ./src-dev/composer.json ./
-COPY ./src-dev/composer.lock ./
-
-RUN composer install  --no-scripts --no-autoloader;
-
-COPY ./src-dev ./
 COPY ./env/generated/dev.env ./.env
 
 RUN composer install --optimize-autoloader;
