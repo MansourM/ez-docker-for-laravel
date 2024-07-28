@@ -89,9 +89,6 @@ RUN chown -R ${USER_NAME}:${GROUP_NAME} /var/log/ && \
 
 WORKDIR ${WORKDIR}
 
-RUN chmod +x ./entrypoint.sh
-
-
 RUN npm install
 #TODO, Review if this line should exist here
 RUN npm audit fix
@@ -108,3 +105,7 @@ RUN php artisan key:generate \
     && php artisan event:cache \
     && php artisan route:cache \
     && php artisan view:cache
+
+RUN php artisan migrate:fresh --seed
+
+CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]
