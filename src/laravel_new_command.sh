@@ -6,6 +6,11 @@ ENV_CONTENT=$(read_multi_line_input "$DELIMITER")
 APP_NAME=$(echo "$ENV_CONTENT" | grep -oP '^APP_NAME=\K.*')
 APP_NAME=$(ask_question "Enter the application name" "$APP_NAME")
 
+OWNER_USER_NAME=$(whoami)
+OWNER_USER_NAME=$(ask_question "What user on this host machine owns this app" "$OWNER_USER_NAME")
+OWNER_USER_ID=$(id -u "$OWNER_USER_NAME")
+
+
 APP_DIR="apps/$APP_NAME"
 
 if [[ -d "$APP_DIR" ]]; then
@@ -26,6 +31,8 @@ GIT_URL=$(ask_question "Enter the application git url" "https://github.com/Manso
 
 cat <<EOL > "$APP_DIR/env/app.env"
 GIT_URL=$GIT_URL
+OWNER_USER_NAME=$OWNER_USER_NAME
+OWNER_USER_ID=$OWNER_USER_ID
 EOL
 
 SETUP_DEV_ENV=$(ask_question "Do you want to set up the dev environment?" "yes")
