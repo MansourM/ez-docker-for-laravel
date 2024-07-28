@@ -87,25 +87,9 @@ RUN chown -R ${USER_NAME}:${GROUP_NAME} /var/log/ && \
   chown -R $USER_NAME:$GROUP_NAME /var/log/supervisor && \
   chown -R $USER_NAME:$GROUP_NAME /etc/nginx/conf.d/
 
-WORKDIR ${WORKDIR}
 
-RUN npm install
-#TODO, Review if this line should exist here
-RUN npm audit fix
+COPY ./entrypoint-dev.sh /usr/local/bin/entrypoint-dev.sh
 
-COPY ./env/generated/dev.env ./.env
+RUN chmod +x /usr/local/bin/start-container
 
-RUN composer install --optimize-autoloader;
-
-RUN npm run build;
-
-# Generate Laravel key and cache configurations
-RUN php artisan key:generate \
-    && php artisan config:cache \
-    && php artisan event:cache \
-    && php artisan route:cache \
-    && php artisan view:cache
-
-RUN php artisan migrate:fresh --seed
-
-CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+ENTRYPOINT ["entrypoint-dev.sh"]

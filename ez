@@ -1349,6 +1349,10 @@ ez_laravel_deploy_command() {
 
   create_new_database_and_user "$DB_DATABASE" "$DB_USERNAME" "$DB_PASSWORD"
 
+  if [[ "${args[APP_ENV]}" == "dev" ]]; then
+    cp "$merged_env_path" "$app_dir/.env"
+  fi
+
   log_header "Running Docker Compose for Laravel ${args[APP_ENV]}"
   docker compose -f "$app_dir/compose-laravel.yml" --profile "${args[APP_ENV]}" --env-file "$merged_env_path" up --build -d
 
@@ -1458,6 +1462,7 @@ EOL
 
   cp -r "template/nginx" "$APP_DIR/nginx"
   cp "template/entrypoint.sh" "$APP_DIR/entrypoint.sh"
+  cp "template/entrypoint-dev.sh" "$APP_DIR/entrypoint-dev.sh"
   cp "template/opcache.ini" "$APP_DIR/opcache.ini"
   cp "template/php.ini" "$APP_DIR/php.ini"
   cp "template/supervisord.conf" "$APP_DIR/supervisord.conf"
