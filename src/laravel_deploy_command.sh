@@ -60,7 +60,7 @@ fi
 log_success "Server running on [${args[APP_NAME]}_${args[APP_ENV]}] container with 'inner' port 80."
 log_info "You can connect your website to a domain using Nginx Proxy Manager at [<your_ip>:$PORT_NGINX_PM]."
 
-if [[ "${args[APP_ENV]}" == "test" ]]; then
+if [[ "${args[APP_ENV]}" == "dev" || "${args[APP_ENV]}" == "test" ]]; then
   if [[ -n "$APP_PORT" ]]; then
     log_success "Server running on [http://<your_ip>:$APP_PORT]."
   else

@@ -17,12 +17,12 @@ setup_environment() {
   generated_password=$(generate_password 20)
   db_password=$(ask_question "Enter the $db_username's password" "$generated_password")
 
-  if [ "$environment" == "test" ]; then
+  if [[ "$environment" == "dev" || "$environment" == "test" ]]; then
     app_debug=true
-    # Determine the test app port based on the number of folders in the apps directory
+    # Determine the dev/test app port based on the number of folders in the apps directory
     local num_apps=$(ls -l apps | grep -c '^d')
     local default_port=$((7999 + num_apps))
-    app_port=$(ask_question "Enter the test app port" "$default_port")
+    app_port=$(ask_question "Enter the ${environment} app port" "$default_port")
   else
     app_debug=false
   fi

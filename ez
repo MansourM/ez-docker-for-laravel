@@ -469,7 +469,7 @@ ez_laravel_deploy_usage() {
     # :argument.usage
     printf "  %s\n" "APP_ENV"
     printf "    Laravel app environment\n"
-    printf "    Allowed: test, staging, production\n"
+    printf "    Allowed: dev, test, staging, production\n"
     echo
 
   fi
@@ -515,7 +515,7 @@ ez_laravel_start_usage() {
     # :argument.usage
     printf "  %s\n" "APP_ENV"
     printf "    Laravel app environment\n"
-    printf "    Allowed: test, staging, production\n"
+    printf "    Allowed: dev, test, staging, production\n"
     echo
 
   fi
@@ -558,7 +558,7 @@ ez_laravel_stop_usage() {
     # :argument.usage
     printf "  %s\n" "APP_ENV"
     printf "    Laravel app environment\n"
-    printf "    Allowed: test, staging, production\n"
+    printf "    Allowed: dev, test, staging, production\n"
     echo
 
   fi
@@ -604,7 +604,7 @@ ez_laravel_restart_usage() {
     # :argument.usage
     printf "  %s\n" "APP_ENV"
     printf "    Laravel app environment\n"
-    printf "    Allowed: test, staging, production\n"
+    printf "    Allowed: dev, test, staging, production\n"
     echo
 
   fi
@@ -647,7 +647,7 @@ ez_laravel_down_usage() {
     # :argument.usage
     printf "  %s\n" "APP_ENV"
     printf "    Laravel app environment\n"
-    printf "    Allowed: test, staging, production\n"
+    printf "    Allowed: dev, test, staging, production\n"
     echo
 
   fi
@@ -1122,12 +1122,12 @@ setup_environment() {
   generated_password=$(generate_password 20)
   db_password=$(ask_question "Enter the $db_username's password" "$generated_password")
 
-  if [ "$environment" == "test" ]; then
+  if [[ "$environment" == "dev" || "$environment" == "test" ]]; then
     app_debug=true
-    # Determine the test app port based on the number of folders in the apps directory
+    # Determine the dev/test app port based on the number of folders in the apps directory
     local num_apps=$(ls -l apps | grep -c '^d')
     local default_port=$((7999 + num_apps))
-    app_port=$(ask_question "Enter the test app port" "$default_port")
+    app_port=$(ask_question "Enter the ${environment} app port" "$default_port")
   else
     app_debug=false
   fi
@@ -1358,7 +1358,7 @@ ez_laravel_deploy_command() {
   log_success "Server running on [${args[APP_NAME]}_${args[APP_ENV]}] container with 'inner' port 80."
   log_info "You can connect your website to a domain using Nginx Proxy Manager at [<your_ip>:$PORT_NGINX_PM]."
 
-  if [[ "${args[APP_ENV]}" == "test" ]]; then
+  if [[ "${args[APP_ENV]}" == "dev" || "${args[APP_ENV]}" == "test" ]]; then
     if [[ -n "$APP_PORT" ]]; then
       log_success "Server running on [http://<your_ip>:$APP_PORT]."
     else
@@ -1429,6 +1429,12 @@ ez_laravel_new_command() {
   cat <<EOL > "$APP_DIR/env/app.env"
 GIT_URL=$GIT_URL
 EOL
+
+  SETUP_DEV_ENV=$(ask_question "Do you want to set up the dev environment?" "yes")
+
+  if [[ "$SETUP_DEV_ENV" == "yes" || "$SETUP_DEV_ENV" == "y" ]]; then
+    setup_environment "$APP_NAME" "test"
+  fi
 
   SETUP_TEST_ENV=$(ask_question "Do you want to set up the test environment?" "yes")
 
@@ -2239,8 +2245,8 @@ ez_laravel_deploy_parse_requirements() {
   fi
 
   # :command.whitelist_filter
-  if [[ -n ${args['APP_ENV']:-} ]] && [[ ! ${args['APP_ENV']:-} =~ ^(test|staging|production)$ ]]; then
-    printf "%s\n" "APP_ENV must be one of: test, staging, production" >&2
+  if [[ -n ${args['APP_ENV']:-} ]] && [[ ! ${args['APP_ENV']:-} =~ ^(dev|test|staging|production)$ ]]; then
+    printf "%s\n" "APP_ENV must be one of: dev, test, staging, production" >&2
     exit 1
   fi
 
@@ -2309,8 +2315,8 @@ ez_laravel_start_parse_requirements() {
   fi
 
   # :command.whitelist_filter
-  if [[ -n ${args['APP_ENV']:-} ]] && [[ ! ${args['APP_ENV']:-} =~ ^(test|staging|production)$ ]]; then
-    printf "%s\n" "APP_ENV must be one of: test, staging, production" >&2
+  if [[ -n ${args['APP_ENV']:-} ]] && [[ ! ${args['APP_ENV']:-} =~ ^(dev|test|staging|production)$ ]]; then
+    printf "%s\n" "APP_ENV must be one of: dev, test, staging, production" >&2
     exit 1
   fi
 
@@ -2379,8 +2385,8 @@ ez_laravel_stop_parse_requirements() {
   fi
 
   # :command.whitelist_filter
-  if [[ -n ${args['APP_ENV']:-} ]] && [[ ! ${args['APP_ENV']:-} =~ ^(test|staging|production)$ ]]; then
-    printf "%s\n" "APP_ENV must be one of: test, staging, production" >&2
+  if [[ -n ${args['APP_ENV']:-} ]] && [[ ! ${args['APP_ENV']:-} =~ ^(dev|test|staging|production)$ ]]; then
+    printf "%s\n" "APP_ENV must be one of: dev, test, staging, production" >&2
     exit 1
   fi
 
@@ -2449,8 +2455,8 @@ ez_laravel_restart_parse_requirements() {
   fi
 
   # :command.whitelist_filter
-  if [[ -n ${args['APP_ENV']:-} ]] && [[ ! ${args['APP_ENV']:-} =~ ^(test|staging|production)$ ]]; then
-    printf "%s\n" "APP_ENV must be one of: test, staging, production" >&2
+  if [[ -n ${args['APP_ENV']:-} ]] && [[ ! ${args['APP_ENV']:-} =~ ^(dev|test|staging|production)$ ]]; then
+    printf "%s\n" "APP_ENV must be one of: dev, test, staging, production" >&2
     exit 1
   fi
 
@@ -2519,8 +2525,8 @@ ez_laravel_down_parse_requirements() {
   fi
 
   # :command.whitelist_filter
-  if [[ -n ${args['APP_ENV']:-} ]] && [[ ! ${args['APP_ENV']:-} =~ ^(test|staging|production)$ ]]; then
-    printf "%s\n" "APP_ENV must be one of: test, staging, production" >&2
+  if [[ -n ${args['APP_ENV']:-} ]] && [[ ! ${args['APP_ENV']:-} =~ ^(dev|test|staging|production)$ ]]; then
+    printf "%s\n" "APP_ENV must be one of: dev, test, staging, production" >&2
     exit 1
   fi
 
@@ -2583,7 +2589,7 @@ before_hook() {
 
 # :command.initialize
 initialize() {
-  version="0.2.0"
+  version="0.3.0"
   long_usage=''
   set -e
 

@@ -1,6 +1,6 @@
 name: ez
 help: easy to setup, robust and production ready environment for Laravel using Docker, Docker Compose and bash script.
-version: 0.2.0
+version: 0.3.0
 
 commands:
 - name: docker
@@ -58,7 +58,7 @@ commands:
 
       - name: APP_ENV
         help: Laravel app environment
-        allowed: [ test, staging, production ]
+        allowed: [ dev, test, staging, production ]
         required: true
 
   - name: start
@@ -71,7 +71,7 @@ commands:
 
       - name: APP_ENV
         help: Laravel app environment
-        allowed: [ test, staging, production ]
+        allowed: [ dev, test, staging, production ]
         required: true
 
   - name: stop
@@ -83,7 +83,7 @@ commands:
 
       - name: APP_ENV
         help: Laravel app environment
-        allowed: [ test, staging, production ]
+        allowed: [ dev, test, staging, production ]
         required: true
 
   - name: restart
@@ -96,7 +96,7 @@ commands:
 
       - name: APP_ENV
         help: Laravel app environment
-        allowed: [ test, staging, production ]
+        allowed: [ dev, test, staging, production ]
         required: true
 
   - name: down
@@ -108,7 +108,7 @@ commands:
 
       - name: APP_ENV
         help: Laravel app environment
-        allowed: [ test, staging, production ]
+        allowed: [ dev, test, staging, production ]
         required: true
 
   - name: new
