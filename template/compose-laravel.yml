@@ -1,5 +1,17 @@
 services:
 
+  nginx-fpm-laravel-dev:
+    container_name: ${APP_NAME}_dev
+    extends:
+      file: common-laravel.yml
+      service: nginx-fpm-laravel
+    ports:
+      - ${APP_PORT}:80
+    volumes:
+      - './src-dev:/var/www/html'
+    profiles:
+      - dev
+
   nginx-fpm-laravel-test:
     container_name: ${APP_NAME}_test
     extends:
