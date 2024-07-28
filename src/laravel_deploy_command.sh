@@ -50,6 +50,10 @@ check_containers "${containers[@]}"
 
 create_new_database_and_user "$DB_DATABASE" "$DB_USERNAME" "$DB_PASSWORD"
 
+if [[ "${args[APP_ENV]}" == "dev" ]]; then
+  cp "$merged_env_path" "$app_dir/.env"
+fi
+
 log_header "Running Docker Compose for Laravel ${args[APP_ENV]}"
 docker compose -f "$app_dir/compose-laravel.yml" --profile "${args[APP_ENV]}" --env-file "$merged_env_path" up --build -d
 
