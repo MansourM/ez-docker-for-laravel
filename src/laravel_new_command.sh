@@ -38,6 +38,7 @@ log "or this format: https://<user>:<pass>@github.com/MansourM/ez-docker-for-lar
 GIT_URL=$(ask_question "Enter the application git url" "https://github.com/MansourM/ez-docker-for-laravel-example.git")
 
 cat <<EOL > "$APP_DIR/env/app.env"
+APP_NAME=$APP_NAME
 GIT_URL=$GIT_URL
 OWNER_USER_NAME=$OWNER_USER_NAME
 OWNER_USER_ID=$OWNER_USER_ID
