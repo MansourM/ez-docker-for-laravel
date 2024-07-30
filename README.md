@@ -116,15 +116,11 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 ## :compass: TODOs
 
 - [ ] review https://github.com/masoudfesahat/laravel-with-docker
-- [ ] add dev env? (=test except src in mounted on a volume)
 - [ ] APP_ENV in laravel.dockerfile is affecting build cache when building different env after each other ----> or not!!!?
-- [ ] be more strict on showing passwords in cli
-- [ ] review and fix all permission stuff
+- [ ] be more strict on showing passwords in cli? (it is good for convenience though!)
 - [ ] add flags like -d on laravel new to go with the default instead of prompting the user, etc
 - [ ] image/build cache seems to be effected when service/container name is changed -> research this
 - [ ] add docker to sudoers
-- [ ] dynamically handle the ubuntu (host) USER NAME & ID in dockerfiles
-- [ ] improve/customize entrypoint.sh for each environment maybe even separate them?
 - [ ] add tags to --build then remove orphans
 - [ ] better handling of unused/dangling/orphan images/containers
 - [ ] explain how to change scripts and generate new a `ez` script with Bashly 

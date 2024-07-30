@@ -1,6 +1,6 @@
 log_error() {
   if [ "$#" -ne 1 ]; then
-      echo -e "\nInvalid Arguments, Usage: $0 <message>\n"
+      echo -e "\nInvalid Arguments, Usage: $0 <message>\n" >&2
       return 1
   fi
 
