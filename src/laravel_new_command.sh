@@ -6,6 +6,19 @@ ENV_CONTENT=$(read_multi_line_input "$DELIMITER")
 APP_NAME=$(echo "$ENV_CONTENT" | grep -oP '^APP_NAME=\K.*')
 APP_NAME=$(ask_question "Enter the application name" "$APP_NAME")
 
+while true; do
+  OWNER_USER_NAME=$(ask_question "What user on this host machine owns this app" "$(whoami)")
+
+  if user_exists "$OWNER_USER_NAME"; then
+    break
+  else
+    log_error "User '$OWNER_USER_NAME' does not exist. Please enter a valid user."
+  fi
+done
+OWNER_USER_ID=$(id -u "$OWNER_USER_NAME")
+OWNER_GROUP_NAME=$(id -gn "$OWNER_USER_NAME")
+OWNER_GROUP_ID=$(id -g "$OWNER_USER_NAME")
+
 APP_DIR="apps/$APP_NAME"
 
 if [[ -d "$APP_DIR" ]]; then
@@ -25,8 +38,19 @@ log "or this format: https://<user>:<pass>@github.com/MansourM/ez-docker-for-lar
 GIT_URL=$(ask_question "Enter the application git url" "https://github.com/MansourM/ez-docker-for-laravel-example.git")
 
 cat <<EOL > "$APP_DIR/env/app.env"
+APP_NAME=$APP_NAME
 GIT_URL=$GIT_URL
+OWNER_USER_NAME=$OWNER_USER_NAME
+OWNER_USER_ID=$OWNER_USER_ID
+OWNER_GROUP_NAME=$OWNER_GROUP_NAME
+OWNER_GROUP_ID=$OWNER_GROUP_ID
 EOL
+
+SETUP_DEV_ENV=$(ask_question "Do you want to set up the dev environment?" "yes")
+
+if [[ "$SETUP_DEV_ENV" == "yes" || "$SETUP_DEV_ENV" == "y" ]]; then
+  setup_environment "$APP_NAME" "dev"
+fi
 
 SETUP_TEST_ENV=$(ask_question "Do you want to set up the test environment?" "yes")
 
@@ -48,10 +72,12 @@ fi
 
 cp -r "template/nginx" "$APP_DIR/nginx"
 cp "template/entrypoint.sh" "$APP_DIR/entrypoint.sh"
+cp "template/entrypoint-dev.sh" "$APP_DIR/entrypoint-dev.sh"
 cp "template/opcache.ini" "$APP_DIR/opcache.ini"
 cp "template/php.ini" "$APP_DIR/php.ini"
 cp "template/supervisord.conf" "$APP_DIR/supervisord.conf"
 
 cp "template/common-laravel.yml" "$APP_DIR/common-laravel.yml"
+cp "template/laravel-dev.Dockerfile" "$APP_DIR/laravel-dev.Dockerfile"
 cp "template/laravel.Dockerfile" "$APP_DIR/laravel.Dockerfile"
 cp "template/compose-laravel.yml" "$APP_DIR/compose-laravel.yml"

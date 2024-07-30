@@ -68,10 +68,10 @@ FROM php:8.2-fpm
 
 ENV DEBIAN_FRONTEND noninteractive
 
-ARG USER_ID=1000
-ENV USER_NAME=www-data
+ARG OWNER_USER_ID
+ARG OWNER_GROUP_ID
 
-ARG GROUP_ID=1000
+ENV USER_NAME=www-data
 ARG GROUP_NAME=www-data
 
 ARG WORKDIR=/var/www
@@ -120,8 +120,8 @@ COPY ./supervisord.conf /etc/supervisor/supervisord.conf
 COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
 
-RUN usermod -u ${USER_ID} ${USER_NAME} \
-    && groupmod -g ${USER_ID} ${GROUP_NAME}
+RUN usermod -u ${OWNER_USER_ID} ${USER_NAME} \
+    && groupmod -g ${OWNER_GROUP_ID} ${GROUP_NAME}
 
 RUN mkdir -p /var/log/supervisor \
     && mkdir -p /var/log/nginx \

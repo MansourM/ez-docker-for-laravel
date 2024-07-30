@@ -6,14 +6,14 @@ services:
       dockerfile: laravel.Dockerfile
       args:
         - APP_ENV=${APP_ENV}
+        - OWNER_USER_ID=${OWNER_USER_ID}
+        - OWNER_GROUP_ID=${OWNER_GROUP_ID}
     environment:
       - APP_ENV=${APP_ENV}
     restart: unless-stopped
     user: www-data
     working_dir: /var/www
     entrypoint: ./entrypoint.sh
-    volumes:
-      - ./storage-${APP_ENV}:/var/www/storage/app
     healthcheck:
       test: [ "CMD-SHELL", "curl -f http://localhost:80 || exit 1" ]
       interval: 30s
