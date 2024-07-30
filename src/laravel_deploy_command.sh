@@ -53,8 +53,6 @@ create_new_database_and_user "$DB_DATABASE" "$DB_USERNAME" "$DB_PASSWORD"
 if [[ "${args[APP_ENV]}" == "dev" ]]; then
   cp "$merged_env_path" "$app_dir/src-dev/.env"
   chown -R "$OWNER_USER_NAME:$OWNER_GROUP_NAME" "$app_dir/src-dev"
-else
-  chown -R "$OWNER_USER_NAME:$OWNER_GROUP_NAME" "$app_dir/storage-${args[APP_ENV]}"
 fi
 
 log_header "Running Docker Compose for Laravel ${args[APP_ENV]}"
@@ -63,6 +61,10 @@ docker compose -f "$app_dir/compose-laravel.yml" --profile "${args[APP_ENV]}" --
 if [ $? -ne 0 ]; then
   log_error "Docker Compose up failed for app: ${args[APP_NAME]}, environment: ${args[APP_ENV]}"
   exit 1
+fi
+
+if [[ "${args[APP_ENV]}" != "dev" ]]; then
+  chown -R "$OWNER_USER_NAME:$OWNER_GROUP_NAME" "$app_dir/storage-${args[APP_ENV]}"
 fi
 
 log_success "Server running on [${args[APP_NAME]}_${args[APP_ENV]}] container with 'inner' port 80."
