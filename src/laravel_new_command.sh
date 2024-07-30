@@ -6,9 +6,8 @@ ENV_CONTENT=$(read_multi_line_input "$DELIMITER")
 APP_NAME=$(echo "$ENV_CONTENT" | grep -oP '^APP_NAME=\K.*')
 APP_NAME=$(ask_question "Enter the application name" "$APP_NAME")
 
-OWNER_USER_NAME=$(whoami)
 while true; do
-  OWNER_USER_NAME=$(ask_question "What user on this host machine owns this app" "$OWNER_USER_NAME")
+  OWNER_USER_NAME=$(ask_question "What user on this host machine owns this app" "$(whoami)")
 
   if user_exists "$OWNER_USER_NAME"; then
     break
@@ -42,14 +41,14 @@ cat <<EOL > "$APP_DIR/env/app.env"
 GIT_URL=$GIT_URL
 OWNER_USER_NAME=$OWNER_USER_NAME
 OWNER_USER_ID=$OWNER_USER_ID
-OWNER_GROUP_NAME=OWNER_GROUP_NAME
-OWNER_GROUP_ID=OWNER_GROUP_ID
+OWNER_GROUP_NAME=$OWNER_GROUP_NAME
+OWNER_GROUP_ID=$OWNER_GROUP_ID
 EOL
 
 SETUP_DEV_ENV=$(ask_question "Do you want to set up the dev environment?" "yes")
 
 if [[ "$SETUP_DEV_ENV" == "yes" || "$SETUP_DEV_ENV" == "y" ]]; then
-  setup_environment "$APP_NAME" "test"
+  setup_environment "$APP_NAME" "dev"
 fi
 
 SETUP_TEST_ENV=$(ask_question "Do you want to set up the test environment?" "yes")
