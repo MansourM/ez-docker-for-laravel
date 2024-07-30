@@ -17,16 +17,16 @@ setup_environment() {
   generated_password=$(generate_password 20)
   db_password=$(ask_question "Enter the $db_username's password" "$generated_password")
 
-  if [[ "$environment" == "dev" || "$environment" == "test" ]]; then
+  if [[ "$environment" == "dev" ]]; then
     app_debug=true
-    # Determine the dev/test app port based on the number of folders in the apps directory
-    local num_apps=$(ls -l apps | grep -c '^d')
-    # fixme now that we have dev, dev and test need to both have ports (now both use same port)
-    local default_port=$((7999 + num_apps))
-    app_port=$(ask_question "Enter the ${environment} app port" "$default_port")
+    app_port=$(assign_port "dev" 7000)  # Directly capture the correct port
+  elif [[ "$environment" == "test" ]]; then
+    app_debug=true
+    app_port=$(assign_port "test" 8000)  # Directly capture the correct port
   else
     app_debug=false
   fi
+
 
   #FIXME do something for APP_URL
   cat <<EOL > "apps/$app_name/env/$environment.env"
