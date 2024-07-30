@@ -827,6 +827,27 @@ ask_question_v2() {
     echo $result
 }
 
+# src/lib/assign_port.sh
+assign_port() {
+  local environment=$1
+  local base_port=$2
+  local num_apps default_port app_port
+
+  num_apps=$(ls -l apps | grep -c '^d')
+  default_port=$((base_port + num_apps))
+
+  while true; do
+    app_port=$(ask_question "Enter the ${environment} app port" "$default_port")
+
+    if is_port_in_use "$app_port"; then
+      log_error "Port $app_port is already in use. Please choose a different port." >&2
+    else
+      echo "$app_port"  # This should be captured in the main script
+      return 0
+    fi
+  done
+}
+
 # src/lib/check_containers.sh
 check_containers() {
     log_header "Checking shared containers health before building the Laravel container."
@@ -964,6 +985,16 @@ is_container_running() {
     return $?
 }
 
+# src/lib/is_port_in_use.sh
+is_port_in_use() {
+  local port=$1
+  if lsof -i -P -n | grep -q ":$port"; then
+    return 0
+  else
+    return 1
+  fi
+}
+
 # src/lib/load_env.sh
 load_env() {
   local filePath="${1:-.env}"
@@ -997,7 +1028,7 @@ log() {
 # src/lib/log_error.sh
 log_error() {
   if [ "$#" -ne 1 ]; then
-      echo -e "\nInvalid Arguments, Usage: $0 <message>\n"
+      echo -e "\nInvalid Arguments, Usage: $0 <message>\n" >&2
       return 1
   fi
 
@@ -1122,13 +1153,12 @@ setup_environment() {
   generated_password=$(generate_password 20)
   db_password=$(ask_question "Enter the $db_username's password" "$generated_password")
 
-  if [[ "$environment" == "dev" || "$environment" == "test" ]]; then
+  if [[ "$environment" == "dev" ]]; then
     app_debug=true
-    # Determine the dev/test app port based on the number of folders in the apps directory
-    local num_apps=$(ls -l apps | grep -c '^d')
-    # fixme now that we have dev, dev and test need to both have ports (now both use same port)
-    local default_port=$((7999 + num_apps))
-    app_port=$(ask_question "Enter the ${environment} app port" "$default_port")
+    app_port=$(assign_port "dev" 7000)  # Directly capture the correct port
+  elif [[ "$environment" == "test" ]]; then
+    app_debug=true
+    app_port=$(assign_port "test" 8000)  # Directly capture the correct port
   else
     app_debug=false
   fi
