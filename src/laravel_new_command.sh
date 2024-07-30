@@ -7,9 +7,18 @@ APP_NAME=$(echo "$ENV_CONTENT" | grep -oP '^APP_NAME=\K.*')
 APP_NAME=$(ask_question "Enter the application name" "$APP_NAME")
 
 OWNER_USER_NAME=$(whoami)
-OWNER_USER_NAME=$(ask_question "What user on this host machine owns this app" "$OWNER_USER_NAME")
-OWNER_USER_ID=$(id -u "$OWNER_USER_NAME")
+while true; do
+  OWNER_USER_NAME=$(ask_question "What user on this host machine owns this app" "$OWNER_USER_NAME")
 
+  if user_exists "$OWNER_USER_NAME"; then
+    break
+  else
+    log_error "User '$OWNER_USER_NAME' does not exist. Please enter a valid user."
+  fi
+done
+OWNER_USER_ID=$(id -u "$OWNER_USER_NAME")
+OWNER_GROUP_NAME=$(id -gn "$OWNER_USER_NAME")
+OWNER_GROUP_ID=$(id -g "$OWNER_USER_NAME")
 
 APP_DIR="apps/$APP_NAME"
 
@@ -33,6 +42,8 @@ cat <<EOL > "$APP_DIR/env/app.env"
 GIT_URL=$GIT_URL
 OWNER_USER_NAME=$OWNER_USER_NAME
 OWNER_USER_ID=$OWNER_USER_ID
+OWNER_GROUP_NAME=OWNER_GROUP_NAME
+OWNER_GROUP_ID=OWNER_GROUP_ID
 EOL
 
 SETUP_DEV_ENV=$(ask_question "Do you want to set up the dev environment?" "yes")
