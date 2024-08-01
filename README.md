@@ -115,6 +115,7 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 
 ## :compass: TODOs
 
+- [ ] review https://laradock.io/getting-started/
 - [ ] review https://github.com/masoudfesahat/laravel-with-docker
 - [ ] APP_ENV in laravel.dockerfile is affecting build cache when building different env after each other ----> or not!!!?
 - [ ] be more strict on showing passwords in cli? (it is good for convenience though!)
