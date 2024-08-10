@@ -1,4 +1,4 @@
-load_laravel_envs() {
+merge_laravel_envs() {
   local app_dir=$1
   local app_env=$2
 
