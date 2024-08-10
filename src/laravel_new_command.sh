@@ -46,6 +46,8 @@ OWNER_GROUP_NAME=$OWNER_GROUP_NAME
 OWNER_GROUP_ID=$OWNER_GROUP_ID
 EOL
 
+log_success "created $APP_DIR/env/app.env"
+
 SETUP_DEV_ENV=$(ask_question "Do you want to set up the dev environment?" "yes")
 
 if [[ "$SETUP_DEV_ENV" == "yes" || "$SETUP_DEV_ENV" == "y" ]]; then
