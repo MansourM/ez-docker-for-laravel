@@ -23,5 +23,4 @@ merge_envs() {
   merged_content=$(echo "$merged_content" | grep -Ev '^(SHARED_NETWORK_NAME|DB_ROOT_PASSWORD|GIT_URL)=')
 
   echo "$merged_content" > "$output"
-  log_info "Merged env files into $output."
 }
