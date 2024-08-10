@@ -1020,6 +1020,28 @@ load_env() {
       export "$CLEANED_LINE"
     fi
   done < "$filePath"
+
+  log_info "loaded env file: $filePath."
+}
+
+# src/lib/load_laravel_envs.sh
+load_laravel_envs() {
+  local app_dir=$1
+  local app_env=$2
+
+  laravel_env_path="$app_dir/env/laravel.env"
+  docker_env_path="docker/docker.env"
+  app_env_path="$app_dir/env/app.env"
+  override_env_path="$app_dir/env/$app_env.env"
+  merged_env_path="$app_dir/env/generated/$app_env.env"
+
+  merge_envs "$merged_env_path" "$laravel_env_path" "$docker_env_path" "$app_env_path" "$override_env_path"
+
+  load_env "$docker_env_path"
+  load_env "$app_env_path"
+  load_env "$merged_env_path"
+
+  echo "$merged_env_path"
 }
 
 # src/lib/log.sh
@@ -1123,7 +1145,7 @@ merge_envs() {
   merged_content=$(echo "$merged_content" | grep -Ev '^(SHARED_NETWORK_NAME|DB_ROOT_PASSWORD|GIT_URL)=')
 
   echo "$merged_content" > "$output"
-  log_success "Merged files into $output."
+  log_info "Merged env files into $output."
 }
 
 # src/lib/read_multi_line_input.sh
@@ -1350,17 +1372,7 @@ ez_laravel_deploy_command() {
       exit 1
   fi
 
-  laravel_env_path="$app_dir/env/laravel.env"
-  docker_env_path="docker/docker.env"
-  app_env_path="$app_dir/env/app.env"
-  override_env_path="$app_dir/env/${args[APP_ENV]}.env"
-  merged_env_path="$app_dir/env/generated/${args[APP_ENV]}.env"
-
-  merge_envs "$merged_env_path" "$laravel_env_path" "$docker_env_path" "$app_env_path" "$override_env_path"
-
-  load_env "$docker_env_path"
-  load_env "$app_env_path"
-  load_env "$merged_env_path"
+  merged_env_path=$(load_laravel_envs "$app_dir" "${args[APP_ENV]}")
 
   SOURCE_CODE_DIR="$app_dir/src-${args[APP_ENV]}"
   #TODO add a force clone config somewhere so user can choose to always clone instead of updating the repo?
@@ -1426,29 +1438,40 @@ ez_laravel_deploy_command() {
 # :command.function
 ez_laravel_start_command() {
   # src/laravel_start_command.sh
-  docker compose -f "apps/${args[APP_NAME]}/compose-laravel.yml" --profile "${args[APP_ENV]}" start
+  app_dir="apps/${args[APP_NAME]}"
+  merged_env_path=$(load_laravel_envs "$app_dir" "${args[APP_ENV]}")
+
+  docker compose -f "apps/${args[APP_NAME]}/compose-laravel.yml" --profile "${args[APP_ENV]}" --env-file "$merged_env_path" start
 
 }
 
 # :command.function
 ez_laravel_stop_command() {
   # src/laravel_stop_command.sh
-  docker compose -f "apps/${args[APP_NAME]}/compose-laravel.yml" --profile "${args[APP_ENV]}" stop
+  app_dir="apps/${args[APP_NAME]}"
+  merged_env_path=$(load_laravel_envs "$app_dir" "${args[APP_ENV]}")
+
+  docker compose -f "apps/${args[APP_NAME]}/compose-laravel.yml" --profile "${args[APP_ENV]}" --env-file "$merged_env_path" stop
 
 }
 
 # :command.function
 ez_laravel_restart_command() {
   # src/laravel_restart_command.sh
-  docker compose -f "apps/${args[APP_NAME]}/compose-laravel.yml" --profile "${args[APP_ENV]}" restart
+  app_dir="apps/${args[APP_NAME]}"
+  merged_env_path=$(load_laravel_envs "$app_dir" "${args[APP_ENV]}")
+
+  docker compose -f "apps/${args[APP_NAME]}/compose-laravel.yml" --profile "${args[APP_ENV]}" --env-file "$merged_env_path" restart
 
 }
 
 # :command.function
 ez_laravel_down_command() {
   # src/laravel_down_command.sh
-  #TODO add better logs to laravel commands?
-  docker compose -f "apps/${args[APP_NAME]}/compose-laravel.yml" --profile "${args[APP_ENV]}" down
+  app_dir="apps/${args[APP_NAME]}"
+  merged_env_path=$(load_laravel_envs "$app_dir" "${args[APP_ENV]}")
+
+  docker compose -f "app_dir/compose-laravel.yml" --profile "${args[APP_ENV]}" --env-file "$merged_env_path" down
 
 }
 
