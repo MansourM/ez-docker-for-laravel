@@ -1145,7 +1145,6 @@ merge_envs() {
   merged_content=$(echo "$merged_content" | grep -Ev '^(SHARED_NETWORK_NAME|DB_ROOT_PASSWORD|GIT_URL)=')
 
   echo "$merged_content" > "$output"
-  log_info "Merged env files into $output."
 }
 
 # src/lib/read_multi_line_input.sh
@@ -1441,7 +1440,7 @@ ez_laravel_start_command() {
   app_dir="apps/${args[APP_NAME]}"
   merged_env_path=$(load_laravel_envs "$app_dir" "${args[APP_ENV]}")
 
-  docker compose -f "apps/${args[APP_NAME]}/compose-laravel.yml" --profile "${args[APP_ENV]}" --env-file "$merged_env_path" start
+  docker compose -f "$app_dir/compose-laravel.yml" --profile "${args[APP_ENV]}" --env-file "$merged_env_path" start
 
 }
 
@@ -1451,7 +1450,7 @@ ez_laravel_stop_command() {
   app_dir="apps/${args[APP_NAME]}"
   merged_env_path=$(load_laravel_envs "$app_dir" "${args[APP_ENV]}")
 
-  docker compose -f "apps/${args[APP_NAME]}/compose-laravel.yml" --profile "${args[APP_ENV]}" --env-file "$merged_env_path" stop
+  docker compose -f "$app_dir/compose-laravel.yml" --profile "${args[APP_ENV]}" --env-file "$merged_env_path" stop
 
 }
 
@@ -1461,7 +1460,7 @@ ez_laravel_restart_command() {
   app_dir="apps/${args[APP_NAME]}"
   merged_env_path=$(load_laravel_envs "$app_dir" "${args[APP_ENV]}")
 
-  docker compose -f "apps/${args[APP_NAME]}/compose-laravel.yml" --profile "${args[APP_ENV]}" --env-file "$merged_env_path" restart
+  docker compose -f "$app_dir/compose-laravel.yml" --profile "${args[APP_ENV]}" --env-file "$merged_env_path" restart
 
 }
 
@@ -1471,7 +1470,7 @@ ez_laravel_down_command() {
   app_dir="apps/${args[APP_NAME]}"
   merged_env_path=$(load_laravel_envs "$app_dir" "${args[APP_ENV]}")
 
-  docker compose -f "app_dir/compose-laravel.yml" --profile "${args[APP_ENV]}" --env-file "$merged_env_path" down
+  docker compose -f "$app_dir/compose-laravel.yml" --profile "${args[APP_ENV]}" --env-file "$merged_env_path" down
 
 }
 
