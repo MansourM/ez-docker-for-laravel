@@ -40,5 +40,5 @@ DB_USERNAME=$db_username
 DB_PASSWORD=$db_password
 EOL
 
-  log_success "created apps/$app_name/env/$environment.env"
+  log_info "created apps/$app_name/env/$environment.env"
 }
