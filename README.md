@@ -115,6 +115,8 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 
 ## :compass: TODOs
 
+- [ ] say hi!
+- [ ] add text logs
 - [ ] review https://laradock.io/getting-started/
 - [ ] review https://github.com/masoudfesahat/laravel-with-docker
 - [ ] APP_ENV in laravel.dockerfile is affecting build cache when building different env after each other ----> or not!!!?
