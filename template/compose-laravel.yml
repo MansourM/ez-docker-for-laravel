@@ -10,6 +10,8 @@ services:
       dockerfile: laravel-dev.Dockerfile
       args:
         - APP_ENV=${APP_ENV}
+        - OWNER_USER_ID=${OWNER_USER_ID}
+        - OWNER_GROUP_ID=${OWNER_GROUP_ID}
     ports:
       - ${APP_PORT}:80
     volumes:
