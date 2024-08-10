@@ -15,4 +15,6 @@ load_env() {
       export "$CLEANED_LINE"
     fi
   done < "$filePath"
+
+  log_info "loaded env file: $filePath."
 }
