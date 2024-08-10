@@ -6,7 +6,6 @@ load_env() {
     exit 1
   fi
 
-  log "Reading $filePath"
   while read -r LINE; do
     # Remove leading and trailing whitespaces, and carriage return
     CLEANED_LINE=$(echo "$LINE" | awk '{$1=$1};1' | tr -d '\r')
@@ -16,5 +15,5 @@ load_env() {
     fi
   done < "$filePath"
 
-  log_info "loaded env file: $filePath."
+  log "loaded env file: $filePath."
 }
