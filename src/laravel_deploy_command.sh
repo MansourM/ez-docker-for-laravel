@@ -7,7 +7,8 @@ if [[ ! -d "$app_dir" ]]; then
     exit 1
 fi
 
-merged_env_path=$(load_laravel_envs "$app_dir" "${args[APP_ENV]}")
+merged_env_path=$(merge_laravel_envs "$app_dir" "${args[APP_ENV]}")
+load_laravel_envs "$app_dir" "${args[APP_ENV]}"
 
 SOURCE_CODE_DIR="$app_dir/src-${args[APP_ENV]}"
 #TODO add a force clone config somewhere so user can choose to always clone instead of updating the repo?
