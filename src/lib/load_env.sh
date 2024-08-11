@@ -15,5 +15,5 @@ load_env() {
     fi
   done < "$filePath"
 
-  log "loaded env file: $filePath."
+  log "loaded env file: $filePath"
 }
