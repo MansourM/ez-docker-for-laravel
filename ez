@@ -1020,7 +1020,7 @@ load_env() {
     fi
   done < "$filePath"
 
-  log "loaded env file: $filePath."
+  log "loaded env file: $filePath"
 }
 
 # src/lib/load_laravel_envs.sh
