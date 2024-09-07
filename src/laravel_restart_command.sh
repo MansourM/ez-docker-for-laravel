@@ -7,4 +7,8 @@ if [[ "${args[APP_ENV]}" == "dev" ]]; then
   chown -R "$OWNER_USER_NAME:$OWNER_GROUP_NAME" "$app_dir/src-dev"
 fi
 
+if [[ "${args[APP_ENV]}" == "dev" && -n "${args[--update]}" ]]; then
+  update_source_code
+fi
+
 docker compose -f "$app_dir/compose-laravel.yml" --profile "${args[APP_ENV]}" --env-file "$merged_env_path" restart

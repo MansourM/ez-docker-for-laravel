@@ -491,13 +491,19 @@ ez_laravel_start_usage() {
   echo
 
   printf "%s\n" "Usage:"
-  printf "  ez laravel start APP_NAME APP_ENV\n"
+  printf "  ez laravel start APP_NAME APP_ENV [OPTIONS]\n"
   printf "  ez laravel start --help | -h\n"
   echo
 
   # :command.long_usage
   if [[ -n $long_usage ]]; then
     printf "%s\n" "Options:"
+
+    # :command.usage_flags
+    # :flag.usage
+    printf "  %s\n" "--update, -u"
+    printf "    update the source code before starting the container\n"
+    echo
 
     # :command.usage_fixed_flags
     printf "  %s\n" "--help, -h"
@@ -580,13 +586,19 @@ ez_laravel_restart_usage() {
   echo
 
   printf "%s\n" "Usage:"
-  printf "  ez laravel restart APP_NAME APP_ENV\n"
+  printf "  ez laravel restart APP_NAME APP_ENV [OPTIONS]\n"
   printf "  ez laravel restart --help | -h\n"
   echo
 
   # :command.long_usage
   if [[ -n $long_usage ]]; then
     printf "%s\n" "Options:"
+
+    # :command.usage_flags
+    # :flag.usage
+    printf "  %s\n" "--update, -u"
+    printf "    update the source code before restarting the container\n"
+    echo
 
     # :command.usage_fixed_flags
     printf "  %s\n" "--help, -h"
@@ -1215,6 +1227,38 @@ EOL
   log_info "created apps/$app_name/env/$environment.env"
 }
 
+# src/lib/update_source_code.sh
+update_source_code() {
+  log_info "updating source code ..."
+  local source_code_dir="apps/${args[APP_NAME]}/src-${args[APP_ENV]}"
+
+  # If the source code directory exists, update the repo
+  #TODO add a force clone config somewhere so user can choose to always clone instead of updating the repo?
+  if [ -d "$source_code_dir" ]; then
+      log "Updating existing $source_code_dir folder"
+
+      cd "$source_code_dir" || exit 1
+
+      git pull origin "$GIT_BRANCH"
+      if [ $? -ne 0 ]; then
+          log_error "Error: Git pull failed."
+          exit 1
+      fi
+
+      cd - || exit 1
+  else
+      # If the source code directory doesn't exist, clone the repo
+      log "Cloning new $source_code_dir folder"
+      git clone --depth 1 -b "$GIT_BRANCH" "$GIT_URL" "$source_code_dir"
+
+      # Check if cloning was successful
+      if [ $? -ne 0 ]; then
+          log_error "Error: Git cloning failed."
+          exit 1
+      fi
+  fi
+}
+
 # src/lib/user_exists.sh
 user_exists() {
   local username=$1
@@ -1383,31 +1427,7 @@ ez_laravel_deploy_command() {
   merged_env_path=$(merge_laravel_envs "$app_dir" "${args[APP_ENV]}")
   load_laravel_envs "$app_dir" "${args[APP_ENV]}"
 
-  SOURCE_CODE_DIR="$app_dir/src-${args[APP_ENV]}"
-  #TODO add a force clone config somewhere so user can choose to always clone instead of updating the repo?
-  log_info "Preparing source code"
-  if [ -d "$SOURCE_CODE_DIR" ]; then
-      log "Updating existing $SOURCE_CODE_DIR folder"
-
-      cd "$SOURCE_CODE_DIR" || exit 1
-
-      git pull origin "$GIT_BRANCH"
-      if [ $? -ne 0 ]; then
-          log_error "Error: Git pull failed."
-          exit 1
-      fi
-
-      cd - || exit 1
-  else
-      log "Cloning new $SOURCE_CODE_DIR folder"
-      git clone --depth 1 -b "$GIT_BRANCH" "$GIT_URL" "$SOURCE_CODE_DIR"
-
-      # Check if cloning was successful
-      if [ $? -ne 0 ]; then
-          log_error "Error: Git cloning failed."
-          exit 1
-      fi
-  fi
+  update_source_code
 
   containers=("nginx-pm" "mysql8")
   check_containers "${containers[@]}"
@@ -1456,6 +1476,10 @@ ez_laravel_start_command() {
     chown -R "$OWNER_USER_NAME:$OWNER_GROUP_NAME" "$app_dir/src-dev"
   fi
 
+  if [[ "${args[APP_ENV]}" == "dev" && -n "${args[--update]}" ]]; then
+    update_source_code
+  fi
+
   docker compose -f "$app_dir/compose-laravel.yml" --profile "${args[APP_ENV]}" --env-file "$merged_env_path" start
 
 }
@@ -1481,6 +1505,10 @@ ez_laravel_restart_command() {
   if [[ "${args[APP_ENV]}" == "dev" ]]; then
     cp "$merged_env_path" "$app_dir/src-dev/.env"
     chown -R "$OWNER_USER_NAME:$OWNER_GROUP_NAME" "$app_dir/src-dev"
+  fi
+
+  if [[ "${args[APP_ENV]}" == "dev" && -n "${args[--update]}" ]]; then
+    update_source_code
   fi
 
   docker compose -f "$app_dir/compose-laravel.yml" --profile "${args[APP_ENV]}" --env-file "$merged_env_path" restart
@@ -2400,6 +2428,13 @@ ez_laravel_start_parse_requirements() {
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
+      # :flag.case
+      --update | -u)
+
+        # :flag.case_no_arg
+        args['--update']=1
+        shift
+        ;;
 
       -?*)
         printf "invalid option: %s\n" "$key" >&2
@@ -2429,11 +2464,11 @@ ez_laravel_start_parse_requirements() {
 
   # :command.required_args_filter
   if [[ -z ${args['APP_NAME']+x} ]]; then
-    printf "missing required argument: APP_NAME\nusage: ez laravel start APP_NAME APP_ENV\n" >&2
+    printf "missing required argument: APP_NAME\nusage: ez laravel start APP_NAME APP_ENV [OPTIONS]\n" >&2
     exit 1
   fi
   if [[ -z ${args['APP_ENV']+x} ]]; then
-    printf "missing required argument: APP_ENV\nusage: ez laravel start APP_NAME APP_ENV\n" >&2
+    printf "missing required argument: APP_ENV\nusage: ez laravel start APP_NAME APP_ENV [OPTIONS]\n" >&2
     exit 1
   fi
 
@@ -2540,6 +2575,13 @@ ez_laravel_restart_parse_requirements() {
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
+      # :flag.case
+      --update | -u)
+
+        # :flag.case_no_arg
+        args['--update']=1
+        shift
+        ;;
 
       -?*)
         printf "invalid option: %s\n" "$key" >&2
@@ -2569,11 +2611,11 @@ ez_laravel_restart_parse_requirements() {
 
   # :command.required_args_filter
   if [[ -z ${args['APP_NAME']+x} ]]; then
-    printf "missing required argument: APP_NAME\nusage: ez laravel restart APP_NAME APP_ENV\n" >&2
+    printf "missing required argument: APP_NAME\nusage: ez laravel restart APP_NAME APP_ENV [OPTIONS]\n" >&2
     exit 1
   fi
   if [[ -z ${args['APP_ENV']+x} ]]; then
-    printf "missing required argument: APP_ENV\nusage: ez laravel restart APP_NAME APP_ENV\n" >&2
+    printf "missing required argument: APP_ENV\nusage: ez laravel restart APP_NAME APP_ENV [OPTIONS]\n" >&2
     exit 1
   fi
 
