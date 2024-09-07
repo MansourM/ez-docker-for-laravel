@@ -73,6 +73,10 @@ commands:
         help: Laravel app environment
         allowed: [ dev, test, staging, production ]
         required: true
+    flags:
+      - long: --update
+        short: -u
+        help: update the source code before starting the container
 
   - name: stop
     help: stop Laravel containers
@@ -98,6 +102,10 @@ commands:
         help: Laravel app environment
         allowed: [ dev, test, staging, production ]
         required: true
+    flags:
+      - long: --update
+        short: -u
+        help: update the source code before restarting the container
 
   - name: down
     help: remove Laravel containers

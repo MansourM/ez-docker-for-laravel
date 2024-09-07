@@ -10,31 +10,7 @@ fi
 merged_env_path=$(merge_laravel_envs "$app_dir" "${args[APP_ENV]}")
 load_laravel_envs "$app_dir" "${args[APP_ENV]}"
 
-SOURCE_CODE_DIR="$app_dir/src-${args[APP_ENV]}"
-#TODO add a force clone config somewhere so user can choose to always clone instead of updating the repo?
-log_info "Preparing source code"
-if [ -d "$SOURCE_CODE_DIR" ]; then
-    log "Updating existing $SOURCE_CODE_DIR folder"
-
-    cd "$SOURCE_CODE_DIR" || exit 1
-
-    git pull origin "$GIT_BRANCH"
-    if [ $? -ne 0 ]; then
-        log_error "Error: Git pull failed."
-        exit 1
-    fi
-
-    cd - || exit 1
-else
-    log "Cloning new $SOURCE_CODE_DIR folder"
-    git clone --depth 1 -b "$GIT_BRANCH" "$GIT_URL" "$SOURCE_CODE_DIR"
-
-    # Check if cloning was successful
-    if [ $? -ne 0 ]; then
-        log_error "Error: Git cloning failed."
-        exit 1
-    fi
-fi
+update_source_code
 
 containers=("nginx-pm" "mysql8")
 check_containers "${containers[@]}"
