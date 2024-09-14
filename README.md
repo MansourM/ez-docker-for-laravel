@@ -43,7 +43,7 @@ EZ Docker For Laravel provides an easy-to-use, production-ready environment for 
 
 ## :tada: :tada: :tada:
 * **now your website is running at `<your_ip_address>:<APP_PORT>`**
-* website is only exposed via `APP_PORT` in `app` and `test` `{environment}` to access the `staging` or `production` website you need to configure them on your domain using npm proxy manager
+* website is only exposed via `APP_PORT` in `dev` and `test` environments to access the `staging` or `production` website you need to configure them on your domain using npm proxy manager
 
 
 ## :gear: Github actions
