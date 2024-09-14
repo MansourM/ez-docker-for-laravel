@@ -116,6 +116,7 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 ## :compass: TODOs
 
 - [ ] say hi!
+- [ ] changing GIT_URL in app.env has no effect, will still pull from previous repo
 - [ ] make builder stage on volume so we have better caching on it?
 - [ ] add text log files
 - [ ] mayne merge docker and shared folder? needs better naming or refactor -probably
