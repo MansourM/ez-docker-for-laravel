@@ -6,8 +6,8 @@ else
   log_warning "$DOCKER_ENV_PATH not found."
   log_info "Creating new '$DOCKER_ENV_PATH' file."
 
-  PORT_NGINX_PM=$(ask_question "Enter the Nginx Proxy Manager port" "7000")
-  PORT_PMA=$(ask_question "Enter the PhpMyAdmin port" "7001")
+  PORT_NGINX_PM=$(ask_question "Enter the Nginx Proxy Manager port" "6000")
+  PORT_PMA=$(ask_question "Enter the PhpMyAdmin port" "6001")
   GENERATED_PASSWORD=$(generate_password 24)
   DB_ROOT_PASSWORD=$(ask_question "Enter the database root password" "$GENERATED_PASSWORD" )
   SHARED_NETWORK_NAME=$(ask_question "Enter the docker network name" "ez-shared-network")
