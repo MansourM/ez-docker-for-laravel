@@ -1,4 +1,4 @@
-inspect_args
+#inspect_args
 log_header "Preparing to deploy Laravel in ${args[APP_ENV]} mode"
 
 app_dir="apps/${args[APP_NAME]}"
