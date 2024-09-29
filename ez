@@ -931,7 +931,7 @@ create_new_database_and_user() {
   # $DB_HOST & DB_ROOT_PASSWORD is read from docker.env
 
   # Check if database exists (improve error handling)
-  if ! docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "SELECT 1 FROM \`$NEW_DB_NAME\`;" > /dev/null 2>&1; then
+  if ! docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "SHOW DATABASES WHERE \`Database\` = '$NEW_DB_NAME';" > /dev/null 2>&1; then
     # Create database
     if ! docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "CREATE DATABASE IF NOT EXISTS \`$NEW_DB_NAME\`;"; then
       log_error "Failed to create database '$NEW_DB_NAME'"
