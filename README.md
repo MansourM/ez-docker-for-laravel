@@ -147,7 +147,7 @@ I have installed the minimum PHP plugins required to run Laravel (marked by ✔)
 
 ## :warning: Known Issues
 
-- [ ] you need to manually sudo chown -R <host_user> <laravel_storage_volume>
+- [ ] having # in DB_PASSWORD will break the script (everything will run but you cant access db as password won't be set properly)
 
 <!-- Contributing -->
 
