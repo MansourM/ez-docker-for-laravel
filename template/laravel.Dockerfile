@@ -100,9 +100,9 @@ RUN docker-php-ext-configure gd --with-freetype=/usr/include/
 
 # Install PHP extensions
 # RUN pecl install -o -f redis &&  rm -rf /tmp/pear &&  docker-php-ext-enable redis
-RUN docker-php-ext-install pdo pdo_mysql zip gd intl pcntl opcache sockets bcmath \
+RUN docker-php-ext-install opcache exif pdo pdo_mysql zip gd intl pcntl sockets bcmath \
     && docker-php-ext-configure pcntl --enable-pcntl \
-    && docker-php-ext-enable opcache
+    && docker-php-ext-enable opcache exif
 
 #Clean apt
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
