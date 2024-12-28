@@ -15,6 +15,6 @@ php artisan migrate:fresh --seed
 #add these or other similar ones here if needed
 #php artisan optimize
 #php artisan filament:optimize
-#php artisan shield:generate --all
+#php artisan shield:generate --all --panel admin
 
 supervisord -c /etc/supervisor/supervisord.conf
