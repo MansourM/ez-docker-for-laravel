@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
     g++ \
     libzip-dev
 
-RUN docker-php-ext-install zip
+RUN docker-php-ext-install zip exif
 
 RUN curl -sLS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer \
     && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
