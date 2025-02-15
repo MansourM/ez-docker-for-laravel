@@ -10,6 +10,7 @@ npm install
 npm run build;
 
 php artisan key:generate
+php artisan migrate --force
 php artisan migrate:fresh --seed
 php artisan optimize:clear
 
