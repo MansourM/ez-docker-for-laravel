@@ -16,7 +16,8 @@ RUN apt-get update && apt-get install -y \
     g++ \
     libzip-dev
 
-RUN docker-php-ext-install zip
+# exif and intl are needed for filament
+RUN docker-php-ext-install zip exif intl
 
 RUN curl -sLS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer \
     && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
@@ -46,9 +47,9 @@ COPY ./src-${APP_ENV}/composer.json ${WORKDIR}
 COPY ./src-${APP_ENV}/composer.lock ${WORKDIR}
 
 RUN if [ "${APP_ENV}" = "test" ]; then \
-      composer install  --no-scripts --no-autoloader; \
+      composer install --no-scripts --no-autoloader; \
     else \
-      composer install  --no-scripts --no-autoloader --no-dev; \
+      composer install --no-scripts --no-autoloader --no-dev; \
     fi
 
 COPY ./src-${APP_ENV} ${WORKDIR}
@@ -146,8 +147,7 @@ COPY --from=builder --chown=$USER_NAME:$GROUP_NAME /var/www /var/www
 WORKDIR ${WORKDIR}
 
 # Generate Laravel key and cache configurations
-RUN php artisan key:generate \
-    && php artisan config:cache \
+RUN php artisan config:cache \
     && php artisan event:cache \
     && php artisan route:cache \
     && php artisan view:cache
