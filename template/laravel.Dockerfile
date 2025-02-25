@@ -146,7 +146,7 @@ COPY --from=builder --chown=$USER_NAME:$GROUP_NAME /var/www /var/www
 
 WORKDIR ${WORKDIR}
 
-# Generate Laravel key and cache configurations
+# cache Laravel configurations
 RUN php artisan config:cache \
     && php artisan event:cache \
     && php artisan route:cache \
