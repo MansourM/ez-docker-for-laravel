@@ -3,6 +3,8 @@
 # Exit immediately if a command exits with a non-zero status
 set -e
 
+echo "Running entrypoint.sh"
+
 app_env=${APP_ENV}
 
 if [ -z "$app_env" ]; then
