@@ -65,7 +65,7 @@ listen [::]:443 ssl http2;
     proxy_set_header X-Forwarded-Proto  $laravel_proto;
     proxy_set_header X-Forwarded-For    $remote_addr;
     proxy_set_header X-Real-IP          $remote_addr;
-    proxy_pass       http://andropay-crm_dev:80;
+    proxy_pass       http://androcrm_dev:80;
 
     # Asset Caching
   include conf.d/include/assets.conf;
@@ -80,5 +80,6 @@ listen [::]:443 ssl http2;
   include /data/nginx/custom/server_proxy[.]conf;
 }
 ```
+- then enter your nginx-pm container and restart by `nginx -s reload`
 5. if using reverb dont forget to ad proxy host for wss with correct inside port (8080 usually)
 6. dont forget to add ssl and http2 support via nginxpm
