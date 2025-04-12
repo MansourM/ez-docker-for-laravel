@@ -1,5 +1,5 @@
 # === Stage 1: Builder ===
-FROM php:8.2-fpm AS builder
+FROM php:8.3-fpm AS builder
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -65,7 +65,7 @@ RUN npm run build;
 
 
 # === Stage 2: Final Image ===
-FROM php:8.2-fpm
+FROM php:8.3-fpm
 
 ENV DEBIAN_FRONTEND noninteractive
 
