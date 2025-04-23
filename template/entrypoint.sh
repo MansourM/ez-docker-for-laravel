@@ -8,20 +8,21 @@ echo "Running entrypoint.sh"
 app_env=${APP_ENV}
 
 if [ -z "$app_env" ]; then
-    echo "Error: APP_ENV is not set."
+    echo "Error: APP_ENV is not set!"
     exit 1
 fi
 
 # Check if .env file exists
 if [ ! -f .env ]; then
-    echo "Warning: .env file not found. Creating from .env.example..."
-    cp .env.example .env || { echo "Error: Failed to create .env file"; exit 1; }
+    echo "Error: .env file not found!"
+    exit 1
 fi
 
 # Generate Laravel key if it doesn't exist or is empty
 if ! grep -q "^APP_KEY=[^[:space:]]" .env; then
     echo "Generating Laravel application key..."
     php artisan key:generate
+    php artisan config:clear
 fi
 
 case "$app_env" in
