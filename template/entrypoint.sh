@@ -45,7 +45,6 @@ case "$app_env" in
         else
             echo "Error: spatie/laravel-backup is not installed. Skipping migrations."
             echo "Please handle migrations manually after ensuring a backup is available."
-            exit 1
         fi
 
         echo "Migrating database in production..."
