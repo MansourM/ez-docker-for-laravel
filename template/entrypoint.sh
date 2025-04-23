@@ -12,8 +12,14 @@ if [ -z "$app_env" ]; then
     exit 1
 fi
 
-# Generate Laravel key if it doesn't exist
-if [ -z "$(grep '^APP_KEY=' .env)" ]; then
+# Check if .env file exists
+if [ ! -f .env ]; then
+    echo "Warning: .env file not found. Creating from .env.example..."
+    cp .env.example .env || { echo "Error: Failed to create .env file"; exit 1; }
+fi
+
+# Generate Laravel key if it doesn't exist or is empty
+if ! grep -q "^APP_KEY=[^[:space:]]" .env; then
     echo "Generating Laravel application key..."
     php artisan key:generate
 fi
@@ -28,17 +34,25 @@ case "$app_env" in
         php artisan migrate --force
         ;;
     "production")
+        # Database migration with backup safety
         if composer show spatie/laravel-backup > /dev/null 2>&1; then
-            echo "Backing up database..."
-            php artisan backup:run --only-db
-
-            echo "Migrating database in production..."
-            php artisan migrate --force
+          echo "Backing up database..."
+          php artisan backup:run --only-db || {
+              echo "Error: Database backup failed. Aborting migrations for safety."
+              exit 1
+          }
         else
             echo "Error: spatie/laravel-backup is not installed. Skipping migrations."
             echo "Please handle migrations manually after ensuring a backup is available."
             exit 1
         fi
+
+        echo "Migrating database in production..."
+        php artisan migrate --force
+
+        # Run a basic health check
+        echo "Performing health check..."
+        php artisan --version || echo "Warning: Health check did not pass, but continuing anyway"
         ;;
     *)
         echo "Unknown environment: $app_env"
@@ -46,4 +60,9 @@ case "$app_env" in
         ;;
 esac
 
+# Clear any excess files from previous deployments
+echo "Cleaning up..."
+php artisan cache:clear
+
+echo "Starting supervisor..."
 supervisord -c /etc/supervisor/supervisord.conf
