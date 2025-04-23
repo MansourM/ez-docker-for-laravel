@@ -86,6 +86,4 @@ RUN chown -R ${USER_NAME}:${GROUP_NAME} /var/log/ && \
   chown -R $USER_NAME:$GROUP_NAME /var/log/supervisor && \
   chown -R $USER_NAME:$GROUP_NAME /etc/nginx/conf.d/
 
-COPY ./entrypoint-dev.sh /usr/local/bin/entrypoint.sh
-
 RUN chmod +x /usr/local/bin/entrypoint.sh
