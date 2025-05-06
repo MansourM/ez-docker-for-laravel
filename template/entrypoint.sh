@@ -42,13 +42,12 @@ case "$app_env" in
               echo "Error: Database backup failed. Aborting migrations for safety."
               exit 1
           }
+          echo "Migrating database in production..."
+          php artisan migrate --force
         else
             echo "Error: spatie/laravel-backup is not installed. Skipping migrations."
             echo "Please handle migrations manually after ensuring a backup is available."
         fi
-
-        echo "Migrating database in production..."
-        php artisan migrate --force
 
         # Run a basic health check
         echo "Performing health check..."
