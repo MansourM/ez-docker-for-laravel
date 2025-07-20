@@ -74,7 +74,6 @@ fi
 
 cp -r "template/nginx" "$APP_DIR/nginx"
 cp "template/entrypoint.sh" "$APP_DIR/entrypoint.sh"
-cp "template/entrypoint-dev.sh" "$APP_DIR/entrypoint-dev.sh"
 cp "template/opcache.ini" "$APP_DIR/opcache.ini"
 cp "template/php.ini" "$APP_DIR/php.ini"
 cp "template/supervisord.conf" "$APP_DIR/supervisord.conf"
