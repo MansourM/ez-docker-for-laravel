@@ -69,6 +69,8 @@ FROM php:8.3-fpm
 
 ENV DEBIAN_FRONTEND noninteractive
 
+# Build arguments to optionally override the default UID/GID of www-data user/group.
+# These are used to align container permissions with the host (especially for mounted volumes).
 ARG OWNER_USER_ID
 ARG OWNER_GROUP_ID
 
@@ -121,8 +123,27 @@ COPY ./supervisord.conf /etc/supervisor/supervisord.conf
 COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
 
-RUN if [ $(id -u www-data) -ne 0 ]; then usermod -u ${OWNER_USER_ID} www-data; fi \
-    && if [ $(getent group www-data | cut -d: -f3) -ne 0 ]; then groupmod -g ${OWNER_GROUP_ID} www-data; fi
+#RUN if [ $(id -u www-data) -ne 0 ]; then usermod -u ${OWNER_USER_ID} www-data; fi \
+#    && if [ $(getent group www-data | cut -d: -f3) -ne 0 ]; then groupmod -g ${OWNER_GROUP_ID} www-data; fi
+
+#fixme temp fix
+RUN echo "Requested UID:GID -> ${OWNER_USER_ID}:${OWNER_GROUP_ID}" \
+ \
+ # Only change the www-data UID if:
+ # - It's not "0" (we NEVER want to assign root UID),
+ # - It's set (not empty),
+ # - It differs from the current UID of www-data.
+ && if [ "${OWNER_USER_ID}" != "0" ] && [ -n "${OWNER_USER_ID}" ] && [ "$(id -u www-data)" -ne "${OWNER_USER_ID}" ]; then \
+      echo "Changing www-data UID to ${OWNER_USER_ID}"; \
+      usermod -u "${OWNER_USER_ID}" www-data; \
+    fi \
+ \
+ # Same logic as above, but for the group ID.
+ # Prevents GID collision with root and ensures consistency with mounted volumes.
+ && if [ "${OWNER_GROUP_ID}" != "0" ] && [ -n "${OWNER_GROUP_ID}" ] && [ "$(getent group www-data | cut -d: -f3)" -ne "${OWNER_GROUP_ID}" ]; then \
+      echo "Changing www-data GID to ${OWNER_GROUP_ID}"; \
+      groupmod -g "${OWNER_GROUP_ID}" www-data; \
+    fi
 
 
 RUN mkdir -p /var/log/supervisor \
