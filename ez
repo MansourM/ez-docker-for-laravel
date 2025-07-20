@@ -1542,14 +1542,34 @@ ez_laravel_new_command() {
   APP_NAME=$(ask_question "Enter the application name" "$APP_NAME")
 
   while true; do
-    OWNER_USER_NAME=$(ask_question "What user on this host machine owns this app" "$(whoami)")
+    # Set default suggestion - if current user is root, suggest ubuntu instead
+    if [[ "$(whoami)" == "root" ]]; then
+      DEFAULT_USER="ubuntu"
+    else
+      DEFAULT_USER="$(whoami)"
+    fi
+
+    OWNER_USER_NAME=$(ask_question "What user on this host machine owns this app" "$DEFAULT_USER")
+
+    # Check if user is trying to use root
+    if [[ "$OWNER_USER_NAME" == "root" ]]; then
+      log_error "Root user is not supported for security reasons. Try using 'ubuntu' or create a dedicated user for your application."
+      continue
+    fi
 
     if user_exists "$OWNER_USER_NAME"; then
+      # Additional check for UID 0 (root)
+      USER_ID=$(id -u "$OWNER_USER_NAME")
+      if [[ "$USER_ID" == "0" ]]; then
+        log_error "User '$OWNER_USER_NAME' has root privileges (UID 0). Try using 'ubuntu' or create a dedicated user for your application."
+        continue
+      fi
       break
     else
       log_error "User '$OWNER_USER_NAME' does not exist. Please enter a valid user."
     fi
   done
+
   OWNER_USER_ID=$(id -u "$OWNER_USER_NAME")
   OWNER_GROUP_NAME=$(id -gn "$OWNER_USER_NAME")
   OWNER_GROUP_ID=$(id -g "$OWNER_USER_NAME")
