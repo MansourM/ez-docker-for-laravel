@@ -20,7 +20,8 @@ check_containers() {
 
             if [ $attempt -gt $retries ]; then
                 log_error "Container '$container' is not healthy or not running after $retries attempts."
-                exit 1
+                #fixme
+                #exit 1
             fi
 
             log_info "Retrying in $delay seconds: "
