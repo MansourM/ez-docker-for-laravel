@@ -931,17 +931,20 @@ create_new_database_and_user() {
   MYSQL_USER="root"
   # $DB_HOST & DB_ROOT_PASSWORD is read from docker.env
 
-  # Check if database exists (improve error handling)
-  if ! docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "SHOW DATABASES WHERE \`Database\` = '$NEW_DB_NAME';" > /dev/null 2>&1; then
-    # Create database
-    if ! docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "CREATE DATABASE IF NOT EXISTS \`$NEW_DB_NAME\`;"; then
+  # Check if database exists by querying INFORMATION_SCHEMA.SCHEMATA
+  DB_EXISTS=$(docker exec -i $DB_HOST mysql -u"$MYSQL_USER" -p"$DB_ROOT_PASSWORD" -e \
+      "SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '$NEW_DB_NAME';" --skip-column-names 2>/dev/null)
+
+  if [[ "$DB_EXISTS" != "1" ]]; then
+    # Database doesn't exist, so create it
+    if ! docker exec -i $DB_HOST mysql -u"$MYSQL_USER" -p"$DB_ROOT_PASSWORD" -e "CREATE DATABASE \`$NEW_DB_NAME\`;"; then
       log_error "Failed to create database '$NEW_DB_NAME'"
       exit 1
     else
-      log_success "Created Database: $NEW_DB_NAME";
+      log_success "Created Database: $NEW_DB_NAME"
     fi
   else
-    log "Database: $NEW_DB_NAME Already Exists";
+    log "Database: $NEW_DB_NAME Already Exists"
   fi
 
   #TODO how to give access to specific container instead of %?
