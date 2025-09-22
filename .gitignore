@@ -1,3 +1,6 @@
 .idea/
-test/
+temp/
 docker/docker.env
+test/tmp/
+test/approvals/
+test/*.log
