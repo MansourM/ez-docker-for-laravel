@@ -1,0 +1,16 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+
+- We are working with **Bashly**, a CLI generator for Bash scripts.
+- Folder structure:
+  - `src/commands/` → command scripts.
+  - `src/lib/` → helper functions (`*.sh`).
+- Bashly compiles everything with `bashly generate` into one script.
+- Function files in `src/lib/`:
+  - No shebangs (`#!/usr/bin/env bash`).
+  - Use **descriptive function names**.
+  - Comments only if they explain **how** or **when** to use, not obvious behavior.
+- Assume argument validation and parsing is handled by Bashly, not helper functions.
