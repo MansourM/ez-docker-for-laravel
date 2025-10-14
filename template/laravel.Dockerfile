@@ -119,6 +119,8 @@ RUN rm -rf /etc/nginx/conf.d/default.conf \
 COPY ./php.ini /usr/local/etc/php/conf.d/php.ini
 COPY ./opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 COPY ./supervisord.conf /etc/supervisor/supervisord.conf
+#add these as needed
+#COPY ./supervisor/conf.d/laravel-scheduler.conf /etc/supervisor/conf.d/laravel-scheduler.conf
 
 COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
