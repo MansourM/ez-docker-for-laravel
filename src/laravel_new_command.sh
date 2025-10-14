@@ -96,7 +96,7 @@ cp -r "template/nginx" "$APP_DIR/nginx"
 cp "template/entrypoint.sh" "$APP_DIR/entrypoint.sh"
 cp "template/opcache.ini" "$APP_DIR/opcache.ini"
 cp "template/php.ini" "$APP_DIR/php.ini"
-cp "template/supervisord.conf" "$APP_DIR/supervisord.conf"
+cp "template/supervisor/supervisord.conf" "$APP_DIR/supervisord.conf"
 
 cp "template/common-laravel.yml" "$APP_DIR/common-laravel.yml"
 cp "template/laravel-dev.Dockerfile" "$APP_DIR/laravel-dev.Dockerfile"
