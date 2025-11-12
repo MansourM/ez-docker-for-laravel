@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
 # Security tests for input validation module
 
-source "$(dirname "$0")/../approvals.bash"
+# Set approvals directory before sourcing approvals.bash
+TEST_DIR="$(dirname "$0")"
+export APPROVALS_DIR="$TEST_DIR/approvals"
+
+source "$TEST_DIR/../approvals.bash"
 
 # Test environment setup
 export TEST_MODE=1
-TEST_DIR="$(dirname "$0")"
 PROJECT_ROOT="$(realpath "$TEST_DIR/../..")"
 mkdir -p "$TEST_DIR/../tmp"
 
