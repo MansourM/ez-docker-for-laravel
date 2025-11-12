@@ -4,6 +4,17 @@
 
 This document outlines the requirements for addressing critical security vulnerabilities and production-readiness gaps in the EZ Docker For Laravel project. The current codebase has several high-risk security issues that must be resolved before any production deployment.
 
+## Glossary
+
+- **System**: The EZ Docker For Laravel CLI tool and associated scripts
+- **Container**: A Docker container instance running services (MySQL, Nginx, Laravel, etc.)
+- **User**: A developer or system administrator using the EZ Docker For Laravel tool
+- **Database Credentials**: Username, password, and database name used for MySQL access
+- **Docker Network**: The isolated network created by Docker Compose for container communication
+- **Security Headers**: HTTP response headers that enhance web application security
+- **OPcache**: PHP's opcode cache for improved performance
+- **Health Check**: Automated verification that a container is functioning correctly
+
 ## Requirements
 
 ### Requirement 1: Database Security
