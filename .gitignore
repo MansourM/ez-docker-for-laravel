@@ -7,3 +7,9 @@ test/*.log
 
 # Environment configuration (keep .env.example tracked)
 .env
+
+# Work in progress notes
+wip_notes.md
+*.swp
+*.swo
+*~
