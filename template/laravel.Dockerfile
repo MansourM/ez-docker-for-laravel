@@ -119,6 +119,18 @@ COPY ./supervisord.conf /etc/supervisor/supervisord.conf
 
 COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY ./nginx/security-headers.conf /etc/nginx/conf.d/security-headers.conf
+COPY ./nginx/websocket.conf.template /tmp/websocket.conf.template
+
+# Configure WebSocket support based on build arg
+ARG WEBSOCKET_ENABLED=false
+ARG WEBSOCKET_PORT=6001
+ARG WEBSOCKET_PATH=/app
+
+RUN if [ "$WEBSOCKET_ENABLED" = "true" ]; then \
+        envsubst '${WEBSOCKET_PORT} ${WEBSOCKET_PATH}' < /tmp/websocket.conf.template > /etc/nginx/conf.d/websocket.conf; \
+    fi && \
+    rm -f /tmp/websocket.conf.template
 
 RUN if [ $(id -u www-data) -ne 0 ]; then usermod -u ${OWNER_USER_ID} www-data; fi \
     && if [ $(getent group www-data | cut -d: -f3) -ne 0 ]; then groupmod -g ${OWNER_GROUP_ID} www-data; fi
@@ -127,6 +139,9 @@ RUN if [ $(id -u www-data) -ne 0 ]; then usermod -u ${OWNER_USER_ID} www-data; f
 RUN mkdir -p /var/log/supervisor \
     && mkdir -p /var/log/nginx \
     && mkdir -p /var/cache/nginx \
+    && mkdir -p /var/log/php \
+    && chown -R ${OWNER_USER_NAME}:${OWNER_GROUP_NAME} /var/log/php \
+    && chmod 755 /var/log/php \
     && mkdir -p /etc/supervisor/conf.d/
 
 RUN chown -R ${USER_NAME}:${GROUP_NAME} /var/log/ && \
