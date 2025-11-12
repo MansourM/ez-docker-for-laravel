@@ -23,11 +23,14 @@ setup_environment() {
   if [[ "$environment" == "dev" ]]; then
     app_debug=true
     app_port=$(assign_port "dev" 7000)  # Directly capture the correct port
+    opcache_validate_timestamps=1  # Dev: check for file changes
   elif [[ "$environment" == "test" ]]; then
     app_debug=true
     app_port=$(assign_port "test" 8000)  # Directly capture the correct port
+    opcache_validate_timestamps=1  # Test: check for file changes
   else
     app_debug=false
+    opcache_validate_timestamps=0  # Production/Staging: maximum performance
   fi
 
 
@@ -41,6 +44,12 @@ APP_PORT=$app_port
 DB_DATABASE=$db_database
 DB_USERNAME=$db_username
 DB_PASSWORD=$db_password
+OPCACHE_VALIDATE_TIMESTAMPS=$opcache_validate_timestamps
+
+# WebSocket Configuration (Laravel Reverb/Soketi)
+WEBSOCKET_ENABLED=false
+WEBSOCKET_PORT=6001
+WEBSOCKET_PATH=/app
 EOL
 
   log_info "created apps/$app_name/env/$environment.env"

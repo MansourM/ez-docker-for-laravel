@@ -16,6 +16,8 @@ services:
       - ${APP_PORT}:80
     volumes:
       - ./src-dev:/var/www
+      - ./logs-${APP_ENV}/php:/var/log/php
+      - ./logs-${APP_ENV}/nginx:/var/log/nginx
     entrypoint: entrypoint.sh
     profiles:
       - dev
@@ -30,6 +32,8 @@ services:
     volumes:
       - ./storage-${APP_ENV}/volume:/var/www/storage/volume
       - ./storage-${APP_ENV}/logs:/var/www/storage/logs
+      - ./logs-${APP_ENV}/php:/var/log/php
+      - ./logs-${APP_ENV}/nginx:/var/log/nginx
     profiles:
       - test
 
@@ -41,6 +45,8 @@ services:
     volumes:
       - ./storage-${APP_ENV}/volume:/var/www/storage/volume
       - ./storage-${APP_ENV}/logs:/var/www/storage/logs
+      - ./logs-${APP_ENV}/php:/var/log/php
+      - ./logs-${APP_ENV}/nginx:/var/log/nginx
     profiles:
       - staging
 
@@ -52,6 +58,8 @@ services:
     volumes:
       - ./storage-${APP_ENV}/volume:/var/www/storage/volume
       - ./storage-${APP_ENV}/logs:/var/www/storage/logs
+      - ./logs-${APP_ENV}/php:/var/log/php
+      - ./logs-${APP_ENV}/nginx:/var/log/nginx
     profiles:
       - production
 
