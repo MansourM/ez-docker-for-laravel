@@ -1,3 +1,6 @@
+# Strict error handling
+set -euo pipefail
+
 load_env() {
   local filePath="${1:-.env}"
 

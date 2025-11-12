@@ -2,6 +2,9 @@
 # Database Security Module
 # Provides secure functions for database operations with SQL injection prevention
 
+# Note: set -euo pipefail should be in command scripts, not library files
+# Library files are sourced and should not set global shell options
+
 # Validate database name (alphanumeric and underscores only)
 validate_db_name() {
   local db_name="$1"
