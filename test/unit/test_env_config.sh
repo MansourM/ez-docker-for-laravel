@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
 # Unit tests for .env configuration loading
 
-source "$(dirname "$0")/../approvals.bash"
+# Set approvals directory before sourcing approvals.bash
+TEST_DIR="$(dirname "$0")"
+export APPROVALS_DIR="$TEST_DIR/approvals"
+
+source "$TEST_DIR/../approvals.bash"
 
 # Test environment setup
 export TEST_MODE=1
-TEST_DIR="$(dirname "$0")"
 PROJECT_ROOT="$(realpath "$TEST_DIR/../..")"
 mkdir -p "$TEST_DIR/../tmp"
 
@@ -47,3 +50,4 @@ context ".gitignore Configuration"
 
 # Cleanup
 rm -f "$TEST_DIR/../tmp/test_security.env" 2>/dev/null || true
+rm -rf "$TEST_DIR/../tmp/"* 2>/dev/null || true

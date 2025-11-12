@@ -1,8 +1,9 @@
 # Strict error handling
 set -euo pipefail
 
-# Source the secure database functions
-source "$(dirname "${BASH_SOURCE[0]}")/security/db_security.sh"
+# Note: db_security.sh functions are available when this is embedded in the ez script
+# When testing this file standalone, source the security module:
+# source "$(dirname "${BASH_SOURCE[0]}")/security/db_security.sh"
 
 create_new_database_and_user() {
 

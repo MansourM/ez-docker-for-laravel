@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 # Integration test for input validation in command files
 
-source "$(dirname "$0")/../approvals.bash"
-
+# Set approvals directory before sourcing approvals.bash
 TEST_DIR="$(dirname "$0")"
+export APPROVALS_DIR="$TEST_DIR/approvals"
+
+source "$TEST_DIR/../approvals.bash"
+
 PROJECT_ROOT="$(realpath "$TEST_DIR/../..")"
 
 describe "Input Validation Integration Tests"

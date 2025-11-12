@@ -833,9 +833,11 @@ EOL
 
 set -euo pipefail
 
-# Source the secure database functions
+# Note: db_security.sh functions are available when this is embedded in the ez script
 
-source "$(dirname "${BASH_SOURCE[0]}")/security/db_security.sh"
+# When testing this file standalone, source the security module:
+
+# source "$(dirname "${BASH_SOURCE[0]}")/security/db_security.sh"
 
 create_new_database_and_user() {
 
@@ -1590,6 +1592,11 @@ DB_DATABASE=$db_database
 DB_USERNAME=$db_username
 DB_PASSWORD=$db_password
 OPCACHE_VALIDATE_TIMESTAMPS=$opcache_validate_timestamps
+
+# WebSocket Configuration (Laravel Reverb/Soketi)
+WEBSOCKET_ENABLED=false
+WEBSOCKET_PORT=6001
+WEBSOCKET_PATH=/app
 EOL
 
   log_info "created apps/$app_name/env/$environment.env"
@@ -3392,9 +3399,27 @@ before_hook() {
 
   #inspect_args
 
-  if [[ $EUID -ne 0 ]]; then
+  # Check Docker access instead of requiring root
 
-     log_error "This script must be run as root"
+  if ! docker ps >/dev/null 2>&1; then
+
+     log_error "Cannot connect to Docker daemon
+
+  This script requires access to Docker. Please ensure:
+
+    1. Docker is installed and running
+
+    2. Your user has permission to access Docker
+
+  To add your user to the docker group:
+
+    sudo usermod -aG docker \$USER
+
+    newgrp docker
+
+  Or run with sudo if you prefer:
+
+    sudo ./ez <command>"
 
      exit 1
 
