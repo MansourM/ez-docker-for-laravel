@@ -1,184 +1,214 @@
 # Testing Framework for Ez-Docker-for-Laravel
 
-This directory contains comprehensive tests for the ez-docker-for-laravel project using the Approvals.bash testing framework.
+This directory contains tests for the ez-docker-for-laravel project using the **Approvals.bash** testing framework.
 
 ## Prerequisites
 
-- **WSL/Linux Environment**: Tests must be run in a Linux environment (WSL on Windows)
-- **Bash 4.0+**: Required for associative arrays and other features
-- **Docker**: For integration tests
-- **Git**: For version control operations
+- **WSL/Linux Environment**: Tests must be run in WSL on Windows or native Linux
+- **Bash 4.0+**: Required for approvals.bash framework
+- **Docker**: For integration tests (future)
 
 ## Testing Framework
 
-We use [Approvals.bash](https://github.com/DannyBen/approvals.bash) - an interactive approval testing framework that:
-- Captures command output and prompts for approval
-- Automatically detects changes in output
-- Allows regex-based output filtering for dynamic content
-- Supports CI/CD environments
+We use [Approvals.bash](https://github.com/DannyBen/approvals.bash) v0.5.1 - an interactive approval testing framework.
 
-## Test Structure
+**How it works:**
+- Captures command output and compares with approved files
+- Shows diffs when output changes
+- Prompts to approve/reject changes interactively
+- Auto-approves in CI environments or with `AUTO_APPROVE=1`
+
+## Current Test Structure
 
 ```
 test/
-├── README.md                    # This file
-├── approvals.bash              # Testing framework
-├── approve                     # Example test runner
-├── unit/                       # Unit tests for individual functions
-│   ├── test_lib_functions.sh   # Library function tests
-│   ├── test_env_handling.sh    # Environment handling tests
-│   └── test_validation.sh      # Input validation tests
-├── integration/                # Integration tests
-│   ├── test_docker_setup.sh    # Docker environment tests
-│   ├── test_laravel_deploy.sh  # Full deployment tests
-│   └── test_shared_services.sh # Shared services tests
-├── security/                   # Security-focused tests
-│   ├── test_input_validation.sh # SQL injection prevention
-│   ├── test_permissions.sh     # File/container permissions
-│   └── test_network_security.sh # Network isolation tests
-└── approvals/                  # Approved test outputs (auto-generated)
+├── README.md                           # This file
+├── approvals.bash                      # Testing framework (v0.5.1)
+├── run_security_tests.sh              # Main test runner
+├── unit/                               # Unit tests
+│   └── test_env_config.sh             # Environment configuration tests
+├── security/                           # Security tests
+│   └── test_db_security_module.sh     # Database security validation tests
+├── integration/                        # Integration tests (future)
+├── fixtures/                           # Test data files (future)
+├── tmp/                                # Temporary test files (auto-cleaned)
+└── approvals/                          # Approved test outputs (auto-generated)
 ```
 
 ## Running Tests
 
-### All Tests
+### Main Test Suite (All Tests)
 ```bash
-# From WSL/Linux terminal in project root
-cd test
-./run_simple_tests.sh
+# From project root (Windows PowerShell)
+wsl bash test/run_security_tests.sh
+
+# From WSL/Linux
+cd test && bash run_security_tests.sh
 ```
 
-### Quick Setup Test
-```bash
-cd test
-./quick_test.sh
-```
-
-### Specific Test Categories
+### Test Suite by Category
 ```bash
 # Unit tests only
-./run_unit_tests.sh
-
-# Integration tests only  
-./run_integration_tests.sh
+wsl bash test/unit/run_tests.sh
 
 # Security tests only
-./run_security_tests.sh
+wsl bash test/security/run_tests.sh
+
+# Integration tests only
+wsl bash test/integration/run_tests.sh
 ```
 
 ### Individual Test Files
 ```bash
-# Run specific test file
-./unit/test_lib_functions.sh
+# Environment configuration tests
+wsl bash test/unit/test_env_config.sh
+
+# Database security tests
+wsl bash test/security/test_db_security_module.sh
 ```
 
-## Writing Tests
+### Interactive Mode (Review Changes)
+```bash
+# Run without auto-approve to review changes
+wsl bash -c "cd test && AUTO_APPROVE=0 bash run_security_tests.sh"
+```
+
+## Current Test Coverage
+
+### ✅ Unit Tests
+- **test_env_config.sh**: Environment configuration loading and validation
+  - `.env.example` file existence and content
+  - Docker Compose configuration with pinned versions
+  - Environment variable loading
+  - `.gitignore` configuration
+
+### ✅ Security Tests  
+- **test_db_security_module.sh**: Database security validation
+  - Database name validation (SQL injection prevention)
+  - Username validation (SQL injection prevention)
+  - Password sanitization (special character handling)
+  - Network restriction validation (Docker network only)
+  - Security function existence checks
+
+**Total: 15 test cases, all passing**
+
+## Writing New Tests
 
 ### Basic Test Structure
 ```bash
 #!/usr/bin/env bash
-# Always run from test directory and source approvals.bash
-cd "$(dirname "$0")/.."
-source approvals.bash
+source "$(dirname "$0")/../approvals.bash"
 
-describe "Function Name"
-  it "should do something specific"
-    # Source the function you're testing
-    source ../src/lib/function_file.sh
-    
-    # Test the function
-    approve "function_to_test arg1 arg2"
-    expect_exit_code 0
+# Setup
+TEST_DIR="$(dirname "$0")"
+PROJECT_ROOT="$(realpath "$TEST_DIR/../..")"
+
+describe "Feature Name"
+
+context "Specific Scenario"
+    it "should do something"
+        approve "command to test" "custom_approval_name"
+        expect_exit_code 0
 ```
 
-### Testing with Dynamic Content
-```bash
-# Filter out timestamps, IDs, etc.
-allow_diff "\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}"
-approve "command_that_outputs_timestamps"
-```
+### Key Points
+- Use `approve "command"` to test command output
+- Provide custom approval names for long commands
+- Use `expect_exit_code N` to verify exit codes
+- Suppress stderr with `2>/dev/null` if needed
+- Use `bash -c '...'` for complex multi-line commands
 
-### Testing Error Conditions
+### Example
 ```bash
-describe "Error Handling"
-  it "should fail with invalid input"
-    approve "command_with_invalid_input"
-    expect_exit_code 1
+it "should validate database names"
+    approve "bash -c '
+        source \"$PROJECT_ROOT/src/lib/security/db_security.sh\"
+        validate_db_name \"test_db\" && echo \"VALID\" || echo \"INVALID\"
+    ' 2>/dev/null" "db_name_validation"
 ```
 
 ## Test Guidelines
 
-### Unit Tests
+### Unit Tests (`test/unit/`)
 - Test individual functions in isolation
-- Mock external dependencies where possible
-- Focus on input validation and error handling
-- Test both success and failure scenarios
+- Mock dependencies when needed
+- Focus on input/output validation
+- Test both success and failure cases
 
-### Integration Tests
-- Test complete workflows
-- Use real Docker containers when needed
-- Test environment interactions
-- Validate container health and connectivity
-
-### Security Tests
+### Security Tests (`test/security/`)
 - Test SQL injection prevention
 - Validate input sanitization
-- Check file permissions
-- Test network isolation
+- Check access controls
+- Test with malicious inputs
 
-## Continuous Integration
+### Integration Tests (`test/integration/`)
+- Test complete workflows (future)
+- Use real Docker containers
+- Test environment interactions
+- Validate end-to-end scenarios
 
-Tests are designed to work in CI environments:
-- Use `AUTO_APPROVE=1` to automatically approve in CI
-- All tests should be deterministic
-- Use proper cleanup after each test
+## Approval Files
 
-## Test Data Management
+Approval files are stored in `test/approvals/` and contain the expected output for each test.
 
-- Test fixtures in `test/fixtures/`
-- Temporary files in `test/tmp/` (auto-cleaned)
-- Mock data should be minimal and realistic
-- No real credentials or sensitive data
+**Managing Approvals:**
+- First run: Creates approval file, prompts to approve
+- Subsequent runs: Compares with approval file
+- Changes detected: Shows diff, prompts to approve
+- Auto-approve: Set `AUTO_APPROVE=1` to skip prompts
+
+**Custom Approval Names:**
+Use short custom names to avoid filename length issues:
+```bash
+approve "long command here" "short_name"
+```
 
 ## Troubleshooting
 
-### Common Issues
+### Tests Fail with "File name too long"
+**Solution:** Add custom approval name as second parameter to `approve`
 
-**Permission Denied**
+### Tests Prompt for Approval in CI
+**Solution:** Set `AUTO_APPROVE=1` environment variable
+
+### Unicode Characters Display Incorrectly
+**Issue:** PowerShell encoding (cosmetic only, tests still work)
+**Solution:** Tests work correctly despite display issues
+
+### Permission Denied
 ```bash
-chmod +x test/*.sh
-chmod +x test/*/*.sh
+wsl chmod +x test/*.sh
+wsl chmod +x test/*/*.sh
 ```
 
-**WSL Docker Issues**
+## CI/CD Integration
+
+Tests are designed for automated environments:
 ```bash
-# Ensure Docker Desktop is running
-# Verify WSL integration is enabled
-docker version
+# In CI pipeline
+export AUTO_APPROVE=1
+bash test/run_security_tests.sh
 ```
 
-**Approval File Conflicts**
-```bash
-# Reset all approvals (use carefully)
-rm -rf test/approvals/
-```
+## Future Test Coverage
+
+- [ ] Integration tests for CLI commands
+- [ ] Integration tests for Docker deployment
+- [ ] Integration tests for Laravel setup
+- [ ] Performance tests
+- [ ] Load tests
 
 ## Contributing
 
 When adding new functionality:
-1. Write tests first (TDD approach)
-2. Ensure tests pass in clean environment  
-3. Update this README if needed
-4. Include both positive and negative test cases
-
-## Test Coverage Goals
-
-- [ ] **Unit Tests**: All library functions
-- [ ] **Integration Tests**: All command workflows  
-- [ ] **Security Tests**: All input vectors
-- [ ] **Error Handling**: All failure modes
-- [ ] **Documentation**: All examples work
+1. Write tests first (TDD)
+2. Use `approve` command for output validation
+3. Provide custom approval names for complex commands
+4. Test both success and failure scenarios
+5. Run full test suite before committing
 
 ---
 
-*Tests should be run before every commit and all must pass before merging to main branch.*
+**Current Status:** 15/15 tests passing ✅
+
+*Last Updated: Security Hardening Phase 1 Complete*

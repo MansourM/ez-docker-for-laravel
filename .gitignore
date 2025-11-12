@@ -2,7 +2,7 @@
 temp/
 docker/docker.env
 test/tmp/
-test/approvals/
+test/*/approvals/
 test/*.log
 
 # Environment configuration (keep .env.example tracked)

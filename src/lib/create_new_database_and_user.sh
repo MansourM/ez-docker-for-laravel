@@ -1,3 +1,6 @@
+# Strict error handling
+set -euo pipefail
+
 # Source the secure database functions
 source "$(dirname "${BASH_SOURCE[0]}")/security/db_security.sh"
 

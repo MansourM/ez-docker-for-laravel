@@ -1,3 +1,6 @@
+# Strict error handling
+set -euo pipefail
+
 assign_port() {
   local environment=$1
   local base_port=$2

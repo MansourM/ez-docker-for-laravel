@@ -1,3 +1,6 @@
+# Strict error handling
+set -euo pipefail
+
 merge_envs() {
   if [ "$#" -lt 3 ]; then
     log_error "Usage: merge_env <output> <file1> <file2> [file3 ... fileN]"

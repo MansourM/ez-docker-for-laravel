@@ -1,3 +1,6 @@
+# Strict error handling
+set -euo pipefail
+
 setup_environment() {
   local app_name=$1
   local environment=$2
