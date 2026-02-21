@@ -18,7 +18,7 @@ check_containers "${containers[@]}"
 create_new_database_and_user "$DB_DATABASE" "$DB_USERNAME" "$DB_PASSWORD"
 
 if [[ "${args[APP_ENV]}" == "dev" ]]; then
-  cp "$merged_env_path" "$app_dir/src-dev/.env"
+  cp "$merged_env_path" "$app_dir/src-dev/${LARAVEL_ROOT}.env"
   chown -R "$OWNER_USER_NAME:$OWNER_GROUP_NAME" "$app_dir/src-dev"
 fi
 
