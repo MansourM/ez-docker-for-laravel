@@ -3,12 +3,14 @@ FROM php:8.3-fpm
 ENV DEBIAN_FRONTEND noninteractive
 
 ARG NODE_VERSION=20
+ARG LARAVEL_ROOT
 
 ARG OWNER_USER_ID
 ARG OWNER_GROUP_ID
 
 ENV USER_NAME=www-data
 ARG GROUP_NAME=www-data
+ENV LARAVEL_ROOT_ENV=${LARAVEL_ROOT}
 
 ARG TZ=Asia/Tehran
 ARG WORKDIR=/var/www
@@ -85,5 +87,7 @@ RUN chown -R ${USER_NAME}:${GROUP_NAME} /var/log/ && \
   chown -R $USER_NAME:$GROUP_NAME /var/run/nginx.pid && \
   chown -R $USER_NAME:$GROUP_NAME /var/log/supervisor && \
   chown -R $USER_NAME:$GROUP_NAME /etc/nginx/conf.d/
+
+WORKDIR ${WORKDIR}
 
 RUN chmod +x /usr/local/bin/entrypoint.sh

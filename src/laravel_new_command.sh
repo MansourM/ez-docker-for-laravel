@@ -57,9 +57,19 @@ log "normal git url (you get prompted for authorization): https://github.com/Man
 log "or this format: https://<user>:<pass>@github.com/MansourM/ez-docker-for-laravel.git"
 GIT_URL=$(ask_question "Enter the application git url" "https://github.com/MansourM/ez-docker-for-laravel-example.git")
 
+log_info "Laravel root path (leave empty if Laravel is at repository root):"
+log "Examples: src, src/api, apps/backend"
+LARAVEL_ROOT=$(ask_question "Enter the path to Laravel root within the repository" "")
+
+# Ensure LARAVEL_ROOT ends with / if not empty (for consistent path building)
+if [[ -n "$LARAVEL_ROOT" && "$LARAVEL_ROOT" != */ ]]; then
+  LARAVEL_ROOT="${LARAVEL_ROOT}/"
+fi
+
 cat <<EOL > "$APP_DIR/env/app.env"
 APP_NAME=$APP_NAME
 GIT_URL=$GIT_URL
+LARAVEL_ROOT=$LARAVEL_ROOT
 OWNER_USER_NAME=$OWNER_USER_NAME
 OWNER_USER_ID=$OWNER_USER_ID
 OWNER_GROUP_NAME=$OWNER_GROUP_NAME
