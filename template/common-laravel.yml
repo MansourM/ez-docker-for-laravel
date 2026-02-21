@@ -9,6 +9,8 @@ services:
         - LARAVEL_ROOT=${LARAVEL_ROOT}
         - OWNER_USER_ID=${OWNER_USER_ID}
         - OWNER_GROUP_ID=${OWNER_GROUP_ID}
+    environment:
+      - APP_ENV=${APP_ENV}
     restart: unless-stopped
     user: www-data
     working_dir: /var/www

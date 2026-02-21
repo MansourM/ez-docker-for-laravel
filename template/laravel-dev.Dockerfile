@@ -1,7 +1,6 @@
 FROM php:8.3-fpm
 
 ENV DEBIAN_FRONTEND noninteractive
-ENV APP_ENV=dev
 
 ARG NODE_VERSION=20
 
