@@ -33,7 +33,6 @@ RUN apt-get install -y nodejs \
 
 WORKDIR ${WORKDIR}
 
-#TODO use workdir relative pathing to shorten the path
 COPY ./entrypoint.sh ${WORKDIR}/entrypoint.sh
 RUN chmod +x ${WORKDIR}/entrypoint.sh
 
