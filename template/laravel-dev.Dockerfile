@@ -3,14 +3,12 @@ FROM php:8.3-fpm
 ENV DEBIAN_FRONTEND noninteractive
 
 ARG NODE_VERSION=20
-ARG LARAVEL_ROOT
 
 ARG OWNER_USER_ID
 ARG OWNER_GROUP_ID
 
 ENV USER_NAME=www-data
 ARG GROUP_NAME=www-data
-ENV LARAVEL_ROOT_ENV=${LARAVEL_ROOT}
 
 ARG TZ=Asia/Tehran
 ARG WORKDIR=/var/www
@@ -68,6 +66,10 @@ COPY ./supervisord.conf /etc/supervisor/supervisord.conf
 COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
 
+# Copy entrypoint for dev environment
+COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 RUN if [ $(id -u www-data) -ne 0 ]; then usermod -u ${OWNER_USER_ID} www-data; fi \
     && if [ $(getent group www-data | cut -d: -f3) -ne 0 ]; then groupmod -g ${OWNER_GROUP_ID} www-data; fi
 
@@ -89,5 +91,3 @@ RUN chown -R ${USER_NAME}:${GROUP_NAME} /var/log/ && \
   chown -R $USER_NAME:$GROUP_NAME /etc/nginx/conf.d/
 
 WORKDIR ${WORKDIR}
-
-RUN chmod +x /usr/local/bin/entrypoint.sh
