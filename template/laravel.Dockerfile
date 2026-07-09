@@ -4,6 +4,7 @@ FROM php:8.3-fpm AS builder
 ENV DEBIAN_FRONTEND noninteractive
 
 ARG APP_ENV
+ARG LARAVEL_ROOT
 ARG WORKDIR=/var/www
 ARG NODE_VERSION=20
 
@@ -32,19 +33,19 @@ RUN apt-get install -y nodejs \
 
 WORKDIR ${WORKDIR}
 
-#TODO use workdir relative pathing to shorten the path
 COPY ./entrypoint.sh ${WORKDIR}/entrypoint.sh
 RUN chmod +x ${WORKDIR}/entrypoint.sh
 
-COPY ./src-${APP_ENV}/package.json ${WORKDIR}
-COPY ./src-${APP_ENV}/package-lock.json ${WORKDIR}
+# LARAVEL_ROOT includes trailing / if not empty (e.g., "apps/backend/" or "")
+COPY ./src-${APP_ENV}/${LARAVEL_ROOT}package.json ${WORKDIR}/
+COPY ./src-${APP_ENV}/${LARAVEL_ROOT}package-lock.json ${WORKDIR}/
 
 RUN npm install
 #TODO, Review if this line should exist here
 RUN npm audit fix
 
-COPY ./src-${APP_ENV}/composer.json ${WORKDIR}
-COPY ./src-${APP_ENV}/composer.lock ${WORKDIR}
+COPY ./src-${APP_ENV}/${LARAVEL_ROOT}composer.json ${WORKDIR}/
+COPY ./src-${APP_ENV}/${LARAVEL_ROOT}composer.lock ${WORKDIR}/
 
 RUN if [ "${APP_ENV}" = "test" ]; then \
       composer install --no-scripts --no-autoloader; \
@@ -52,7 +53,7 @@ RUN if [ "${APP_ENV}" = "test" ]; then \
       composer install --no-scripts --no-autoloader --no-dev; \
     fi
 
-COPY ./src-${APP_ENV} ${WORKDIR}
+COPY ./src-${APP_ENV}/${LARAVEL_ROOT} ${WORKDIR}
 COPY ./env/generated/${APP_ENV}.env ${WORKDIR}/.env
 
 RUN if [ "${APP_ENV}" = "test" ]; then \
@@ -73,6 +74,7 @@ ENV DEBIAN_FRONTEND noninteractive
 # These are used to align container permissions with the host (especially for mounted volumes).
 ARG OWNER_USER_ID
 ARG OWNER_GROUP_ID
+ARG LARAVEL_ROOT
 
 ENV USER_NAME=www-data
 ARG GROUP_NAME=www-data
@@ -119,12 +121,19 @@ RUN rm -rf /etc/nginx/conf.d/default.conf \
 COPY ./php.ini /usr/local/etc/php/conf.d/php.ini
 COPY ./opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 COPY ./supervisord.conf /etc/supervisor/supervisord.conf
-#add these as needed
-#COPY ./supervisor/conf.d/laravel-scheduler.conf /etc/supervisor/conf.d/laravel-scheduler.conf
 
 COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY ./nginx/security-headers.conf /etc/nginx/conf.d/security-headers.conf
+
+# Copy supervisor conf.d files if they exist (optional Laravel services)
+# Uncomment the services you need in your app
+# COPY ./supervisor/conf.d/laravel-scheduler.conf /etc/supervisor/conf.d/
+# COPY ./supervisor/conf.d/laravel-queue.conf /etc/supervisor/conf.d/
+# COPY ./supervisor/conf.d/laravel-horizon.conf /etc/supervisor/conf.d/
+# COPY ./supervisor/conf.d/laravel-reverb.conf /etc/supervisor/conf.d/
+# COPY ./supervisor/conf.d/laravel-octane.conf /etc/supervisor/conf.d/
+# COPY ./supervisor/conf.d/laravel-websockets.conf /etc/supervisor/conf.d/
 
 #fixme needs fix here host can not be root or err
 RUN if [ $(id -u www-data) -ne 0 ]; then usermod -u ${OWNER_USER_ID} www-data; fi \

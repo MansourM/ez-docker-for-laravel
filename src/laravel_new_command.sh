@@ -79,9 +79,19 @@ if ! validate_git_url "$GIT_URL"; then
   exit 1
 fi
 
+log_info "Laravel root path (leave empty if Laravel is at repository root):"
+log "Examples: src, src/api, apps/backend"
+LARAVEL_ROOT=$(ask_question "Enter the path to Laravel root within the repository" "")
+
+# Ensure LARAVEL_ROOT ends with / if not empty (for consistent path building)
+if [[ -n "$LARAVEL_ROOT" && "$LARAVEL_ROOT" != */ ]]; then
+  LARAVEL_ROOT="${LARAVEL_ROOT}/"
+fi
+
 cat <<EOL > "$APP_DIR/env/app.env"
 APP_NAME=$APP_NAME
 GIT_URL=$GIT_URL
+LARAVEL_ROOT=$LARAVEL_ROOT
 OWNER_USER_NAME=$OWNER_USER_NAME
 OWNER_USER_ID=$OWNER_USER_ID
 OWNER_GROUP_NAME=$OWNER_GROUP_NAME

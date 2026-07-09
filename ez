@@ -309,7 +309,7 @@ ez_laravel_usage() {
   printf "  %s   stop Laravel containers\n" "stop   "
   printf "  %s   restart Laravel containers\n" "restart"
   printf "  %s   remove Laravel containers\n" "down   "
-  printf "  %s   remove Laravel containers\n" "new    "
+  printf "  %s   setup a new Laravel application\n" "new    "
   echo
 
   # :command.long_usage
@@ -519,7 +519,7 @@ ez_laravel_down_usage() {
 
 # :command.usage
 ez_laravel_new_usage() {
-  printf "ez laravel new - remove Laravel containers\n\n"
+  printf "ez laravel new - setup a new Laravel application\n\n"
   printf "Alias: n\n"
   echo
 
@@ -1165,32 +1165,38 @@ EOL
 update_source_code() {
   log_info "updating source code ..."
   local source_code_dir="apps/${args[APP_NAME]}/src-${args[APP_ENV]}"
+  local laravel_path="${source_code_dir}/${LARAVEL_ROOT}"
 
   # If the source code directory exists, update the repo
   #TODO add a force clone config somewhere so user can choose to always clone instead of updating the repo?
   if [ -d "$source_code_dir" ]; then
       log "Updating existing $source_code_dir folder"
-
       cd "$source_code_dir" || exit 1
-
       git pull origin "$GIT_BRANCH"
       if [ $? -ne 0 ]; then
           log_error "Error: Git pull failed."
           exit 1
       fi
-
       cd - || exit 1
   else
       # If the source code directory doesn't exist, clone the repo
       log "Cloning new $source_code_dir folder"
       git clone --depth 1 -b "$GIT_BRANCH" "$GIT_URL" "$source_code_dir"
-
       # Check if cloning was successful
       if [ $? -ne 0 ]; then
           log_error "Error: Git cloning failed."
           exit 1
       fi
   fi
+
+  # Verify Laravel exists
+  if [ ! -f "$laravel_path/artisan" ]; then
+      log_error "Error: Laravel not found at $laravel_path"
+      log_error "LARAVEL_ROOT is set to: '${LARAVEL_ROOT}' in apps/${args[APP_NAME]}/env/app.env"
+      exit 1
+  fi
+
+  log_success "Laravel found at: $laravel_path"
 }
 
 # src/lib/user_exists.sh
@@ -1409,7 +1415,7 @@ ez_laravel_deploy_command() {
   create_new_database_and_user "$DB_DATABASE" "$DB_USERNAME" "$DB_PASSWORD"
 
   if [[ "${args[APP_ENV]}" == "dev" ]]; then
-    cp "$merged_env_path" "$app_dir/src-dev/.env"
+    cp "$merged_env_path" "$app_dir/src-dev/${LARAVEL_ROOT}.env"
     chown -R "$OWNER_USER_NAME:$OWNER_GROUP_NAME" "$app_dir/src-dev"
   fi
 
@@ -1455,7 +1461,7 @@ ez_laravel_start_command() {
   load_laravel_envs "$app_dir" "${args[APP_ENV]}"
 
   if [[ "${args[APP_ENV]}" == "dev" ]]; then
-    cp "$merged_env_path" "$app_dir/src-dev/.env"
+    cp "$merged_env_path" "$app_dir/src-dev/${LARAVEL_ROOT}.env"
     chown -R "$OWNER_USER_NAME:$OWNER_GROUP_NAME" "$app_dir/src-dev"
   fi
 
@@ -1488,7 +1494,7 @@ ez_laravel_restart_command() {
   load_laravel_envs "$app_dir" "${args[APP_ENV]}"
 
   if [[ "${args[APP_ENV]}" == "dev" ]]; then
-    cp "$merged_env_path" "$app_dir/src-dev/.env"
+    cp "$merged_env_path" "$app_dir/src-dev/${LARAVEL_ROOT}.env"
     chown -R "$OWNER_USER_NAME:$OWNER_GROUP_NAME" "$app_dir/src-dev"
   fi
 
@@ -1597,9 +1603,19 @@ ez_laravel_new_command() {
     exit 1
   fi
 
+  log_info "Laravel root path (leave empty if Laravel is at repository root):"
+  log "Examples: src, src/api, apps/backend"
+  LARAVEL_ROOT=$(ask_question "Enter the path to Laravel root within the repository" "")
+
+  # Ensure LARAVEL_ROOT ends with / if not empty (for consistent path building)
+  if [[ -n "$LARAVEL_ROOT" && "$LARAVEL_ROOT" != */ ]]; then
+    LARAVEL_ROOT="${LARAVEL_ROOT}/"
+  fi
+
   cat <<EOL > "$APP_DIR/env/app.env"
 APP_NAME=$APP_NAME
 GIT_URL=$GIT_URL
+LARAVEL_ROOT=$LARAVEL_ROOT
 OWNER_USER_NAME=$OWNER_USER_NAME
 OWNER_USER_ID=$OWNER_USER_ID
 OWNER_GROUP_NAME=$OWNER_GROUP_NAME

@@ -3,6 +3,8 @@ FROM php:8.3-fpm AS builder
 
 ENV DEBIAN_FRONTEND noninteractive
 
+ARG APP_ENV
+ARG LARAVEL_ROOT
 ARG WORKDIR=/var/www
 ARG NODE_VERSION=20
 
@@ -30,24 +32,24 @@ RUN apt-get install -y nodejs \
 
 WORKDIR ${WORKDIR}
 
-#TODO use workdir relative pathing to shorten the path
 COPY ./entrypoint.sh ${WORKDIR}/entrypoint.sh
 RUN chmod +x ${WORKDIR}/entrypoint.sh
 
-COPY ./src-test/package.json ${WORKDIR}
-COPY ./src-test/package-lock.json ${WORKDIR}
+# LARAVEL_ROOT includes trailing / if not empty (e.g., "apps/backend/" or "")
+COPY ./src-${APP_ENV}/${LARAVEL_ROOT}package.json ${WORKDIR}/
+COPY ./src-${APP_ENV}/${LARAVEL_ROOT}package-lock.json ${WORKDIR}/
 
 RUN npm install
 #TODO, Review if this line should exist here
 RUN npm audit fix
 
-COPY ./src-test/composer.json ${WORKDIR}
-COPY ./src-test/composer.lock ${WORKDIR}
+COPY ./src-${APP_ENV}/${LARAVEL_ROOT}composer.json ${WORKDIR}/
+COPY ./src-${APP_ENV}/${LARAVEL_ROOT}composer.lock ${WORKDIR}/
 
 RUN composer install  --no-scripts --no-autoloader;
 
-COPY ./src-test ${WORKDIR}
-COPY ./env/generated/test.env ${WORKDIR}/.env
+COPY ./src-${APP_ENV}/${LARAVEL_ROOT} ${WORKDIR}
+COPY ./env/generated/${APP_ENV}.env ${WORKDIR}/.env
 
 RUN composer install --optimize-autoloader;
 
@@ -55,12 +57,13 @@ RUN npm run build;
 
 
 # === Stage 2: Final Image ===
-FROM php:8.2-fpm
+FROM php:8.3-fpm
 
 ENV DEBIAN_FRONTEND noninteractive
 
 ARG OWNER_USER_ID
 ARG OWNER_GROUP_ID
+ARG LARAVEL_ROOT
 
 ENV USER_NAME=www-data
 ARG GROUP_NAME=www-data

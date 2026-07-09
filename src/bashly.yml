@@ -121,7 +121,7 @@ commands:
 
   - name: new
     alias: n
-    help: remove Laravel containers
+    help: setup a new Laravel application
 
 examples:
 - ez docker install

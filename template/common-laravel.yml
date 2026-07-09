@@ -6,6 +6,7 @@ services:
       dockerfile: laravel.Dockerfile
       args:
         - APP_ENV=${APP_ENV}
+        - LARAVEL_ROOT=${LARAVEL_ROOT}
         - OWNER_USER_ID=${OWNER_USER_ID}
         - OWNER_GROUP_ID=${OWNER_GROUP_ID}
     environment:

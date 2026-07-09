@@ -66,6 +66,10 @@ COPY ./supervisord.conf /etc/supervisor/supervisord.conf
 COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
 
+# Copy entrypoint for dev environment
+COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 RUN if [ $(id -u www-data) -ne 0 ]; then usermod -u ${OWNER_USER_ID} www-data; fi \
     && if [ $(getent group www-data | cut -d: -f3) -ne 0 ]; then groupmod -g ${OWNER_GROUP_ID} www-data; fi
 
@@ -86,4 +90,4 @@ RUN chown -R ${USER_NAME}:${GROUP_NAME} /var/log/ && \
   chown -R $USER_NAME:$GROUP_NAME /var/log/supervisor && \
   chown -R $USER_NAME:$GROUP_NAME /etc/nginx/conf.d/
 
-RUN chmod +x /usr/local/bin/entrypoint.sh
+WORKDIR ${WORKDIR}
