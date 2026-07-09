@@ -4,9 +4,22 @@
 ## before running any command (but after processing its arguments).
 ##
 ## You can safely delete this file if you do not need it.
+
 #inspect_args
 
-if [[ $EUID -ne 0 ]]; then
-   log_error "This script must be run as root"
+# Check Docker access instead of requiring root
+if ! docker ps >/dev/null 2>&1; then
+   log_error "Cannot connect to Docker daemon
+
+This script requires access to Docker. Please ensure:
+  1. Docker is installed and running
+  2. Your user has permission to access Docker
+
+To add your user to the docker group:
+  sudo usermod -aG docker \$USER
+  newgrp docker
+
+Or run with sudo if you prefer:
+  sudo ./ez <command>"
    exit 1
 fi

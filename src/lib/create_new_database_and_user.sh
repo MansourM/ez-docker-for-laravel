@@ -31,7 +31,14 @@ create_new_database_and_user() {
     log "Database: $NEW_DB_NAME Already Exists"
   fi
 
-  #TODO how to give access to specific container instead of %?
+  # NOTE: the DB user is granted host '%' (connect from any address) on purpose.
+  # This "just works" on every Docker network setup, which keeps the tool usable
+  # for beginners. Restricting the host (e.g. to '172.%.%.%', the default Docker
+  # bridge subnet) is more secure, but silently breaks the DB connection whenever
+  # Docker assigns a container an address outside that range (custom networks,
+  # non-default subnets) — a hard-to-debug trap for new users. If you run this on
+  # an exposed/shared MySQL and want to lock it down, narrow the '%' below to your
+  # actual container subnet.
   # Check if user exists
   if docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "SELECT user FROM mysql.user WHERE user='$NEW_USER_NAME';" --skip-column-names -B | grep -q "$NEW_USER_NAME"; then
       log_warning "User '$NEW_USER_NAME' already exists. Updating password."
