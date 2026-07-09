@@ -781,7 +781,14 @@ create_new_database_and_user() {
     log "Database: $NEW_DB_NAME Already Exists"
   fi
 
-  #TODO how to give access to specific container instead of %?
+  # NOTE: the DB user is granted host '%' (connect from any address) on purpose.
+  # This "just works" on every Docker network setup, which keeps the tool usable
+  # for beginners. Restricting the host (e.g. to '172.%.%.%', the default Docker
+  # bridge subnet) is more secure, but silently breaks the DB connection whenever
+  # Docker assigns a container an address outside that range (custom networks,
+  # non-default subnets) — a hard-to-debug trap for new users. If you run this on
+  # an exposed/shared MySQL and want to lock it down, narrow the '%' below to your
+  # actual container subnet.
   # Check if user exists
   if docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "SELECT user FROM mysql.user WHERE user='$NEW_USER_NAME';" --skip-column-names -B | grep -q "$NEW_USER_NAME"; then
       log_warning "User '$NEW_USER_NAME' already exists. Updating password."
@@ -822,6 +829,91 @@ get_prompt_text() {
     local NO_COLOR='\033[0m'
 
     echo "${GREEN}$question ${YELLOW}[$default]${NO_COLOR}: "
+}
+
+# src/lib/input_validator.sh
+#!/usr/bin/env bash
+# Input validation and sanitization functions for security hardening
+
+# Validate application name (alphanumeric, hyphens, underscores only, max 64 chars)
+# Args: $1 - application name
+# Returns: 0 if valid, 1 if invalid
+validate_app_name() {
+  local app_name="$1"
+
+  # Check for valid characters (alphanumeric, hyphens, underscores)
+  if [[ ! "$app_name" =~ ^[a-zA-Z0-9_-]+$ ]]; then
+    if [ "${TEST_MODE:-0}" != "1" ]; then
+      echo "[ERROR] Invalid app name: $app_name. Only alphanumeric, hyphens, and underscores allowed." >&2
+    fi
+    return 1
+  fi
+
+  # Check length (max 64 characters)
+  if [ ${#app_name} -gt 64 ]; then
+    if [ "${TEST_MODE:-0}" != "1" ]; then
+      echo "[ERROR] App name too long: maximum 64 characters" >&2
+    fi
+    return 1
+  fi
+
+  return 0
+}
+
+# Validate environment name (restricted to known values)
+# Args: $1 - environment name
+# Returns: 0 if valid, 1 if invalid
+validate_environment() {
+  local env="$1"
+
+  case "$env" in
+    dev|test|staging|production)
+      return 0
+      ;;
+    *)
+      if [ "${TEST_MODE:-0}" != "1" ]; then
+        echo "[ERROR] Invalid environment: $env. Must be one of: dev, test, staging, production" >&2
+      fi
+      return 1
+      ;;
+  esac
+}
+
+# Validate Git URL format
+# Args: $1 - Git URL
+# Returns: 0 if valid, 1 if invalid
+validate_git_url() {
+  local url="$1"
+
+  # Check for empty URL
+  if [ -z "$url" ]; then
+    if [ "${TEST_MODE:-0}" != "1" ]; then
+      echo "[ERROR] Git URL cannot be empty" >&2
+    fi
+    return 1
+  fi
+
+  # Check for valid Git URL patterns
+  # Supports: https://*.git, http://*.git, git://*.git, git@*:*.git
+  if [[ "$url" =~ ^(https?|git)://.*\.git$ ]] || [[ "$url" =~ ^git@.*:.*\.git$ ]]; then
+    return 0
+  else
+    if [ "${TEST_MODE:-0}" != "1" ]; then
+      echo "[ERROR] Invalid Git URL format: $url" >&2
+      echo "[ERROR] URL must end with .git and use https://, http://, git://, or git@" >&2
+    fi
+    return 1
+  fi
+}
+
+# Sanitize password for bash context (escape special characters)
+# Args: $1 - password
+# Returns: Sanitized password via stdout
+sanitize_password() {
+  local password="$1"
+
+  # Use printf %q for bash-safe quoting
+  printf '%q' "$password"
 }
 
 # src/lib/is_container_healthy.sh
@@ -1043,11 +1135,14 @@ setup_environment() {
   if [[ "$environment" == "dev" ]]; then
     app_debug=true
     app_port=$(assign_port "dev" 7000)  # Directly capture the correct port
+    opcache_validate_timestamps=1  # Dev: check for file changes
   elif [[ "$environment" == "test" ]]; then
     app_debug=true
     app_port=$(assign_port "test" 8000)  # Directly capture the correct port
+    opcache_validate_timestamps=1  # Test: check for file changes
   else
     app_debug=false
+    opcache_validate_timestamps=0  # Production/Staging: maximum performance
   fi
 
   #FIXME do something for APP_URL
@@ -1060,6 +1155,7 @@ APP_PORT=$app_port
 DB_DATABASE=$db_database
 DB_USERNAME=$db_username
 DB_PASSWORD=$db_password
+OPCACHE_VALIDATE_TIMESTAMPS=$opcache_validate_timestamps
 EOL
 
   log_info "created apps/$app_name/env/$environment.env"
@@ -1263,11 +1359,42 @@ ez_laravel_deploy_command() {
 
   # src/laravel_deploy_command.sh
   #inspect_args
+
+  # Validate application name
+  if ! validate_app_name "${args[APP_NAME]}"; then
+    log_error "Invalid application name: ${args[APP_NAME]}"
+    log_error "Application names must:"
+    log_error "  - Contain only letters, numbers, hyphens, and underscores"
+    log_error "  - Be 64 characters or less"
+    log_error "Example: my-laravel-app"
+    exit 1
+  fi
+
+  # Validate environment name
+  if ! validate_environment "${args[APP_ENV]}"; then
+    log_error "Invalid environment: ${args[APP_ENV]}"
+    log_error "Environment must be one of: dev, test, staging, production"
+    exit 1
+  fi
+
   log_header "Preparing to deploy Laravel in ${args[APP_ENV]} mode"
+
+  # Check Docker daemon availability
+  if ! docker info >/dev/null 2>&1; then
+    log_error "Cannot connect to Docker daemon"
+    log_error "Please ensure:"
+    log_error "  1. Docker is installed and running"
+    log_error "  2. Docker service is started: sudo systemctl start docker"
+    log_error "  3. Your user has Docker permissions: sudo usermod -aG docker \$USER"
+    exit 1
+  fi
 
   app_dir="apps/${args[APP_NAME]}"
   if [[ ! -d "$app_dir" ]]; then
-      log_error "Directory $app_dir does not exist! you need to setup your app first, try './ez laravel new'"
+      log_error "Application directory not found: $app_dir"
+      log_error "The application '${args[APP_NAME]}' has not been initialized."
+      log_error "Please create the application first:"
+      log_error "  sudo ./ez laravel new"
       exit 1
   fi
 
@@ -1290,7 +1417,12 @@ ez_laravel_deploy_command() {
   docker compose -f "$app_dir/compose-laravel.yml" --profile "${args[APP_ENV]}" --env-file "$merged_env_path" up --build -d
 
   if [ $? -ne 0 ]; then
-    log_error "Docker Compose up failed for app: ${args[APP_NAME]}, environment: ${args[APP_ENV]}"
+    log_error "Failed to start Docker containers for ${args[APP_NAME]} (${args[APP_ENV]})"
+    log_error "Troubleshooting steps:"
+    log_error "  1. Check Docker logs: docker compose -f $app_dir/compose-laravel.yml logs"
+    log_error "  2. Verify Docker is running: docker ps"
+    log_error "  3. Check for port conflicts: lsof -i :$APP_PORT"
+    log_error "  4. Review environment file: $merged_env_path"
     exit 1
   fi
 
@@ -1305,7 +1437,10 @@ ez_laravel_deploy_command() {
     if [[ -n "$APP_PORT" ]]; then
       log_success "Server running on [http://<your_ip>:$APP_PORT]."
     else
-    log_warning "APP_PORT not set for test environment. Set it in 'apps/${args[APP_NAME]}/env/test.env'."
+      log_error "APP_PORT not set for ${args[APP_ENV]} environment"
+      log_error "Please add APP_PORT to: apps/${args[APP_NAME]}/env/${args[APP_ENV]}.env"
+      log_error "Example: APP_PORT=7000"
+      exit 1
     fi
   fi
 
@@ -1389,6 +1524,16 @@ ez_laravel_new_command() {
   APP_NAME=$(echo "$ENV_CONTENT" | grep -oP '^APP_NAME=\K.*')
   APP_NAME=$(ask_question "Enter the application name" "$APP_NAME")
 
+  # Validate application name
+  if ! validate_app_name "$APP_NAME"; then
+    log_error "Invalid application name: $APP_NAME"
+    log_error "Application names must:"
+    log_error "  - Contain only letters, numbers, hyphens, and underscores"
+    log_error "  - Be 64 characters or less"
+    log_error "Example: my-laravel-app"
+    exit 1
+  fi
+
   while true; do
     # Set default suggestion - if current user is root, suggest ubuntu instead
     if [[ "$(whoami)" == "root" ]]; then
@@ -1439,6 +1584,18 @@ ez_laravel_new_command() {
   log "normal git url (you get prompted for authorization): https://github.com/MansourM/ez-docker-for-laravel.git"
   log "or this format: https://<user>:<pass>@github.com/MansourM/ez-docker-for-laravel.git"
   GIT_URL=$(ask_question "Enter the application git url" "https://github.com/MansourM/ez-docker-for-laravel-example.git")
+
+  # Validate Git URL
+  if ! validate_git_url "$GIT_URL"; then
+    log_error "Invalid Git URL format: $GIT_URL"
+    log_error "Git URLs must:"
+    log_error "  - End with .git"
+    log_error "  - Use https://, http://, git://, or git@ protocol"
+    log_error "Examples:"
+    log_error "  - https://github.com/user/repo.git"
+    log_error "  - git@github.com:user/repo.git"
+    exit 1
+  fi
 
   cat <<EOL > "$APP_DIR/env/app.env"
 APP_NAME=$APP_NAME
@@ -2648,10 +2805,23 @@ ez_laravel_new_parse_requirements() {
 # :command.user_hooks
 before_hook() {
   # src/before.sh
+
   #inspect_args
 
-  if [[ $EUID -ne 0 ]]; then
-     log_error "This script must be run as root"
+  # Check Docker access instead of requiring root
+  if ! docker ps >/dev/null 2>&1; then
+     log_error "Cannot connect to Docker daemon
+
+  This script requires access to Docker. Please ensure:
+    1. Docker is installed and running
+    2. Your user has permission to access Docker
+
+  To add your user to the docker group:
+    sudo usermod -aG docker \$USER
+    newgrp docker
+
+  Or run with sudo if you prefer:
+    sudo ./ez <command>"
      exit 1
   fi
 }

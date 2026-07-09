@@ -6,6 +6,16 @@ ENV_CONTENT=$(read_multi_line_input "$DELIMITER")
 APP_NAME=$(echo "$ENV_CONTENT" | grep -oP '^APP_NAME=\K.*')
 APP_NAME=$(ask_question "Enter the application name" "$APP_NAME")
 
+# Validate application name
+if ! validate_app_name "$APP_NAME"; then
+  log_error "Invalid application name: $APP_NAME"
+  log_error "Application names must:"
+  log_error "  - Contain only letters, numbers, hyphens, and underscores"
+  log_error "  - Be 64 characters or less"
+  log_error "Example: my-laravel-app"
+  exit 1
+fi
+
 while true; do
   # Set default suggestion - if current user is root, suggest ubuntu instead
   if [[ "$(whoami)" == "root" ]]; then
@@ -56,6 +66,18 @@ log_info "Git url examples:"
 log "normal git url (you get prompted for authorization): https://github.com/MansourM/ez-docker-for-laravel.git"
 log "or this format: https://<user>:<pass>@github.com/MansourM/ez-docker-for-laravel.git"
 GIT_URL=$(ask_question "Enter the application git url" "https://github.com/MansourM/ez-docker-for-laravel-example.git")
+
+# Validate Git URL
+if ! validate_git_url "$GIT_URL"; then
+  log_error "Invalid Git URL format: $GIT_URL"
+  log_error "Git URLs must:"
+  log_error "  - End with .git"
+  log_error "  - Use https://, http://, git://, or git@ protocol"
+  log_error "Examples:"
+  log_error "  - https://github.com/user/repo.git"
+  log_error "  - git@github.com:user/repo.git"
+  exit 1
+fi
 
 cat <<EOL > "$APP_DIR/env/app.env"
 APP_NAME=$APP_NAME
