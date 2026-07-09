@@ -1,4 +1,14 @@
 .idea/
+.vscode/
 test/
 temp/
 docker/docker.env
+
+# Environment configuration (keep .env.example tracked)
+.env
+
+# Editor / work-in-progress
+wip_notes.md
+*.swp
+*.swo
+*~
