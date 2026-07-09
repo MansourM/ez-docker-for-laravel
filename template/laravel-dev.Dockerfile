@@ -1,4 +1,7 @@
-FROM php:8.3-fpm
+# PHP version (supported: 8.2, 8.3, 8.4, 8.5). Passed as a build arg from the
+# app's env; defaults to 8.3 so pre-existing apps rebuild unchanged.
+ARG PHP_VERSION=8.3
+FROM php:${PHP_VERSION}-fpm
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -36,10 +39,14 @@ RUN apt-get update && apt-get install -y \
 RUN docker-php-ext-configure gd --with-freetype=/usr/include/
 
 # Install PHP extensions
+# NOTE: opcache is compiled into PHP 8.5+, but is a separately-installable shared
+# module on 8.2-8.4, so only install it when it isn't already present.
 # RUN pecl install -o -f redis &&  rm -rf /tmp/pear &&  docker-php-ext-enable redis
-RUN docker-php-ext-install opcache exif pdo pdo_mysql zip gd intl pcntl sockets bcmath \
-    && docker-php-ext-configure pcntl --enable-pcntl \
-    && docker-php-ext-enable opcache exif
+RUN docker-php-ext-install exif pdo pdo_mysql zip gd intl pcntl sockets bcmath \
+    && docker-php-ext-enable exif \
+    && if ! php -m | grep -qi 'Zend OPcache'; then \
+         docker-php-ext-install opcache && docker-php-ext-enable opcache; \
+       fi
 
 
 RUN curl -sLS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer \

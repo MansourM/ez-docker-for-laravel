@@ -146,6 +146,22 @@ Nginx Proxymanager default login information:
 
 <!-- PHP Extensions -->
 
+## :elephant: PHP Version
+
+Each app picks its own PHP version. `ez laravel new` asks for it and stores
+`PHP_VERSION` in the app's `env/app.env`.
+
+- **Supported:** `8.2`, `8.3`, `8.4`, `8.5`
+- **Default:** `8.5` (just press Enter at the prompt)
+
+To change an existing app's PHP version, edit `PHP_VERSION` in
+`apps/<app>/env/app.env` and rebuild (`ez laravel deploy ...`). Apps created
+before this feature have no `PHP_VERSION` key and continue to build on `8.3`.
+
+> Note: OPcache ships compiled into PHP 8.5+, whereas 8.2–8.4 provide it as a
+> separate module — the Dockerfiles handle this automatically, so every
+> supported version builds with the same extension set.
+
 ## :heavy_plus_sign: PHP Extensions
 
 I have installed the minimum PHP plugins required to run Laravel (marked by ✔) in the container. You should add others based on your project's needs. Add them in `laravel.Dockerfile`.

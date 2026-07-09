@@ -7,6 +7,7 @@ services:
       args:
         - APP_ENV=${APP_ENV}
         - LARAVEL_ROOT=${LARAVEL_ROOT}
+        - PHP_VERSION=${PHP_VERSION:-8.3}
         - OWNER_USER_ID=${OWNER_USER_ID}
         - OWNER_GROUP_ID=${OWNER_GROUP_ID}
     environment:

@@ -45,6 +45,25 @@ validate_environment() {
   esac
 }
 
+# Validate PHP version (must be one of the officially supported versions)
+# Args: $1 - PHP version (e.g. 8.3)
+# Returns: 0 if valid, 1 if invalid
+validate_php_version() {
+  local version="$1"
+
+  case "$version" in
+    8.2|8.3|8.4|8.5)
+      return 0
+      ;;
+    *)
+      if [ "${TEST_MODE:-0}" != "1" ]; then
+        echo "[ERROR] Invalid PHP version: $version. Must be one of: 8.2, 8.3, 8.4, 8.5" >&2
+      fi
+      return 1
+      ;;
+  esac
+}
+
 # Validate Git URL format
 # Args: $1 - Git URL
 # Returns: 0 if valid, 1 if invalid

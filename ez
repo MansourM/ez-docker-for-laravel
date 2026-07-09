@@ -879,6 +879,25 @@ validate_environment() {
   esac
 }
 
+# Validate PHP version (must be one of the officially supported versions)
+# Args: $1 - PHP version (e.g. 8.3)
+# Returns: 0 if valid, 1 if invalid
+validate_php_version() {
+  local version="$1"
+
+  case "$version" in
+    8.2|8.3|8.4|8.5)
+      return 0
+      ;;
+    *)
+      if [ "${TEST_MODE:-0}" != "1" ]; then
+        echo "[ERROR] Invalid PHP version: $version. Must be one of: 8.2, 8.3, 8.4, 8.5" >&2
+      fi
+      return 1
+      ;;
+  esac
+}
+
 # Validate Git URL format
 # Args: $1 - Git URL
 # Returns: 0 if valid, 1 if invalid
@@ -1612,10 +1631,20 @@ ez_laravel_new_command() {
     LARAVEL_ROOT="${LARAVEL_ROOT}/"
   fi
 
+  log_info "PHP version for this app (supported: 8.2, 8.3, 8.4, 8.5)"
+  while true; do
+    PHP_VERSION=$(ask_question "Enter the PHP version" "8.5")
+    if validate_php_version "$PHP_VERSION"; then
+      break
+    fi
+    log_error "Invalid PHP version: $PHP_VERSION. Must be one of: 8.2, 8.3, 8.4, 8.5"
+  done
+
   cat <<EOL > "$APP_DIR/env/app.env"
 APP_NAME=$APP_NAME
 GIT_URL=$GIT_URL
 LARAVEL_ROOT=$LARAVEL_ROOT
+PHP_VERSION=$PHP_VERSION
 OWNER_USER_NAME=$OWNER_USER_NAME
 OWNER_USER_ID=$OWNER_USER_ID
 OWNER_GROUP_NAME=$OWNER_GROUP_NAME
