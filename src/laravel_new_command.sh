@@ -88,10 +88,20 @@ if [[ -n "$LARAVEL_ROOT" && "$LARAVEL_ROOT" != */ ]]; then
   LARAVEL_ROOT="${LARAVEL_ROOT}/"
 fi
 
+log_info "PHP version for this app (supported: 8.2, 8.3, 8.4, 8.5)"
+while true; do
+  PHP_VERSION=$(ask_question "Enter the PHP version" "8.5")
+  if validate_php_version "$PHP_VERSION"; then
+    break
+  fi
+  log_error "Invalid PHP version: $PHP_VERSION. Must be one of: 8.2, 8.3, 8.4, 8.5"
+done
+
 cat <<EOL > "$APP_DIR/env/app.env"
 APP_NAME=$APP_NAME
 GIT_URL=$GIT_URL
 LARAVEL_ROOT=$LARAVEL_ROOT
+PHP_VERSION=$PHP_VERSION
 OWNER_USER_NAME=$OWNER_USER_NAME
 OWNER_USER_ID=$OWNER_USER_ID
 OWNER_GROUP_NAME=$OWNER_GROUP_NAME
