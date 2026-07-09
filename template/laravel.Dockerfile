@@ -124,6 +124,7 @@ COPY ./supervisord.conf /etc/supervisor/supervisord.conf
 
 COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY ./nginx/security-headers.conf /etc/nginx/conf.d/security-headers.conf
 
 #fixme needs fix here host can not be root or err
 RUN if [ $(id -u www-data) -ne 0 ]; then usermod -u ${OWNER_USER_ID} www-data; fi \
@@ -132,6 +133,9 @@ RUN if [ $(id -u www-data) -ne 0 ]; then usermod -u ${OWNER_USER_ID} www-data; f
 RUN mkdir -p /var/log/supervisor \
     && mkdir -p /var/log/nginx \
     && mkdir -p /var/cache/nginx \
+    && mkdir -p /var/log/php \
+    && chown -R ${OWNER_USER_NAME}:${OWNER_GROUP_NAME} /var/log/php \
+    && chmod 755 /var/log/php \
     && mkdir -p /etc/supervisor/conf.d/
 
 RUN chown -R ${USER_NAME}:${GROUP_NAME} /var/log/ && \
