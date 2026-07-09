@@ -5,9 +5,6 @@
 ##
 ## You can safely delete this file if you do not need it.
 
-# Strict error handling - applies to all commands
-set -euo pipefail
-
 #inspect_args
 
 # Check Docker access instead of requiring root

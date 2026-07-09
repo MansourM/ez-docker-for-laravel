@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 # Input validation and sanitization functions for security hardening
 
-set -euo pipefail
-
 # Validate application name (alphanumeric, hyphens, underscores only, max 64 chars)
 # Args: $1 - application name
 # Returns: 0 if valid, 1 if invalid

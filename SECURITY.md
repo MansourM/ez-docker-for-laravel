@@ -30,11 +30,10 @@ EZ Docker For Laravel takes security seriously. This document outlines our secur
 
 ### 2. Network Security
 
-**Database Access Restrictions:**
-- MySQL users restricted to Docker network: `172.%.%.%`
-- No wildcard (`%`) or all-hosts (`0.0.0.0`) access
-- Network isolation between containers
-- No direct external database access
+**Database Access:**
+- MySQL application users are granted host `'%'` for broad compatibility across Docker networks
+- Network isolation between containers is provided by Docker networks
+- Database ports are not published to the host by default
 
 **Service Exposure:**
 - Development/test: Exposed on `APP_PORT` only
@@ -87,12 +86,6 @@ EZ Docker For Laravel takes security seriously. This document outlines our secur
 - Secure session configuration
 
 ### 5. Error Handling
-
-**Strict Mode:**
-- `set -euo pipefail` in all critical scripts
-- Proper error propagation
-- No silent failures
-- Exit on undefined variables
 
 **Secure Error Messages:**
 - No sensitive information in error output
@@ -152,10 +145,9 @@ EZ Docker For Laravel takes security seriously. This document outlines our secur
 ### For Deployment
 
 1. **Use Strong Passwords:**
-   ```bash
-   # Generate secure passwords
-   generate_password 32
-   ```
+   - Use long, randomly generated passwords (20+ characters)
+   - Do not reuse credentials across environments
+   - Never rely on default passwords
 
 2. **Keep Systems Updated:**
    ```bash
@@ -200,25 +192,16 @@ EZ Docker For Laravel takes security seriously. This document outlines our secur
    - Use `.env.example` for templates
    - Review commits before pushing
 
-2. **Test Security Changes:**
-   ```bash
-   # Run security tests
-   bash test/security/_run_tests.sh
-   
-   # Run all tests
-   bash test/run_all_tests.sh
-   ```
-
-3. **Validate Inputs:**
+2. **Validate Inputs:**
    - Always validate user input
    - Use provided validation functions
    - Test with malicious inputs
 
-4. **Follow Secure Coding:**
-   - Use strict error handling
+3. **Follow Secure Coding:**
+   - Handle errors explicitly
    - Avoid eval and dynamic execution
    - Quote variables properly
-   - Use functions from security modules
+   - Use functions from the input validation module
 
 ## Vulnerability Reporting
 
@@ -277,7 +260,6 @@ If you discover a security vulnerability, please report it responsibly:
 
 - Watch the [GitHub repository](https://github.com/MansourM/ez-docker-for-laravel)
 - Check [releases](https://github.com/MansourM/ez-docker-for-laravel/releases) for security updates
-- Review [CHANGELOG](CHANGELOG.md) for security fixes
 
 ### Applying Updates
 

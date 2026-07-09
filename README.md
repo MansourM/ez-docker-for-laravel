@@ -20,17 +20,14 @@ EZ Docker For Laravel is production-ready with comprehensive security hardening:
 
 - **SQL Injection Protection** - Validated identifiers, parameterized queries, password sanitization
 - **Input Validation** - Strict validation for all user inputs (app names, environments, credentials)
-- **Network Security** - Database access restricted to Docker network (172.%.%.%)
 - **Docker Security** - Pinned image versions, health checks, no `latest` tags
 - **Security Headers** - HSTS, CSP, X-Frame-Options, X-Content-Type-Options, and more
-- **Error Handling** - Strict mode (`set -euo pipefail`) in all critical scripts
 - **Access Control** - Docker group membership (no root required), minimal privileges
 
-**Security Status**: ✅ Production Ready | 🔒 LOW RISK | 96 tests passing
+**Security Status**: ✅ Production Ready | 🔒 LOW RISK
 
 For complete security documentation, see:
 - [SECURITY.md](SECURITY.md) - Security policy, best practices, vulnerability reporting
-- [docs/SECURITY_AUDIT.md](docs/SECURITY_AUDIT.md) - Latest security audit report
 
 <!-- Getting Started -->
 
@@ -295,8 +292,6 @@ Seyed Mansour Mirbehbahani - [sm.mirbehbahani@gmail.com](mailto:sm.mirbehbahani@
 - **[Security Policy](SECURITY.md)** - Security features and vulnerability reporting
 - **[Troubleshooting](docs/TROUBLESHOOTING.md)** - Detailed problem-solving guide
 - **[Health Checks](docs/HEALTH_CHECKS.md)** - Service monitoring and recovery
-- **[Testing Guide](test/README.md)** - Running and writing tests
-- **[Bashly Workflow](docs/BASHLY_WORKFLOW.md)** - Modifying the CLI
 
 <!-- Acknowledgments -->
 

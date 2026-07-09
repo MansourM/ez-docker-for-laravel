@@ -1,5 +1,5 @@
 # === Stage 1: Builder ===
-FROM php:8.2-fpm AS builder
+FROM php:8.3-fpm AS builder
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -16,7 +16,8 @@ RUN apt-get update && apt-get install -y \
     g++ \
     libzip-dev
 
-RUN docker-php-ext-install zip
+# exif and intl are needed for filament
+RUN docker-php-ext-install zip exif intl
 
 RUN curl -sLS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer \
     && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
@@ -46,9 +47,9 @@ COPY ./src-${APP_ENV}/composer.json ${WORKDIR}
 COPY ./src-${APP_ENV}/composer.lock ${WORKDIR}
 
 RUN if [ "${APP_ENV}" = "test" ]; then \
-      composer install  --no-scripts --no-autoloader; \
+      composer install --no-scripts --no-autoloader; \
     else \
-      composer install  --no-scripts --no-autoloader --no-dev; \
+      composer install --no-scripts --no-autoloader --no-dev; \
     fi
 
 COPY ./src-${APP_ENV} ${WORKDIR}
@@ -64,10 +65,12 @@ RUN npm run build;
 
 
 # === Stage 2: Final Image ===
-FROM php:8.2-fpm
+FROM php:8.3-fpm
 
 ENV DEBIAN_FRONTEND noninteractive
 
+# Build arguments to optionally override the default UID/GID of www-data user/group.
+# These are used to align container permissions with the host (especially for mounted volumes).
 ARG OWNER_USER_ID
 ARG OWNER_GROUP_ID
 
@@ -116,25 +119,16 @@ RUN rm -rf /etc/nginx/conf.d/default.conf \
 COPY ./php.ini /usr/local/etc/php/conf.d/php.ini
 COPY ./opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 COPY ./supervisord.conf /etc/supervisor/supervisord.conf
+#add these as needed
+#COPY ./supervisor/conf.d/laravel-scheduler.conf /etc/supervisor/conf.d/laravel-scheduler.conf
 
 COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY ./nginx/security-headers.conf /etc/nginx/conf.d/security-headers.conf
-COPY ./nginx/websocket.conf.template /tmp/websocket.conf.template
 
-# Configure WebSocket support based on build arg
-ARG WEBSOCKET_ENABLED=false
-ARG WEBSOCKET_PORT=6001
-ARG WEBSOCKET_PATH=/app
-
-RUN if [ "$WEBSOCKET_ENABLED" = "true" ]; then \
-        envsubst '${WEBSOCKET_PORT} ${WEBSOCKET_PATH}' < /tmp/websocket.conf.template > /etc/nginx/conf.d/websocket.conf; \
-    fi && \
-    rm -f /tmp/websocket.conf.template
-
+#fixme needs fix here host can not be root or err
 RUN if [ $(id -u www-data) -ne 0 ]; then usermod -u ${OWNER_USER_ID} www-data; fi \
     && if [ $(getent group www-data | cut -d: -f3) -ne 0 ]; then groupmod -g ${OWNER_GROUP_ID} www-data; fi
-
 
 RUN mkdir -p /var/log/supervisor \
     && mkdir -p /var/log/nginx \
@@ -160,9 +154,8 @@ COPY --from=builder --chown=$USER_NAME:$GROUP_NAME /var/www /var/www
 
 WORKDIR ${WORKDIR}
 
-# Generate Laravel key and cache configurations
-RUN php artisan key:generate \
-    && php artisan config:cache \
+# cache Laravel configurations
+RUN php artisan config:cache \
     && php artisan event:cache \
     && php artisan route:cache \
     && php artisan view:cache

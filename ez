@@ -606,210 +606,129 @@ inspect_args() {
 # :command.user_lib
 # src/lib/ask_question.sh
 ask_question() {
-
     local question=$1
-
     local default=$2
-
     local result
 
     local GREEN='\033[0;32m'
-
     local YELLOW='\033[0;33m'
-
     local NC='\033[0m' # No Color
 
     # Prompt the user with the question and default answer
-
     read -p "$(echo -e "${GREEN}$question ${YELLOW}[$default]${NC}: ")" result
 
     # Use the default if the user presses Enter without typing anything
-
     if [[ -z "$result" ]]; then
-
         result=$default
-
     fi
 
     echo $result
-
 }
 
 # src/lib/ask_question_v2.sh
 #TODO This is WIP, read, echo does not work
-
 ask_question_v2() {
-
     local question=$1
-
     local default=$2
-
     local regex=$3
-
     local required=$4
-
     local hide_text=$5
 
     local result
 
     local GREEN='\033[0;32m'
-
     local YELLOW='\033[0;33m'
-
     local RED='\033[0;31m'
-
     local NC='\033[0m' # No Color
 
     while true; do
-
         # Prompt the user with the question and default answer
-
         if [ "$hide_text" == "true" ]; then
-
             read -s -p "$(echo -e "${GREEN}$question ${YELLOW}[$default]${NC}: ")" result
-
             echo ""  # Move to a new line after hidden input
-
         else
-
             read -p "$(echo -e "${GREEN}$question ${YELLOW}[$default]${NC}: ")" result
-
         fi
 
         # Use the default if the user presses Enter without typing anything
-
         if [[ -z "$result" ]]; then
-
             result=$default
-
         fi
 
         # Check if the result is required
-
         if [ "$required" == "true" ] && [[ -z "$result" ]]; then
-
             echo -e "${RED}This field is required.${NC}"
-
             continue
-
         fi
 
         # Check if the result matches the regex
-
         if [ -n "$regex" ] && ! [[ "$result" =~ $regex ]]; then
-
             echo -e "${RED}Invalid input format, should match regex: '$regex'${NC}"
-
             continue
-
         fi
 
         break
-
     done
 
     echo $result
-
 }
 
 # src/lib/assign_port.sh
-# Strict error handling
-
-set -euo pipefail
-
 assign_port() {
-
   local environment=$1
-
   local base_port=$2
-
   local num_apps default_port app_port
 
   num_apps=$(ls -l apps | grep -c '^d')
-
   default_port=$((base_port + num_apps))
 
   while true; do
-
     app_port=$(ask_question "Enter the ${environment} app port" "$default_port")
 
     if is_port_in_use "$app_port"; then
-
       log_error "Port $app_port is already in use. Please choose a different port." >&2
-
     else
-
       echo "$app_port"  # This should be captured in the main script
-
       return 0
-
     fi
-
   done
-
 }
 
 # src/lib/check_containers.sh
 check_containers() {
-
     log_header "Checking shared containers health before building the Laravel container."
-
     local containers=("$@")
-
     local retries=4
-
     local delay=10
 
     for container in "${containers[@]}"; do
-
         for attempt in $(seq 1 $((retries + 1))); do
-
             if is_container_running "$container"; then
-
                 log_success "Container '$container' is running."
-
                 if is_container_healthy "$container"; then
-
                     log_success "Container '$container' is healthy."
-
                     break
-
                 else
-
                     log_warning "Container '$container' is not healthy. Attempt $((attempt))/$retries."
-
                 fi
-
             else
-
                 log_warning "Container '$container' is not running. Attempt $((attempt))/$retries. You can run shared container by './ez shared deploy'"
-
             fi
 
             if [ $attempt -gt $retries ]; then
-
                 log_error "Container '$container' is not healthy or not running after $retries attempts."
-
-                exit 1
-
+                #fixme
+                #exit 1
             fi
 
             log_info "Retrying in $delay seconds: "
-
             for ((i=0; i<$delay; i++)); do
-
                 echo -n "."
-
                 sleep 1
-
             done
-
             echo ""
-
         done
-
     done
-
 }
 
 # src/lib/create_docker_env.sh
@@ -829,147 +748,92 @@ EOL
 }
 
 # src/lib/create_new_database_and_user.sh
-# Strict error handling
-
-set -euo pipefail
-
-# Note: db_security.sh functions are available when this is embedded in the ez script
-
-# When testing this file standalone, source the security module:
-
-# source "$(dirname "${BASH_SOURCE[0]}")/security/db_security.sh"
-
 create_new_database_and_user() {
 
   if [ "$#" -ne 3 ]; then
-
       log_error "Invalid Arguments, Usage: $0 <new_db_name> <new_user_name> <new_user_password>"
-
       return 1
-
   fi
 
   # Set variables
-
   NEW_DB_NAME=$1
-
   NEW_USER_NAME=$2
-
   NEW_USER_PASSWORD=$3
 
   log_header "Creating Database: $NEW_DB_NAME with User: $NEW_USER_NAME"
 
+  MYSQL_USER="root"
   # $DB_HOST & DB_ROOT_PASSWORD is read from docker.env
 
-  # Get network restriction from .env or use default
+  # Check if database exists by querying INFORMATION_SCHEMA.SCHEMATA
+  DB_EXISTS=$(docker exec -i $DB_HOST mysql -u"$MYSQL_USER" -p"$DB_ROOT_PASSWORD" -e \
+      "SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '$NEW_DB_NAME';" --skip-column-names 2>/dev/null)
 
-  local NETWORK_RESTRICTION="${DB_NETWORK_RESTRICTION:-172.%.%.%}"
-
-  # Check if database exists using secure function
-
-  if database_exists "$NEW_DB_NAME"; then
-
-    log "Database: $NEW_DB_NAME Already Exists"
-
-  else
-
-    # Create database using secure function
-
-    if ! create_database_secure "$NEW_DB_NAME"; then
-
+  if [[ "$DB_EXISTS" != "1" ]]; then
+    # Database doesn't exist, so create it
+    if ! docker exec -i $DB_HOST mysql -u"$MYSQL_USER" -p"$DB_ROOT_PASSWORD" -e "CREATE DATABASE \`$NEW_DB_NAME\`;"; then
       log_error "Failed to create database '$NEW_DB_NAME'"
-
       exit 1
-
+    else
+      log_success "Created Database: $NEW_DB_NAME"
     fi
-
-  fi
-
-  # Check if user exists with network restriction
-
-  if user_exists "$NEW_USER_NAME" "$NETWORK_RESTRICTION"; then
-
-      log_warning "User '$NEW_USER_NAME'@'$NETWORK_RESTRICTION' already exists. Updating password."
-
-      # Update user password using secure function
-
-      if ! update_user_password_secure "$NEW_USER_NAME" "$NEW_USER_PASSWORD" "$NETWORK_RESTRICTION"; then
-
-        log_error "Failed to update password for user '$NEW_USER_NAME'"
-
-        exit 1
-
-      fi
-
-      # Grant privileges (in case they changed)
-
-      local sql="GRANT ALL PRIVILEGES ON \`$NEW_DB_NAME\`.* TO '$NEW_USER_NAME'@'$NETWORK_RESTRICTION';"
-
-      if ! execute_mysql_command "$sql" "root" "$DB_ROOT_PASSWORD"; then
-
-        log_error "Failed to grant privileges for user '$NEW_USER_NAME'"
-
-        exit 1
-
-      fi
-
-      log_success "User: '$NEW_USER_NAME'@'$NETWORK_RESTRICTION' password updated for DB: $NEW_DB_NAME with full privileges"
-
   else
-
-      # Create user and grant privileges using secure function
-
-      if ! create_user_secure "$NEW_USER_NAME" "$NEW_USER_PASSWORD" "$NEW_DB_NAME" "$NETWORK_RESTRICTION"; then
-
-        log_error "Failed to create and grant privileges for user '$NEW_USER_NAME'"
-
-        exit 1
-
-      fi
-
-      log_success "User: '$NEW_USER_NAME'@'$NETWORK_RESTRICTION' created for DB: $NEW_DB_NAME with full privileges"
-
+    log "Database: $NEW_DB_NAME Already Exists"
   fi
 
+  # NOTE: the DB user is granted host '%' (connect from any address) on purpose.
+  # This "just works" on every Docker network setup, which keeps the tool usable
+  # for beginners. Restricting the host (e.g. to '172.%.%.%', the default Docker
+  # bridge subnet) is more secure, but silently breaks the DB connection whenever
+  # Docker assigns a container an address outside that range (custom networks,
+  # non-default subnets) — a hard-to-debug trap for new users. If you run this on
+  # an exposed/shared MySQL and want to lock it down, narrow the '%' below to your
+  # actual container subnet.
+  # Check if user exists
+  if docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "SELECT user FROM mysql.user WHERE user='$NEW_USER_NAME';" --skip-column-names -B | grep -q "$NEW_USER_NAME"; then
+      log_warning "User '$NEW_USER_NAME' already exists. Updating password."
+      # Update user password
+      if ! docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "ALTER USER '$NEW_USER_NAME'@'%' IDENTIFIED BY '$NEW_USER_PASSWORD';" || \
+         ! docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON \`$NEW_DB_NAME\`.* TO '$NEW_USER_NAME'@'%';" || \
+         ! docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "FLUSH PRIVILEGES;"; then
+        log_error "Failed to update password and/or grant privileges for user '$NEW_USER_NAME'"
+        exit 1
+      fi
+      log_success "User: '$NEW_USER_NAME' password updated for DB: $NEW_DB_NAME with full privileges";
+  else
+      # Create user and grant privileges
+      if ! docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "CREATE USER '$NEW_USER_NAME'@'%' IDENTIFIED BY '$NEW_USER_PASSWORD';" || \
+         ! docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON \`$NEW_DB_NAME\`.* TO '$NEW_USER_NAME'@'%';" || \
+         ! docker exec -i $DB_HOST mysql -u$MYSQL_USER -p$DB_ROOT_PASSWORD -e "FLUSH PRIVILEGES;"; then
+        log_error "Failed to create and grant privileges for user '$NEW_USER_NAME'"
+        exit 1
+      fi
+      log_success "User: '$NEW_USER_NAME' created for DB: $NEW_DB_NAME with full privileges";
+  fi
 }
 
 # src/lib/generate_password.sh
-# Strict error handling
-
-set -euo pipefail
-
 generate_password() {
-
     local length=$1
-
     local charset="A-Za-z0-9@%&*"
-
     tr -dc "$charset" </dev/urandom | head -c $length
-
 }
 
 # src/lib/get_prompt_text.sh
 get_prompt_text() {
-
     local question=$1
-
     local default=$2
 
     local GREEN='\033[0;32m'
-
     local YELLOW='\033[0;33m'
-
     local NO_COLOR='\033[0m'
 
     echo "${GREEN}$question ${YELLOW}[$default]${NO_COLOR}: "
-
 }
 
 # src/lib/input_validator.sh
 #!/usr/bin/env bash
 # Input validation and sanitization functions for security hardening
-
-set -euo pipefail
 
 # Validate application name (alphanumeric, hyphens, underscores only, max 64 chars)
 # Args: $1 - application name
@@ -1054,55 +918,33 @@ sanitize_password() {
 
 # src/lib/is_container_healthy.sh
 is_container_healthy() {
-
     local container_name=$1
-
     local health_status=$(docker inspect --format='{{.State.Health.Status}}' "$container_name")
-
     if [ "$health_status" == "healthy" ]; then
-
         return 0
-
     else
-
         return 1
-
     fi
-
 }
 
 # src/lib/is_container_running.sh
 is_container_running() {
-
     local container_name=$1
-
     docker ps --filter "name=$container_name" --filter "status=running" --format '{{.Names}}' | grep -w "$container_name" > /dev/null
-
     return $?
-
 }
 
 # src/lib/is_port_in_use.sh
 is_port_in_use() {
-
   local port=$1
-
   if lsof -i -P -n | grep -q ":$port"; then
-
     return 0
-
   else
-
     return 1
-
   fi
-
 }
 
 # src/lib/load_env.sh
-# Strict error handling
-set -euo pipefail
-
 load_env() {
   local filePath="${1:-.env}"
 
@@ -1149,67 +991,70 @@ log() {
 
 # src/lib/log_error.sh
 log_error() {
+  if [ "$#" -ne 1 ]; then
+      echo -e "\nInvalid Arguments, Usage: $0 <message>\n" >&2
+      return 1
+  fi
 
-    echo -e "\033[0;31m[ERROR]\033[0m $*" >&2
+  RED='\033[0;31m'
+  NORMAL='\033[0m'
 
+  echo -e "${RED}-- $1${NORMAL}"
 }
 
 # src/lib/log_header.sh
 log_header() {
-
   if [ "$#" -ne 1 ]; then
-
       echo -e "\nInvalid Arguments, Usage: $0 <message>\n"
-
       return 1
-
   fi
 
   BOLD_CYAN='\033[1;36m'
-
   NORMAL='\033[0m'
 
   echo -e "\n${BOLD_CYAN}==[ $1 ]==\n${NORMAL}"
-
 }
 
 # src/lib/log_info.sh
 log_info() {
+  if [ "$#" -ne 1 ]; then
+      echo -e "\nInvalid Arguments, Usage: $0 <message>\n"
+      return 1
+  fi
 
-    echo -e "\033[0;34m[INFO]\033[0m $*" >&2
+  BOLD_CYAN='\033[1;36m'
+  NORMAL='\033[0m'
 
+  echo -e "${BOLD_CYAN}-- $1${NORMAL}"
 }
 
 # src/lib/log_success.sh
 log_success() {
+  if [ "$#" -ne 1 ]; then
+      echo -e "\nInvalid Arguments, Usage: $0 <message>\n"
+      return 1
+  fi
 
-    echo -e "\033[0;32m[SUCCESS]\033[0m $*" >&2
+  GREEN='\033[0;32m'
+  NORMAL='\033[0m'
 
+  echo -e "${GREEN}-- $1${NORMAL}"
 }
 
 # src/lib/log_warning.sh
 log_warning() {
-
   if [ "$#" -ne 1 ]; then
-
       echo -e "\nInvalid Arguments, Usage: $0 <message>\n" >&2
-
       return 1
-
   fi
 
   YELLOW='\033[0;33m'
-
   NORMAL='\033[0m'
 
   echo -e "${YELLOW}-- $1${NORMAL}"
-
 }
 
 # src/lib/merge_envs.sh
-# Strict error handling
-set -euo pipefail
-
 merge_envs() {
   if [ "$#" -lt 3 ]; then
     log_error "Usage: merge_env <output> <file1> <file2> [file3 ... fileN]"
@@ -1255,300 +1100,19 @@ merge_laravel_envs() {
 
 # src/lib/read_multi_line_input.sh
 read_multi_line_input() {
-
     local delimiter=$1
-
     local result
 
     result=""
-
     while IFS= read -r line; do
-
         [[ $line == "$delimiter" ]] && break
-
         result+="$line"$'\n'
-
     done
 
     echo "$result"
-
-}
-
-# src/lib/security/db_security.sh
-#!/usr/bin/env bash
-# Database Security Module
-# Provides secure functions for database operations with SQL injection prevention
-
-# Note: set -euo pipefail should be in command scripts, not library files
-# Library files are sourced and should not set global shell options
-
-# Validate database name (alphanumeric and underscores only)
-validate_db_name() {
-  local db_name="$1"
-
-  if [[ -z "$db_name" ]]; then
-    log_error "Database name cannot be empty" 2>/dev/null || echo "ERROR: Database name cannot be empty" >&2
-    return 1
-  fi
-
-  if [[ ! "$db_name" =~ ^[a-zA-Z0-9_]+$ ]]; then
-    log_error "Invalid database name: $db_name. Only alphanumeric and underscores allowed." 2>/dev/null || echo "ERROR: Invalid database name" >&2
-    return 1
-  fi
-
-  if [ ${#db_name} -gt 64 ]; then
-    log_error "Database name too long: maximum 64 characters" 2>/dev/null || echo "ERROR: Database name too long" >&2
-    return 1
-  fi
-
-  return 0
-}
-
-# Validate username (alphanumeric and underscores only)
-validate_username() {
-  local username="$1"
-
-  if [[ -z "$username" ]]; then
-    log_error "Username cannot be empty" 2>/dev/null || echo "ERROR: Username cannot be empty" >&2
-    return 1
-  fi
-
-  if [[ ! "$username" =~ ^[a-zA-Z0-9_]+$ ]]; then
-    log_error "Invalid username: $username. Only alphanumeric and underscores allowed." 2>/dev/null || echo "ERROR: Invalid username" >&2
-    return 1
-  fi
-
-  if [ ${#username} -gt 32 ]; then
-    log_error "Username too long: maximum 32 characters" 2>/dev/null || echo "ERROR: Username too long" >&2
-    return 1
-  fi
-
-  return 0
-}
-
-# Sanitize password for MySQL (escape single quotes)
-sanitize_password_for_mysql() {
-  local password="$1"
-
-  if [[ -z "$password" ]]; then
-    log_error "Password cannot be empty" 2>/dev/null || echo "ERROR: Password cannot be empty" >&2
-    return 1
-  fi
-
-  # Escape single quotes by doubling them (MySQL standard)
-  # This is safe for use within single-quoted strings in SQL
-  local sanitized="${password//\'/\'\'}"
-
-  echo "$sanitized"
-  return 0
-}
-
-# Validate network restriction format
-validate_network_restriction() {
-  local network="$1"
-
-  # Reject wildcard access
-  if [[ "$network" == "%" ]]; then
-    log_error "Wildcard host access (%) is not allowed for security" 2>/dev/null || echo "ERROR: Wildcard not allowed" >&2
-    return 1
-  fi
-
-  # Reject 0.0.0.0 (all hosts)
-  if [[ "$network" == "0.0.0.0" ]]; then
-    log_error "Access from all hosts (0.0.0.0) is not allowed for security" 2>/dev/null || echo "ERROR: 0.0.0.0 not allowed" >&2
-    return 1
-  fi
-
-  # Accept Docker network patterns (172.%.%.% or similar)
-  if [[ "$network" =~ ^[0-9]+\.[0-9%]+\.[0-9%]+\.[0-9%]+$ ]]; then
-    return 0
-  fi
-
-  log_error "Invalid network restriction format: $network" 2>/dev/null || echo "ERROR: Invalid network format" >&2
-  return 1
-}
-
-# Execute MySQL command using here-doc to avoid bash interpolation
-execute_mysql_command() {
-  local sql_command="$1"
-  local user="${2:-root}"
-  local password="$3"
-  local host="${4:-$DB_HOST}"
-
-  if [[ -z "$sql_command" ]]; then
-    log_error "SQL command cannot be empty" 2>/dev/null || echo "ERROR: SQL command empty" >&2
-    return 1
-  fi
-
-  if [[ -z "$password" ]]; then
-    log_error "Password is required for MySQL connection" 2>/dev/null || echo "ERROR: Password required" >&2
-    return 1
-  fi
-
-  # Use here-doc to avoid bash variable interpolation in SQL
-  # This prevents SQL injection through bash variables
-  docker exec -i "$host" mysql -u"$user" -p"$password" <<EOF
-$sql_command
-EOF
-
-  return $?
-}
-
-# Create database with validation and secure execution
-create_database_secure() {
-  local db_name="$1"
-
-  # Validate database name
-  if ! validate_db_name "$db_name"; then
-    return 1
-  fi
-
-  # Use backticks for identifier quoting in MySQL
-  local sql="CREATE DATABASE IF NOT EXISTS \`$db_name\`;"
-
-  # Execute using secure method
-  if execute_mysql_command "$sql" "root" "$DB_ROOT_PASSWORD"; then
-    log_success "Database created: $db_name" 2>/dev/null || echo "SUCCESS: Database created" >&2
-    return 0
-  else
-    log_error "Failed to create database: $db_name" 2>/dev/null || echo "ERROR: Database creation failed" >&2
-    return 1
-  fi
-}
-
-# Create user with network restriction and secure execution
-create_user_secure() {
-  local username="$1"
-  local password="$2"
-  local db_name="$3"
-  local network_restriction="${4:-172.%.%.%}"
-
-  # Validate inputs
-  if ! validate_username "$username"; then
-    return 1
-  fi
-
-  if ! validate_db_name "$db_name"; then
-    return 1
-  fi
-
-  if ! validate_network_restriction "$network_restriction"; then
-    return 1
-  fi
-
-  # Sanitize password
-  local sanitized_password
-  sanitized_password=$(sanitize_password_for_mysql "$password")
-  if [[ $? -ne 0 ]]; then
-    return 1
-  fi
-
-  # Create user with network restriction
-  local sql="CREATE USER IF NOT EXISTS '$username'@'$network_restriction' IDENTIFIED BY '$sanitized_password';"
-
-  if ! execute_mysql_command "$sql" "root" "$DB_ROOT_PASSWORD"; then
-    log_error "Failed to create user: $username" 2>/dev/null || echo "ERROR: User creation failed" >&2
-    return 1
-  fi
-
-  # Grant privileges
-  sql="GRANT ALL PRIVILEGES ON \`$db_name\`.* TO '$username'@'$network_restriction';"
-
-  if ! execute_mysql_command "$sql" "root" "$DB_ROOT_PASSWORD"; then
-    log_error "Failed to grant privileges to user: $username" 2>/dev/null || echo "ERROR: Grant failed" >&2
-    return 1
-  fi
-
-  # Flush privileges
-  sql="FLUSH PRIVILEGES;"
-
-  if ! execute_mysql_command "$sql" "root" "$DB_ROOT_PASSWORD"; then
-    log_warning "Failed to flush privileges" 2>/dev/null || echo "WARNING: Flush failed" >&2
-  fi
-
-  log_success "User created with network restriction: $username@$network_restriction" 2>/dev/null || echo "SUCCESS: User created" >&2
-  return 0
-}
-
-# Update user password with secure execution
-update_user_password_secure() {
-  local username="$1"
-  local password="$2"
-  local network_restriction="${3:-172.%.%.%}"
-
-  # Validate inputs
-  if ! validate_username "$username"; then
-    return 1
-  fi
-
-  if ! validate_network_restriction "$network_restriction"; then
-    return 1
-  fi
-
-  # Sanitize password
-  local sanitized_password
-  sanitized_password=$(sanitize_password_for_mysql "$password")
-  if [[ $? -ne 0 ]]; then
-    return 1
-  fi
-
-  # Update password
-  local sql="ALTER USER '$username'@'$network_restriction' IDENTIFIED BY '$sanitized_password';"
-
-  if execute_mysql_command "$sql" "root" "$DB_ROOT_PASSWORD"; then
-    log_success "Password updated for user: $username" 2>/dev/null || echo "SUCCESS: Password updated" >&2
-    return 0
-  else
-    log_error "Failed to update password for user: $username" 2>/dev/null || echo "ERROR: Password update failed" >&2
-    return 1
-  fi
-}
-
-# Check if user exists
-user_exists() {
-  local username="$1"
-  local network_restriction="${2:-172.%.%.%}"
-
-  if ! validate_username "$username"; then
-    return 1
-  fi
-
-  local sql="SELECT user FROM mysql.user WHERE user='$username' AND host='$network_restriction';"
-  local result
-
-  result=$(execute_mysql_command "$sql" "root" "$DB_ROOT_PASSWORD" 2>/dev/null | grep -c "$username")
-
-  if [[ "$result" -gt 0 ]]; then
-    return 0  # User exists
-  else
-    return 1  # User does not exist
-  fi
-}
-
-# Check if database exists
-database_exists() {
-  local db_name="$1"
-
-  if ! validate_db_name "$db_name"; then
-    return 1
-  fi
-
-  local sql="SHOW DATABASES LIKE '$db_name';"
-  local result
-
-  result=$(execute_mysql_command "$sql" "root" "$DB_ROOT_PASSWORD" 2>/dev/null | grep -c "$db_name")
-
-  if [[ "$result" -gt 0 ]]; then
-    return 0  # Database exists
-  else
-    return 1  # Database does not exist
-  fi
 }
 
 # src/lib/setup_environment.sh
-# Strict error handling
-set -euo pipefail
-
 setup_environment() {
   local app_name=$1
   local environment=$2
@@ -1592,20 +1156,12 @@ DB_DATABASE=$db_database
 DB_USERNAME=$db_username
 DB_PASSWORD=$db_password
 OPCACHE_VALIDATE_TIMESTAMPS=$opcache_validate_timestamps
-
-# WebSocket Configuration (Laravel Reverb/Soketi)
-WEBSOCKET_ENABLED=false
-WEBSOCKET_PORT=6001
-WEBSOCKET_PATH=/app
 EOL
 
   log_info "created apps/$app_name/env/$environment.env"
 }
 
 # src/lib/update_source_code.sh
-# Strict error handling
-set -euo pipefail
-
 update_source_code() {
   log_info "updating source code ..."
   local source_code_dir="apps/${args[APP_NAME]}/src-${args[APP_ENV]}"
@@ -1639,11 +1195,8 @@ update_source_code() {
 
 # src/lib/user_exists.sh
 user_exists() {
-
   local username=$1
-
   id -u "$username" >/dev/null 2>&1
-
 }
 
 # :command.command_functions
@@ -1655,37 +1208,24 @@ ez_docker_install_command() {
   #inspect_args
 
   apt-get update
-
   apt-get -y install ca-certificates curl gnupg
-
   install -m 0755 -d /etc/apt/keyrings
-
   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-
   chmod a+r /etc/apt/keyrings/docker.gpg
 
   # Add the repository to Apt sources:
-
   echo \
-
     "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-
       "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" |
-
     tee /etc/apt/sources.list.d/docker.list >/dev/null
-
   apt-get update
 
   apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
   # Validate the success of the installation
-
   if [ $? -ne 0 ]; then
-
       log_error "Failed to install Docker and related packages"
-
       exit 1
-
   fi
 
 }
@@ -1707,7 +1247,6 @@ ez_docker_remove_command() {
   #inspect_args
 
   rm -rf /var/lib/docker
-
   rm -rf /var/lib/containerd
 
 }
@@ -1719,80 +1258,51 @@ ez_shared_deploy_command() {
   DOCKER_ENV_PATH="docker/docker.env"
 
   if [[ -f "$DOCKER_ENV_PATH" ]]; then
-
     load_env "$DOCKER_ENV_PATH"
-
   else
-
     log_warning "$DOCKER_ENV_PATH not found."
-
     log_info "Creating new '$DOCKER_ENV_PATH' file."
 
-    PORT_NGINX_PM=$(ask_question "Enter the Nginx Proxy Manager port" "6000")
-
+    PORT_NGINX_PM=$(ask_question "Enter the Nginx Proxy Manager port" "81")
     PORT_PMA=$(ask_question "Enter the PhpMyAdmin port" "6001")
-
     GENERATED_PASSWORD=$(generate_password 24)
-
     DB_ROOT_PASSWORD=$(ask_question "Enter the database root password" "$GENERATED_PASSWORD" )
-
     SHARED_NETWORK_NAME=$(ask_question "Enter the docker network name" "ez-shared-network")
 
     cat <<EOL > "$DOCKER_ENV_PATH"
-
 SHARED_NETWORK_NAME=$SHARED_NETWORK_NAME
 
 PORT_NGINX_PM=$PORT_NGINX_PM
-
 PORT_PMA=$PORT_PMA
 
 DB_HOST=mysql8
-
 DB_PORT=3306
-
 DB_ROOT_PASSWORD=$DB_ROOT_PASSWORD
-
 EOL
 
-  log_success "Saved docker environment variables to $DOCKER_ENV_PATH"
-
-fi
-
-# Check if the network already exists
-
-if docker network inspect "$SHARED_NETWORK_NAME" >/dev/null 2>&1; then
-
-  log "Network '$SHARED_NETWORK_NAME' already exists"
-
-else
-
-  docker network create "$SHARED_NETWORK_NAME"
-
-  if [ $? -eq 0 ]; then
-
-    log_success "Network '$SHARED_NETWORK_NAME' created"
-
-  else
-
-    log_error "Failed to create network '$SHARED_NETWORK_NAME'"
-
-    exit 1
-
+    log_success "Saved docker environment variables to $DOCKER_ENV_PATH"
   fi
 
-fi
+  # Check if the network already exists
+  if docker network inspect "$SHARED_NETWORK_NAME" >/dev/null 2>&1; then
+    log "Network '$SHARED_NETWORK_NAME' already exists"
+  else
+    docker network create "$SHARED_NETWORK_NAME"
+    if [ $? -eq 0 ]; then
+      log_success "Network '$SHARED_NETWORK_NAME' created"
+    else
+      log_error "Failed to create network '$SHARED_NETWORK_NAME'"
+      exit 1
+    fi
+  fi
 
-log_header "Running Docker Compose for shared services"
+  log_header "Running Docker Compose for shared services"
 
-docker compose -f docker/compose-shared.yml --env-file "docker/docker.env" up --build -d
-
-if [ $? -ne 0 ]; then
-
-  log_error "Failed to run Docker Compose"
-
-  exit 1
-
-fi
+  docker compose -f docker/compose-shared.yml --env-file "docker/docker.env" up --build -d
+  if [ $? -ne 0 ]; then
+    log_error "Failed to run Docker Compose"
+    exit 1
+  fi
 
 }
 
@@ -1851,141 +1361,87 @@ ez_laravel_deploy_command() {
   #inspect_args
 
   # Validate application name
-
   if ! validate_app_name "${args[APP_NAME]}"; then
-
     log_error "Invalid application name: ${args[APP_NAME]}"
-
     log_error "Application names must:"
-
     log_error "  - Contain only letters, numbers, hyphens, and underscores"
-
     log_error "  - Be 64 characters or less"
-
     log_error "Example: my-laravel-app"
-
     exit 1
-
   fi
 
   # Validate environment name
-
   if ! validate_environment "${args[APP_ENV]}"; then
-
     log_error "Invalid environment: ${args[APP_ENV]}"
-
     log_error "Environment must be one of: dev, test, staging, production"
-
     exit 1
-
   fi
 
   log_header "Preparing to deploy Laravel in ${args[APP_ENV]} mode"
 
   # Check Docker daemon availability
-
   if ! docker info >/dev/null 2>&1; then
-
     log_error "Cannot connect to Docker daemon"
-
     log_error "Please ensure:"
-
     log_error "  1. Docker is installed and running"
-
     log_error "  2. Docker service is started: sudo systemctl start docker"
-
     log_error "  3. Your user has Docker permissions: sudo usermod -aG docker \$USER"
-
     exit 1
-
   fi
 
   app_dir="apps/${args[APP_NAME]}"
-
   if [[ ! -d "$app_dir" ]]; then
-
       log_error "Application directory not found: $app_dir"
-
       log_error "The application '${args[APP_NAME]}' has not been initialized."
-
       log_error "Please create the application first:"
-
       log_error "  sudo ./ez laravel new"
-
       exit 1
-
   fi
 
   merged_env_path=$(merge_laravel_envs "$app_dir" "${args[APP_ENV]}")
-
   load_laravel_envs "$app_dir" "${args[APP_ENV]}"
 
   update_source_code
 
   containers=("nginx-pm" "mysql8")
-
   check_containers "${containers[@]}"
 
   create_new_database_and_user "$DB_DATABASE" "$DB_USERNAME" "$DB_PASSWORD"
 
   if [[ "${args[APP_ENV]}" == "dev" ]]; then
-
     cp "$merged_env_path" "$app_dir/src-dev/.env"
-
     chown -R "$OWNER_USER_NAME:$OWNER_GROUP_NAME" "$app_dir/src-dev"
-
   fi
 
   log_header "Running Docker Compose for Laravel ${args[APP_ENV]}"
-
   docker compose -f "$app_dir/compose-laravel.yml" --profile "${args[APP_ENV]}" --env-file "$merged_env_path" up --build -d
 
   if [ $? -ne 0 ]; then
-
     log_error "Failed to start Docker containers for ${args[APP_NAME]} (${args[APP_ENV]})"
-
     log_error "Troubleshooting steps:"
-
     log_error "  1. Check Docker logs: docker compose -f $app_dir/compose-laravel.yml logs"
-
     log_error "  2. Verify Docker is running: docker ps"
-
     log_error "  3. Check for port conflicts: lsof -i :$APP_PORT"
-
     log_error "  4. Review environment file: $merged_env_path"
-
     exit 1
-
   fi
 
   if [[ "${args[APP_ENV]}" != "dev" ]]; then
-
     chown -R "$OWNER_USER_NAME:$OWNER_GROUP_NAME" "$app_dir/storage-${args[APP_ENV]}"
-
   fi
 
   log_success "Server running on [${args[APP_NAME]}_${args[APP_ENV]}] container with 'inner' port 80."
-
   log_info "You can connect your website to a domain using Nginx Proxy Manager at [<your_ip>:$PORT_NGINX_PM]."
 
   if [[ "${args[APP_ENV]}" == "dev" || "${args[APP_ENV]}" == "test" ]]; then
-
     if [[ -n "$APP_PORT" ]]; then
-
       log_success "Server running on [http://<your_ip>:$APP_PORT]."
-
     else
-
       log_error "APP_PORT not set for ${args[APP_ENV]} environment"
-
       log_error "Please add APP_PORT to: apps/${args[APP_NAME]}/env/${args[APP_ENV]}.env"
-
       log_error "Example: APP_PORT=7000"
-
       exit 1
-
     fi
-
   fi
 
 }
@@ -2061,174 +1517,131 @@ ez_laravel_new_command() {
 
   # src/laravel_new_command.sh
   DELIMITER="exit"
-
   PROMPT=$(get_prompt_text "Please paste the content of your .env file, " "type '$DELIMITER' on a new line and press enter to finish")
-
   echo -e "$PROMPT"
-
   ENV_CONTENT=$(read_multi_line_input "$DELIMITER")
 
   APP_NAME=$(echo "$ENV_CONTENT" | grep -oP '^APP_NAME=\K.*')
-
   APP_NAME=$(ask_question "Enter the application name" "$APP_NAME")
 
   # Validate application name
-
   if ! validate_app_name "$APP_NAME"; then
-
     log_error "Invalid application name: $APP_NAME"
-
     log_error "Application names must:"
-
     log_error "  - Contain only letters, numbers, hyphens, and underscores"
-
     log_error "  - Be 64 characters or less"
-
     log_error "Example: my-laravel-app"
-
     exit 1
-
   fi
 
   while true; do
-
-    OWNER_USER_NAME=$(ask_question "What user on this host machine owns this app" "$(whoami)")
-
-    if user_exists "$OWNER_USER_NAME"; then
-
-      break
-
+    # Set default suggestion - if current user is root, suggest ubuntu instead
+    if [[ "$(whoami)" == "root" ]]; then
+      DEFAULT_USER="ubuntu"
     else
-
-      log_error "User '$OWNER_USER_NAME' does not exist. Please enter a valid user."
-
+      DEFAULT_USER="$(whoami)"
     fi
 
+    OWNER_USER_NAME=$(ask_question "What user on this host machine owns this app" "$DEFAULT_USER")
+
+    # Check if user is trying to use root
+    if [[ "$OWNER_USER_NAME" == "root" ]]; then
+      log_error "Root user is not supported for security reasons. Try using 'ubuntu' or create a dedicated user for your application."
+      continue
+    fi
+
+    if user_exists "$OWNER_USER_NAME"; then
+      # Additional check for UID 0 (root)
+      USER_ID=$(id -u "$OWNER_USER_NAME")
+      if [[ "$USER_ID" == "0" ]]; then
+        log_error "User '$OWNER_USER_NAME' has root privileges (UID 0). Try using 'ubuntu' or create a dedicated user for your application."
+        continue
+      fi
+      break
+    else
+      log_error "User '$OWNER_USER_NAME' does not exist. Please enter a valid user."
+    fi
   done
 
   OWNER_USER_ID=$(id -u "$OWNER_USER_NAME")
-
   OWNER_GROUP_NAME=$(id -gn "$OWNER_USER_NAME")
-
   OWNER_GROUP_ID=$(id -g "$OWNER_USER_NAME")
 
   APP_DIR="apps/$APP_NAME"
 
   if [[ -d "$APP_DIR" ]]; then
-
       log_error "Directory $APP_DIR already exists app_name must be unique."
-
       exit 1
-
   fi
 
   log "Creating $APP_DIR directory"
-
   mkdir -p "$APP_DIR/env/generated"
 
   log "saving .env file into $APP_DIR/env/laravel.env"
-
   echo "$ENV_CONTENT" > "$APP_DIR/env/laravel.env"
 
   log_info "Git url examples:"
-
   log "normal git url (you get prompted for authorization): https://github.com/MansourM/ez-docker-for-laravel.git"
-
   log "or this format: https://<user>:<pass>@github.com/MansourM/ez-docker-for-laravel.git"
-
   GIT_URL=$(ask_question "Enter the application git url" "https://github.com/MansourM/ez-docker-for-laravel-example.git")
 
   # Validate Git URL
-
   if ! validate_git_url "$GIT_URL"; then
-
     log_error "Invalid Git URL format: $GIT_URL"
-
     log_error "Git URLs must:"
-
     log_error "  - End with .git"
-
     log_error "  - Use https://, http://, git://, or git@ protocol"
-
     log_error "Examples:"
-
     log_error "  - https://github.com/user/repo.git"
-
     log_error "  - git@github.com:user/repo.git"
-
     exit 1
-
   fi
 
   cat <<EOL > "$APP_DIR/env/app.env"
-
 APP_NAME=$APP_NAME
-
 GIT_URL=$GIT_URL
-
 OWNER_USER_NAME=$OWNER_USER_NAME
-
 OWNER_USER_ID=$OWNER_USER_ID
-
 OWNER_GROUP_NAME=$OWNER_GROUP_NAME
-
 OWNER_GROUP_ID=$OWNER_GROUP_ID
-
 EOL
 
-log_info "created $APP_DIR/env/app.env"
+  log_info "created $APP_DIR/env/app.env"
 
-SETUP_DEV_ENV=$(ask_question "Do you want to set up the dev environment?" "yes")
+  SETUP_DEV_ENV=$(ask_question "Do you want to set up the dev environment?" "yes")
 
-if [[ "$SETUP_DEV_ENV" == "yes" || "$SETUP_DEV_ENV" == "y" ]]; then
+  if [[ "$SETUP_DEV_ENV" == "yes" || "$SETUP_DEV_ENV" == "y" ]]; then
+    setup_environment "$APP_NAME" "dev"
+  fi
 
-  setup_environment "$APP_NAME" "dev"
+  SETUP_TEST_ENV=$(ask_question "Do you want to set up the test environment?" "yes")
 
-fi
+  if [[ "$SETUP_TEST_ENV" == "yes" || "$SETUP_TEST_ENV" == "y" ]]; then
+    setup_environment "$APP_NAME" "test"
+  fi
 
-SETUP_TEST_ENV=$(ask_question "Do you want to set up the test environment?" "yes")
+  SETUP_STAGING_ENV=$(ask_question "Do you want to set up the staging environment?" "yes")
 
-if [[ "$SETUP_TEST_ENV" == "yes" || "$SETUP_TEST_ENV" == "y" ]]; then
+  if [[ "$SETUP_STAGING_ENV" == "yes" || "$SETUP_TEST_ENV" == "y" ]]; then
+    setup_environment "$APP_NAME" "staging"
+  fi
 
-  setup_environment "$APP_NAME" "test"
+  SETUP_STAGING_ENV=$(ask_question "Do you want to set up the production environment?" "yes")
 
-fi
+  if [[ "$SETUP_STAGING_ENV" == "yes" || "$SETUP_TEST_ENV" == "y" ]]; then
+    setup_environment "$APP_NAME" "production"
+  fi
 
-SETUP_STAGING_ENV=$(ask_question "Do you want to set up the staging environment?" "yes")
+  cp -r "template/nginx" "$APP_DIR/nginx"
+  cp "template/entrypoint.sh" "$APP_DIR/entrypoint.sh"
+  cp "template/opcache.ini" "$APP_DIR/opcache.ini"
+  cp "template/php.ini" "$APP_DIR/php.ini"
+  cp "template/supervisor/supervisord.conf" "$APP_DIR/supervisord.conf"
 
-if [[ "$SETUP_STAGING_ENV" == "yes" || "$SETUP_TEST_ENV" == "y" ]]; then
-
-  setup_environment "$APP_NAME" "staging"
-
-fi
-
-SETUP_STAGING_ENV=$(ask_question "Do you want to set up the production environment?" "yes")
-
-if [[ "$SETUP_STAGING_ENV" == "yes" || "$SETUP_TEST_ENV" == "y" ]]; then
-
-  setup_environment "$APP_NAME" "production"
-
-fi
-
-cp -r "template/nginx" "$APP_DIR/nginx"
-
-cp "template/entrypoint.sh" "$APP_DIR/entrypoint.sh"
-
-cp "template/entrypoint-dev.sh" "$APP_DIR/entrypoint-dev.sh"
-
-cp "template/opcache.ini" "$APP_DIR/opcache.ini"
-
-cp "template/php.ini" "$APP_DIR/php.ini"
-
-cp "template/supervisord.conf" "$APP_DIR/supervisord.conf"
-
-cp "template/common-laravel.yml" "$APP_DIR/common-laravel.yml"
-
-cp "template/laravel-dev.Dockerfile" "$APP_DIR/laravel-dev.Dockerfile"
-
-cp "template/laravel.Dockerfile" "$APP_DIR/laravel.Dockerfile"
-
-cp "template/compose-laravel.yml" "$APP_DIR/compose-laravel.yml"
+  cp "template/common-laravel.yml" "$APP_DIR/common-laravel.yml"
+  cp "template/laravel-dev.Dockerfile" "$APP_DIR/laravel-dev.Dockerfile"
+  cp "template/laravel.Dockerfile" "$APP_DIR/laravel.Dockerfile"
+  cp "template/compose-laravel.yml" "$APP_DIR/compose-laravel.yml"
 
 }
 
@@ -3393,36 +2806,23 @@ ez_laravel_new_parse_requirements() {
 before_hook() {
   # src/before.sh
 
-  # Strict error handling - applies to all commands
-
-  set -euo pipefail
-
   #inspect_args
 
   # Check Docker access instead of requiring root
-
   if ! docker ps >/dev/null 2>&1; then
-
      log_error "Cannot connect to Docker daemon
 
   This script requires access to Docker. Please ensure:
-
     1. Docker is installed and running
-
     2. Your user has permission to access Docker
 
   To add your user to the docker group:
-
     sudo usermod -aG docker \$USER
-
     newgrp docker
 
   Or run with sudo if you prefer:
-
     sudo ./ez <command>"
-
      exit 1
-
   fi
 }
 

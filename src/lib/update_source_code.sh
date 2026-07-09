@@ -1,6 +1,3 @@
-# Strict error handling
-set -euo pipefail
-
 update_source_code() {
   log_info "updating source code ..."
   local source_code_dir="apps/${args[APP_NAME]}/src-${args[APP_ENV]}"
