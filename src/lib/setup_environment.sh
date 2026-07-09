@@ -1,6 +1,3 @@
-# Strict error handling
-set -euo pipefail
-
 setup_environment() {
   local app_name=$1
   local environment=$2
@@ -45,11 +42,6 @@ DB_DATABASE=$db_database
 DB_USERNAME=$db_username
 DB_PASSWORD=$db_password
 OPCACHE_VALIDATE_TIMESTAMPS=$opcache_validate_timestamps
-
-# WebSocket Configuration (Laravel Reverb/Soketi)
-WEBSOCKET_ENABLED=false
-WEBSOCKET_PORT=6001
-WEBSOCKET_PATH=/app
 EOL
 
   log_info "created apps/$app_name/env/$environment.env"

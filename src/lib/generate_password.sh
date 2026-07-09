@@ -1,6 +1,3 @@
-# Strict error handling
-set -euo pipefail
-
 generate_password() {
     local length=$1
     local charset="A-Za-z0-9@%&*"

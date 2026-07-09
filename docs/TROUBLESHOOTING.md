@@ -35,8 +35,7 @@ Laravel application can't connect to the database.
 ### Possible Causes
 1. Incorrect database credentials
 2. Database doesn't exist
-3. Network restrictions blocking access
-4. MySQL container not running
+3. MySQL container not running
 
 ### Solutions
 
@@ -59,13 +58,13 @@ If database is missing, recreate it:
 ./ez laravel deploy {app_name} {environment}
 ```
 
-#### 3. Check Network Restrictions
-Database users are restricted to Docker network (`172.%.%.%`). Verify:
+#### 3. Check the User's Host Grant
+Application database users are granted host `'%'` for broad compatibility. Verify the user exists:
 ```bash
 docker exec ez-docker-for-laravel-mysql8-1 mysql -uroot -p{DB_ROOT_PASSWORD} -e "SELECT user, host FROM mysql.user WHERE user='{db_user}';"
 ```
 
-Should show host as `172.%.%.%`, not `%` or `localhost`.
+The user's host should be `%`.
 
 #### 4. Verify Container is Running
 ```bash
@@ -95,13 +94,7 @@ The system now properly handles special characters through password sanitization
 - Don't start passwords with `#` (interpreted as comment)
 - Be careful with `$` (shell variable expansion)
 
-#### 2. Use Password Generation
-```bash
-# Generate a secure password (20 characters)
-generate_password 20
-```
-
-#### 3. Verify Password in .env File
+#### 2. Verify Password in .env File
 ```bash
 # Check the password is properly set
 cat apps/{app_name}/env/{environment}.env | grep DB_PASSWORD
@@ -109,7 +102,7 @@ cat apps/{app_name}/env/{environment}.env | grep DB_PASSWORD
 # Ensure it's not quoted (unless quotes are part of the password)
 ```
 
-#### 4. Test Database Connection
+#### 3. Test Database Connection
 ```bash
 # Test connection with the password
 docker exec ez-docker-for-laravel-mysql8-1 mysql -u{db_user} -p'{db_password}' -e "SELECT 1;"
@@ -554,7 +547,6 @@ If you're still experiencing issues:
 3. **Documentation**:
    - [Health Check Monitoring](HEALTH_CHECKS.md)
    - [Security Documentation](../SECURITY.md)
-   - [Testing Guide](../test/README.md)
 
 4. **Community Support**:
    - [GitHub Issues](https://github.com/MansourM/ez-docker-for-laravel/issues)

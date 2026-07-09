@@ -17,14 +17,34 @@ if ! validate_app_name "$APP_NAME"; then
 fi
 
 while true; do
-  OWNER_USER_NAME=$(ask_question "What user on this host machine owns this app" "$(whoami)")
+  # Set default suggestion - if current user is root, suggest ubuntu instead
+  if [[ "$(whoami)" == "root" ]]; then
+    DEFAULT_USER="ubuntu"
+  else
+    DEFAULT_USER="$(whoami)"
+  fi
+
+  OWNER_USER_NAME=$(ask_question "What user on this host machine owns this app" "$DEFAULT_USER")
+
+  # Check if user is trying to use root
+  if [[ "$OWNER_USER_NAME" == "root" ]]; then
+    log_error "Root user is not supported for security reasons. Try using 'ubuntu' or create a dedicated user for your application."
+    continue
+  fi
 
   if user_exists "$OWNER_USER_NAME"; then
+    # Additional check for UID 0 (root)
+    USER_ID=$(id -u "$OWNER_USER_NAME")
+    if [[ "$USER_ID" == "0" ]]; then
+      log_error "User '$OWNER_USER_NAME' has root privileges (UID 0). Try using 'ubuntu' or create a dedicated user for your application."
+      continue
+    fi
     break
   else
     log_error "User '$OWNER_USER_NAME' does not exist. Please enter a valid user."
   fi
 done
+
 OWNER_USER_ID=$(id -u "$OWNER_USER_NAME")
 OWNER_GROUP_NAME=$(id -gn "$OWNER_USER_NAME")
 OWNER_GROUP_ID=$(id -g "$OWNER_USER_NAME")
@@ -96,10 +116,9 @@ fi
 
 cp -r "template/nginx" "$APP_DIR/nginx"
 cp "template/entrypoint.sh" "$APP_DIR/entrypoint.sh"
-cp "template/entrypoint-dev.sh" "$APP_DIR/entrypoint-dev.sh"
 cp "template/opcache.ini" "$APP_DIR/opcache.ini"
 cp "template/php.ini" "$APP_DIR/php.ini"
-cp "template/supervisord.conf" "$APP_DIR/supervisord.conf"
+cp "template/supervisor/supervisord.conf" "$APP_DIR/supervisord.conf"
 
 cp "template/common-laravel.yml" "$APP_DIR/common-laravel.yml"
 cp "template/laravel-dev.Dockerfile" "$APP_DIR/laravel-dev.Dockerfile"

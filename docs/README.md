@@ -15,14 +15,11 @@ Welcome to the EZ Docker For Laravel documentation. This index helps you find th
 
 ### Security
 - **[Security Policy](../SECURITY.md)** - Security features, best practices, and vulnerability reporting
-- **[Security Audit Report](SECURITY_AUDIT.md)** - Latest security audit results
 
 ## For Developers
 
 ### Development
-- **[Bashly Workflow](BASHLY_WORKFLOW.md)** - How to modify the CLI (IMPORTANT: Read before editing!)
 - **[Bashly Framework Reference](bashly.md)** - Bashly framework documentation
-- **[Testing Guide](../test/README.md)** - Running and writing tests
 
 ### Architecture
 - **[Project Structure](../README.md)** - Directory layout and file organization
@@ -36,7 +33,6 @@ Welcome to the EZ Docker For Laravel documentation. This index helps you find th
 - [Deploy Laravel App](../README.md#installation-steps)
 - [Fix Docker Permissions](TROUBLESHOOTING.md#docker-permission-issues)
 - [Database Connection Issues](TROUBLESHOOTING.md#database-connection-problems)
-- [Run Tests](../test/README.md#running-tests)
 
 ### Reference
 - [PHP Extensions](../README.md#heavy_plus_sign-php-extensions)
@@ -49,8 +45,6 @@ Welcome to the EZ Docker For Laravel documentation. This index helps you find th
 |--------|--------|
 | **Production Ready** | ✅ YES |
 | **Security Status** | ✅ LOW RISK |
-| **Test Coverage** | 96 tests, 100% pass rate |
-| **Last Security Audit** | November 12, 2024 |
 | **Supported Platforms** | Debian/Ubuntu Linux |
 | **Tested On** | Ubuntu 22.04.3 LTS |
 
