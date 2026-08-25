@@ -10,6 +10,11 @@ services:
         - PHP_VERSION=${PHP_VERSION:-8.3}
         - OWNER_USER_ID=${OWNER_USER_ID}
         - OWNER_GROUP_ID=${OWNER_GROUP_ID}
+        # Optional private-package auth; all empty for public apps.
+        - COMPOSER_GITLAB_HOST=${COMPOSER_GITLAB_HOST:-}
+        - COMPOSER_GITLAB_SSH_PORT=${COMPOSER_GITLAB_SSH_PORT:-}
+        - COMPOSER_GITLAB_TOKEN_USER=${COMPOSER_GITLAB_TOKEN_USER:-}
+        - COMPOSER_GITLAB_TOKEN=${COMPOSER_GITLAB_TOKEN:-}
     environment:
       - APP_ENV=${APP_ENV}
     restart: unless-stopped
