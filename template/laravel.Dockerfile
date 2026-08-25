@@ -12,6 +12,16 @@ ARG LARAVEL_ROOT
 ARG WORKDIR=/var/www
 ARG NODE_VERSION=20
 
+# Optional: lets composer clone a private VCS package (e.g. a package in a private GitLab repo)
+# without baking an SSH key into the image. Leave COMPOSER_GITLAB_TOKEN empty for public apps.
+ARG COMPOSER_GITLAB_HOST
+# Optional — leave empty when the composer.json URL carries no port. See the rewrite below.
+ARG COMPOSER_GITLAB_SSH_PORT
+# The HTTPS username paired with the token: `gitlab-ci-token` for a CI job token, but a project or
+# group deploy token has its own username, so it is configurable.
+ARG COMPOSER_GITLAB_TOKEN_USER
+ARG COMPOSER_GITLAB_TOKEN
+
 # Install required librairies
 RUN apt-get update && apt-get install -y \
     git \
@@ -50,6 +60,25 @@ RUN npm audit fix
 
 COPY ./src-${APP_ENV}/${LARAVEL_ROOT}composer.json ${WORKDIR}/
 COPY ./src-${APP_ENV}/${LARAVEL_ROOT}composer.lock ${WORKDIR}/
+
+# Authenticate composer to a private VCS host when a token is provided: rewrite the package's ssh://
+# URL to https + token so it clones without an SSH identity. No-op when the token is empty (public
+# apps). The rewrite is written to this builder stage's git config only, never the final image.
+#
+# COMPOSER_GITLAB_SSH_PORT is optional and must be left empty when the composer.json URL carries no
+# port: git matches insteadOf by literal prefix, so a pattern ending `host:/` never matches a URL
+# reading `host/`, and the rewrite would silently not fire — the build then falls back to SSH with
+# no identity and fails on a private repo. Set it only to the port the URL actually spells out.
+RUN if [ -n "$COMPOSER_GITLAB_TOKEN" ]; then \
+      if [ -n "$COMPOSER_GITLAB_SSH_PORT" ]; then \
+        ssh_prefix="ssh://git@${COMPOSER_GITLAB_HOST}:${COMPOSER_GITLAB_SSH_PORT}/"; \
+      else \
+        ssh_prefix="ssh://git@${COMPOSER_GITLAB_HOST}/"; \
+      fi; \
+      git config --global \
+        url."https://${COMPOSER_GITLAB_TOKEN_USER:-gitlab-ci-token}:${COMPOSER_GITLAB_TOKEN}@${COMPOSER_GITLAB_HOST}/".insteadOf \
+        "$ssh_prefix"; \
+    fi
 
 RUN if [ "${APP_ENV}" = "test" ]; then \
       composer install --no-scripts --no-autoloader; \
