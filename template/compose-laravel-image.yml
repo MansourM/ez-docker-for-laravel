@@ -1,13 +1,12 @@
-# Image mode: run a prebuilt image from the registry instead of building on this host.
+# Image mode: run a prebuilt image from the registry.
 #
-# Two differences from compose-laravel.yml, and both are the point of the mode:
-#   * `image:` replaces `build:` — the artifact CI tested is the artifact that runs here, and the
-#     host needs no source checkout, no build toolchain and no credentials for private packages.
-#   * the environment file is bind-mounted rather than baked in, so a published image never
-#     carries APP_KEY or the database password.
+# `image:` in place of `build:` means the artifact CI tested is the one that runs, and this host
+# needs only a registry pull — no source checkout, build toolchain or private-package credentials.
+# Bind-mounting the environment file keeps APP_KEY and the database password out of a published
+# image.
 #
-# dev and test are deliberately absent: dev mounts live source to edit it, and test builds the
-# tree it is about to test. Neither wants a fixed artifact.
+# Covers the deployed environments only: dev mounts live source to edit, and test builds the tree
+# it is about to test, so both want a build rather than a fixed artifact.
 
 services:
 

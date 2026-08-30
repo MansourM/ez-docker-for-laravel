@@ -50,9 +50,8 @@ if [[ "$DEPLOY_MODE" != "build" && "$DEPLOY_MODE" != "image" ]]; then
 fi
 
 if [[ "$DEPLOY_MODE" == "image" ]]; then
-  # The image already contains the application, so there is nothing to check out. That is the
-  # point of the mode: this host needs no source, no build toolchain, and no credentials for
-  # private packages — CI held those when it built the image.
+  # The image already contains the application, so this host needs no source, build toolchain or
+  # private-package credentials; CI held those when it built it.
   if [[ "${args[APP_ENV]}" == "dev" || "${args[APP_ENV]}" == "test" ]]; then
     log_error "DEPLOY_MODE=image does not apply to ${args[APP_ENV]}."
     log_error "dev mounts live source and test builds the tree it is testing; neither runs a fixed artifact."
@@ -64,8 +63,7 @@ if [[ "$DEPLOY_MODE" == "image" ]]; then
     log_error "  APP_IMAGE=registry.example.com/group/app:<tag>"
     exit 1
   fi
-  # Apps created before image mode existed have no compose-laravel-image.yml. Say so here rather
-  # than letting docker compose fail on a missing file.
+  # Naming the missing template beats docker compose's own error for a missing file.
   if [[ ! -f "$app_dir/compose-laravel-image.yml" ]]; then
     log_error "DEPLOY_MODE=image but $app_dir/compose-laravel-image.yml is missing."
     log_error "This app predates image mode. Copy the template in:"
@@ -92,10 +90,9 @@ log_header "Running Docker Compose for Laravel ${args[APP_ENV]}"
 if [[ "$DEPLOY_MODE" == "image" ]]; then
   registry_login "$REGISTRY_HOST" "$REGISTRY_USER" "$REGISTRY_TOKEN"
 
-  # The published runtime keeps www-data at its distribution uid — a base image shared by every
-  # host cannot bake one host's uid, the way build mode does with `usermod -u $OWNER_USER_ID`.
-  # So the mounted storage must match the *container*, not the host user, and it has to happen
-  # before the container starts: the entrypoint writes logs and caches on its first breath.
+  # The published runtime keeps www-data at its distribution uid so one image serves every host,
+  # so the mounted storage has to match the container rather than the host user. It runs before
+  # the container starts because the entrypoint writes logs and caches on its first breath.
   storage_dir="$app_dir/storage-${args[APP_ENV]}"
   mkdir -p "$storage_dir/volume" "$storage_dir/logs"
   chown -R "${IMAGE_USER_ID:-33}:${IMAGE_GROUP_ID:-33}" "$storage_dir"
@@ -118,9 +115,8 @@ if [ $? -ne 0 ]; then
 fi
 
 if [[ "${args[APP_ENV]}" != "dev" && "$DEPLOY_MODE" != "image" ]]; then
-  # Build mode only: that image remaps www-data to OWNER_USER_ID, so the host owner and the
-  # container are the same uid. Image mode already chowned to the container's uid above, and
-  # redoing it here would lock the running container out of its own storage.
+  # Build mode remaps www-data to OWNER_USER_ID, making the host owner and the container the same
+  # uid. Image mode has already matched the container's uid above.
   chown -R "$OWNER_USER_NAME:$OWNER_GROUP_NAME" "$app_dir/storage-${args[APP_ENV]}"
 fi
 

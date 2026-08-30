@@ -1,12 +1,11 @@
 # ez-laravel-runtime — the serving half of the runtime pair.
 #
-# php-fpm + nginx + supervisor, the extensions a Laravel app needs at runtime, and this repo's
-# nginx/php/supervisor configuration. Carries no application code and no .env: an app's own
-# Dockerfile copies its built tree in, and the environment file is mounted at run time.
+# php-fpm + nginx + supervisor, the extensions a Laravel app needs at run time, and this repo's
+# nginx/php/supervisor configuration. An app's own Dockerfile copies its built tree in, and the
+# environment file is mounted at run time.
 #
-# www-data keeps its distribution uid/gid. Aligning ownership with a specific host is the app
-# image's job (it is the layer that knows which host it is for), not this one's — baking a uid
-# here would make the image unshareable, which is the whole point of publishing it.
+# www-data keeps its distribution uid/gid so one published image serves every host; aligning
+# ownership with a particular host belongs to the layer that knows which host it is for.
 
 ARG PHP_VERSION=8.3
 FROM php:${PHP_VERSION}-fpm
