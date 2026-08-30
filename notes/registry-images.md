@@ -90,6 +90,19 @@ sudo ./ez laravel deploy <app> production
 The deploy pulls the tag, then starts it. Pull happens first, so a wrong tag or an expired token
 fails before the running container is touched.
 
+## Storage ownership
+
+The published runtime keeps `www-data` at its distribution uid (33). Build mode instead remaps it
+to `OWNER_USER_ID` at build time, which a base image shared by every host cannot do.
+
+So in image mode the deploy chowns `apps/<app>/storage-<env>` to **33:33** before starting the
+container, rather than to the host owner. Handing those directories to the host user — which is
+correct for build mode — would leave Laravel unable to write logs or caches, and the failure
+surfaces as 500s rather than as anything about permissions.
+
+Override with `IMAGE_USER_ID` / `IMAGE_GROUP_ID` if a custom runtime uses different ids. The host
+user can still read the logs by joining group 33.
+
 ## Notes
 
 - `dev` and `test` reject image mode: dev mounts live source to edit, and test builds the tree it
