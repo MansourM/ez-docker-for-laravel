@@ -52,8 +52,11 @@ case "$app_env" in
         php artisan migrate --force
         ;;
     "production")
-        # Database migration with backup safety
-        if composer show spatie/laravel-backup > /dev/null 2>&1; then
+        # Is a backup tool actually available? Ask artisan, not composer: composer is a build-time
+        # tool and is not in the runtime image, so `composer show` here fails whether or not the
+        # package is installed — which silently sent every production deploy down the "skip
+        # migrations" path below.
+        if php artisan list --raw 2>/dev/null | grep -q '^backup:run'; then
           echo "Backing up database..."
           php artisan backup:run --only-db || {
               echo "Error: Database backup failed. Aborting migrations for safety."
@@ -61,9 +64,18 @@ case "$app_env" in
           }
           echo "Migrating database in production..."
           php artisan migrate --force
+        elif [ "${MIGRATE_WITHOUT_BACKUP}" = "true" ]; then
+          echo "WARNING: no backup tool available; MIGRATE_WITHOUT_BACKUP=true, so migrating anyway."
+          echo "WARNING: this assumes a database dump was taken outside the container."
+          php artisan migrate --force
         else
-            echo "Error: spatie/laravel-backup is not installed. Skipping migrations."
-            echo "Please handle migrations manually after ensuring a backup is available."
+            # Refuse rather than skip. Skipping leaves new code running against an old schema —
+            # the application looks healthy and misbehaves on the paths that needed the migration,
+            # which is a worse failure than not starting.
+            echo "Error: no backup tool available (spatie/laravel-backup provides backup:run)."
+            echo "Refusing to migrate without one. Either install it, or take a dump yourself and"
+            echo "set MIGRATE_WITHOUT_BACKUP=true for this deploy."
+            exit 1
         fi
 
         # Run a basic health check
