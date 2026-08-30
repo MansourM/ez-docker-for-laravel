@@ -64,6 +64,15 @@ if [[ "$DEPLOY_MODE" == "image" ]]; then
     log_error "  APP_IMAGE=registry.example.com/group/app:<tag>"
     exit 1
   fi
+  # Apps created before image mode existed have no compose-laravel-image.yml. Say so here rather
+  # than letting docker compose fail on a missing file.
+  if [[ ! -f "$app_dir/compose-laravel-image.yml" ]]; then
+    log_error "DEPLOY_MODE=image but $app_dir/compose-laravel-image.yml is missing."
+    log_error "This app predates image mode. Copy the template in:"
+    log_error "  cp template/compose-laravel-image.yml $app_dir/"
+    log_error "  cp template/common-laravel.yml $app_dir/"
+    exit 1
+  fi
   log_info "Image mode — deploying $APP_IMAGE (no source checkout, no build on this host)."
 else
   update_source_code
