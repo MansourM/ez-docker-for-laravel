@@ -67,13 +67,16 @@ DEPLOY_MODE=image
 APP_IMAGE=registry.example.com/group/app:<tag>
 ```
 
-In `apps/<app>/docker/docker.env` (omit both for an anonymous pull from a public registry):
+In `docker/docker.env` at the ez-docker root — it is shared by every app on the host
+(omit these for an anonymous pull from a public registry):
 
 ```
 REGISTRY_HOST=registry.example.com
 REGISTRY_USER=<deploy token username>
 REGISTRY_TOKEN=<deploy token with read_registry>
 ```
+
+These are stripped out of the app's generated `.env`: they configure ez, not the application.
 
 `read_registry` is the whole scope needed — the host pulls images and nothing else. It never reads
 source and never resolves packages.
