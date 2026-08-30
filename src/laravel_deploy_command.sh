@@ -41,7 +41,42 @@ fi
 merged_env_path=$(merge_laravel_envs "$app_dir" "${args[APP_ENV]}")
 load_laravel_envs "$app_dir" "${args[APP_ENV]}"
 
-update_source_code
+DEPLOY_MODE="${DEPLOY_MODE:-build}"
+
+if [[ "$DEPLOY_MODE" != "build" && "$DEPLOY_MODE" != "image" ]]; then
+  log_error "Invalid DEPLOY_MODE: '$DEPLOY_MODE' (expected 'build' or 'image')"
+  log_error "Set it in apps/${args[APP_NAME]}/env/app.env; omit it to keep building on this host."
+  exit 1
+fi
+
+if [[ "$DEPLOY_MODE" == "image" ]]; then
+  # The image already contains the application, so there is nothing to check out. That is the
+  # point of the mode: this host needs no source, no build toolchain, and no credentials for
+  # private packages — CI held those when it built the image.
+  if [[ "${args[APP_ENV]}" == "dev" || "${args[APP_ENV]}" == "test" ]]; then
+    log_error "DEPLOY_MODE=image does not apply to ${args[APP_ENV]}."
+    log_error "dev mounts live source and test builds the tree it is testing; neither runs a fixed artifact."
+    exit 1
+  fi
+  if [[ -z "$APP_IMAGE" ]]; then
+    log_error "DEPLOY_MODE=image but APP_IMAGE is empty."
+    log_error "Set APP_IMAGE to the full image reference, e.g."
+    log_error "  APP_IMAGE=registry.example.com/group/app:<tag>"
+    exit 1
+  fi
+  # Apps created before image mode existed have no compose-laravel-image.yml. Say so here rather
+  # than letting docker compose fail on a missing file.
+  if [[ ! -f "$app_dir/compose-laravel-image.yml" ]]; then
+    log_error "DEPLOY_MODE=image but $app_dir/compose-laravel-image.yml is missing."
+    log_error "This app predates image mode. Copy the template in:"
+    log_error "  cp template/compose-laravel-image.yml $app_dir/"
+    log_error "  cp template/common-laravel.yml $app_dir/"
+    exit 1
+  fi
+  log_info "Image mode — deploying $APP_IMAGE (no source checkout, no build on this host)."
+else
+  update_source_code
+fi
 
 containers=("nginx-pm" "mysql8")
 check_containers "${containers[@]}"
@@ -54,7 +89,15 @@ if [[ "${args[APP_ENV]}" == "dev" ]]; then
 fi
 
 log_header "Running Docker Compose for Laravel ${args[APP_ENV]}"
-docker compose -f "$app_dir/compose-laravel.yml" --profile "${args[APP_ENV]}" --env-file "$merged_env_path" up --build -d
+if [[ "$DEPLOY_MODE" == "image" ]]; then
+  registry_login "$REGISTRY_HOST" "$REGISTRY_USER" "$REGISTRY_TOKEN"
+  compose_file="$app_dir/compose-laravel-image.yml"
+  # Pull first so a registry or tag problem fails before the running container is touched.
+  docker compose -f "$compose_file" --profile "${args[APP_ENV]}" --env-file "$merged_env_path" pull \
+    && docker compose -f "$compose_file" --profile "${args[APP_ENV]}" --env-file "$merged_env_path" up -d
+else
+  docker compose -f "$app_dir/compose-laravel.yml" --profile "${args[APP_ENV]}" --env-file "$merged_env_path" up --build -d
+fi
 
 if [ $? -ne 0 ]; then
   log_error "Failed to start Docker containers for ${args[APP_NAME]} (${args[APP_ENV]})"

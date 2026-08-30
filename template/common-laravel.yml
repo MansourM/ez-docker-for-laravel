@@ -27,3 +27,19 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
+
+  # Image mode's shared half: everything the build-mode service has except `build:`, since the
+  # artifact arrives from the registry. Extended by compose-laravel-image.yml.
+  nginx-fpm-laravel-runtime: #inner port :80
+    environment:
+      - APP_ENV=${APP_ENV}
+    restart: unless-stopped
+    user: www-data
+    working_dir: /var/www
+    entrypoint: /usr/local/bin/entrypoint.sh
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:80 || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
