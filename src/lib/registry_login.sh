@@ -19,7 +19,7 @@ registry_login() {
 
   if [[ -z "$registry" ]]; then
     log_error "REGISTRY_USER/REGISTRY_TOKEN are set but REGISTRY_HOST is empty."
-    log_error "Set REGISTRY_HOST in apps/<app>/docker/docker.env (e.g. registry.example.com)."
+    log_error "Set REGISTRY_HOST in docker/docker.env (e.g. registry.example.com)."
     exit 1
   fi
 

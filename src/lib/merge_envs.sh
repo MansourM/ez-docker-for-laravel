@@ -19,8 +19,11 @@ merge_envs() {
     merged_content=$(sort -u -t '=' -k 1,1 "$file" <(printf "%s" "$merged_content") | grep -v '^$\|^\s*\#')
   done
 
-  #Mask some vars from being merged into others, TODO improve this part
-  merged_content=$(echo "$merged_content" | grep -Ev '^(SHARED_NETWORK_NAME|DB_ROOT_PASSWORD|GIT_URL)=')
+  # Mask host-side plumbing out of the app's .env. These configure ez itself — the registry it
+  # pulls from, the database superuser, the source repo — and the application has no use for any
+  # of them; REGISTRY_TOKEN especially has no business inside a Laravel environment.
+  # TODO improve this part
+  merged_content=$(echo "$merged_content" | grep -Ev '^(SHARED_NETWORK_NAME|DB_ROOT_PASSWORD|GIT_URL|REGISTRY_HOST|REGISTRY_USER|REGISTRY_TOKEN)=')
 
   echo "$merged_content" > "$output"
 }
