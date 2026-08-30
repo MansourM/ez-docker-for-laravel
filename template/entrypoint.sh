@@ -25,6 +25,15 @@ if ! grep -q "^APP_KEY=[^[:space:]]" .env; then
     php artisan config:clear
 fi
 
+# Cache configuration now, not at build time. An image published to a registry must not carry a
+# .env (it would ship APP_KEY and the database password to anyone who can pull it), so the real
+# environment only exists here, at run time — caching earlier would freeze the wrong values.
+echo "Caching configuration..."
+php artisan config:cache
+php artisan event:cache
+php artisan route:cache
+php artisan view:cache
+
 case "$app_env" in
     "local" | "dev" | "test")
         echo "fresh database + seed ..."

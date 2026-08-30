@@ -1,0 +1,44 @@
+# Image mode: run a prebuilt image from the registry instead of building on this host.
+#
+# Two differences from compose-laravel.yml, and both are the point of the mode:
+#   * `image:` replaces `build:` — the artifact CI tested is the artifact that runs here, and the
+#     host needs no source checkout, no build toolchain and no credentials for private packages.
+#   * the environment file is bind-mounted rather than baked in, so a published image never
+#     carries APP_KEY or the database password.
+#
+# dev and test are deliberately absent: dev mounts live source to edit it, and test builds the
+# tree it is about to test. Neither wants a fixed artifact.
+
+services:
+
+  nginx-fpm-laravel-staging:
+    container_name: ${APP_NAME}_staging
+    image: ${APP_IMAGE}
+    extends:
+      file: common-laravel.yml
+      service: nginx-fpm-laravel-runtime
+    volumes:
+      - ./env/generated/${APP_ENV}.env:/var/www/.env:ro
+      - ./storage-${APP_ENV}/volume:/var/www/storage/volume
+      - ./storage-${APP_ENV}/logs:/var/www/storage/logs
+    profiles:
+      - staging
+
+  nginx-fpm-laravel-production:
+    container_name: ${APP_NAME}_production
+    image: ${APP_IMAGE}
+    extends:
+      file: common-laravel.yml
+      service: nginx-fpm-laravel-runtime
+    volumes:
+      - ./env/generated/${APP_ENV}.env:/var/www/.env:ro
+      - ./storage-${APP_ENV}/volume:/var/www/storage/volume
+      - ./storage-${APP_ENV}/logs:/var/www/storage/logs
+    profiles:
+      - production
+
+
+networks:
+  default:
+    external: true
+    name: ${SHARED_NETWORK_NAME}
