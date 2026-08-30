@@ -1533,6 +1533,14 @@ ez_laravel_deploy_command() {
   log_header "Running Docker Compose for Laravel ${args[APP_ENV]}"
   if [[ "$DEPLOY_MODE" == "image" ]]; then
     registry_login "$REGISTRY_HOST" "$REGISTRY_USER" "$REGISTRY_TOKEN"
+
+    # The published runtime keeps www-data at its distribution uid — a base image shared by every
+    # host cannot bake one host's uid, the way build mode does with `usermod -u $OWNER_USER_ID`.
+    # So the mounted storage must match the *container*, not the host user, and it has to happen
+    # before the container starts: the entrypoint writes logs and caches on its first breath.
+    storage_dir="$app_dir/storage-${args[APP_ENV]}"
+    mkdir -p "$storage_dir/volume" "$storage_dir/logs"
+    chown -R "${IMAGE_USER_ID:-33}:${IMAGE_GROUP_ID:-33}" "$storage_dir"
     compose_file="$app_dir/compose-laravel-image.yml"
     # Pull first so a registry or tag problem fails before the running container is touched.
     docker compose -f "$compose_file" --profile "${args[APP_ENV]}" --env-file "$merged_env_path" pull \
@@ -1551,7 +1559,10 @@ ez_laravel_deploy_command() {
     exit 1
   fi
 
-  if [[ "${args[APP_ENV]}" != "dev" ]]; then
+  if [[ "${args[APP_ENV]}" != "dev" && "$DEPLOY_MODE" != "image" ]]; then
+    # Build mode only: that image remaps www-data to OWNER_USER_ID, so the host owner and the
+    # container are the same uid. Image mode already chowned to the container's uid above, and
+    # redoing it here would lock the running container out of its own storage.
     chown -R "$OWNER_USER_NAME:$OWNER_GROUP_NAME" "$app_dir/storage-${args[APP_ENV]}"
   fi
 
