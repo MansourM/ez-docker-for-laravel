@@ -1,11 +1,10 @@
 # ez-laravel-build — the build toolchain half of the runtime pair.
 #
-# Composer + Node + the extensions needed to resolve and compile a Laravel app. Carries no
-# application code: an app's own Dockerfile starts FROM this, installs its dependencies, and
-# copies the result into ez-laravel-runtime.
+# Composer + Node + the extensions needed to resolve and compile a Laravel app. An app's own
+# Dockerfile starts FROM this, installs its dependencies, and copies the result into
+# ez-laravel-runtime.
 #
-# Built and published from this repo (see notes/registry-images.md), so every app shares one
-# toolchain instead of each repeating ~50 lines of it.
+# Published from this repo (see notes/registry-images.md) so every app shares one toolchain.
 
 ARG PHP_VERSION=8.3
 FROM php:${PHP_VERSION}-fpm

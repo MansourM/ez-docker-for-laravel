@@ -103,6 +103,20 @@ surfaces as 500s rather than as anything about permissions.
 Override with `IMAGE_USER_ID` / `IMAGE_GROUP_ID` if a custom runtime uses different ids. The host
 user can still read the logs by joining group 33.
 
+## Migrations and the backup gate
+
+In `production`, the entrypoint backs the database up before migrating. It detects the backup tool
+with `php artisan list | grep backup:run` — **not** `composer show`, which cannot work: composer is
+a build-time tool and is absent from the runtime image, so that test failed regardless of whether
+the package was installed, and every production deploy quietly took the "skip migrations" branch.
+
+If no backup tool is available the deploy now **fails** instead of skipping. Skipping starts new
+code against an old schema: the app looks healthy and misbehaves only on the paths that needed the
+migration, which is harder to diagnose than a container that refuses to start.
+
+To migrate when you have taken a dump by other means, set `MIGRATE_WITHOUT_BACKUP=true` for that
+deploy.
+
 ## Notes
 
 - `dev` and `test` reject image mode: dev mounts live source to edit, and test builds the tree it

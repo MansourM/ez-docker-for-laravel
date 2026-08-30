@@ -1,8 +1,8 @@
 # Log the host in to the image registry, when image mode needs one.
 #
-# Only reached in image mode. A public registry needs no credentials, so an empty REGISTRY_TOKEN
-# is a no-op rather than an error — but a half-filled pair is a misconfiguration and says so
-# instead of failing later with an opaque `pull access denied`.
+# A public registry needs no credentials, so an empty REGISTRY_TOKEN is a valid anonymous pull.
+# A half-filled pair is a misconfiguration, and saying so here beats an opaque
+# `pull access denied` further down.
 registry_login() {
   local registry="$1" user="$2" token="$3"
 
