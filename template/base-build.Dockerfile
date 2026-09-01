@@ -33,10 +33,11 @@ RUN apt-get update && apt-get install -y \
 # exif and intl are needed for filament
 RUN docker-php-ext-install zip exif intl
 
-# Composer and Node come from their official images rather than piped install scripts —
-# fardadev-infra rules.md §7 forbids `curl | bash` installers, and this also drops an apt-repo
-# fetch from every build. Debian-to-Debian copy; ci/assert-base-images.sh runs `node -v` / `npm -v`
-# / `composer --version` afterwards so a glibc or path mismatch fails the build here instead of
+# Composer and Node come from their official images rather than piped install scripts. Piping a
+# remote installer into a shell means the build has no pinned, reviewable input and fails opaquely
+# when upstream changes; copying from a pinned official image also drops an apt-repo fetch from
+# every build. Debian-to-Debian copy; ci/assert-base-images.sh runs `node -v` / `npm -v` /
+# `composer --version` afterwards so a glibc or path mismatch fails the build here instead of
 # surfacing as a broken app build months later.
 COPY --from=docker.io/library/composer:2 /usr/bin/composer /usr/local/bin/composer
 COPY --from=node /usr/local/bin/node /usr/local/bin/node

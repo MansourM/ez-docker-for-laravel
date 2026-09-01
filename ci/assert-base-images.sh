@@ -6,7 +6,7 @@
 # WHY THIS IS A SEPARATE FILE: the same assertions must run in two places — the CI pipeline
 # (buildah) and a manual publish via scripts/publish-base-images.sh (docker). One copy is the
 # point; a divergent second copy is how a check quietly stops covering the thing it was written
-# for. Same reasoning as fardadev/ci-images:ci/assert-image.sh, which this mirrors.
+# for. That is also why it takes the engine as an argument rather than assuming docker.
 #
 # WHY ASSERT AT ALL: a build can exit 0 and still produce a broken image. Real examples from this
 # image pair and its sibling:

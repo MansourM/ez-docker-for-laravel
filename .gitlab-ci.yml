@@ -1,15 +1,28 @@
-# Builds the ez-laravel base image pair and pushes it to registry.fardadev.com.
+# Builds the ez-laravel base image pair and pushes it to the project's container registry.
+#
+# OPT-IN, AND OFF BY DEFAULT. This repo is a general-purpose tool: most people who clone or fork it
+# want the templates and the `ez` deploy flow, not our image-publishing pipeline. Building images in
+# CI needs a runner that can build images unprivileged, which a fork will not have — and a job that
+# queues forever on a runner tag nobody carries is a worse first impression than no job at all.
+#
+# So nothing here runs unless the project sets BASE_IMAGES_CI=true. Everything below then uses
+# GitLab's own predefined registry variables, so it works on gitlab.com or any self-managed
+# instance — nothing about it is specific to our host beyond the runner tag, which is a variable.
+#
+# NOT USING CI AT ALL IS A FIRST-CLASS PATH: scripts/publish-base-images.sh builds and publishes the
+# same pair with plain docker against any registry, and runs the same assertions this pipeline does.
+# See notes/registry-images.md.
 #
 # Before this pipeline existed the pair was published by hand from a developer's Docker daemon via
-# scripts/publish-base-images.sh. That is the same arrangement fardadev/ci-images was deliberately
-# migrated out of on 2026-08-25, for reasons its README spells out: a hand-built image has no
-# host-independent definition, no version identity, and nothing asserts it before it reaches
-# consumers. The script stays as a local escape hatch; CI is the publishing path.
+# scripts/publish-base-images.sh from someone's workstation. A hand-built image has no
+# host-independent definition (lose the machine, lose the recipe), no version identity, and nothing
+# asserting it before consumers build on it. We hit all three on a sibling image set and moved it
+# to CI; this is the same shape. The script remains fully supported — see notes/registry-images.md.
 #
 # WHY BUILDAH AND NOT DOCKER-IN-DOCKER: dind needs privileged = true, which gives every job on that
-# runner root-equivalence on fardadev — the same host that runs GitLab, Caddy and the live sites.
-# See fardadev-infra: configs/gitlab-runner/runner-template-buildah.toml. The `buildah` tag routes
-# to the runner entry carrying security_opt = ["seccomp:unconfined", "apparmor:unconfined"]; both
+# runner root-equivalence on the host — which, if you self-host GitLab, is the host running it.
+# (Our runner config lives in a private infra repo; the shape is what matters.) The runner tag routes
+# to a runner entry carrying security_opt = ["seccomp:unconfined", "apparmor:unconfined"]; both
 # are required — with default profiles the build dies on unshare(CLONE_NEWUSER), and with only
 # seccomp unconfined it dies on an AppArmor remount denial.
 
@@ -17,6 +30,11 @@ stages:
   - build
 
 variables:
+  # Set BASE_IMAGES_CI=true as a project CI/CD variable to enable this pipeline.
+  BASE_IMAGES_CI: "false"
+  # The tag of a runner that can build container images. Ours is `buildah`; point this at whatever
+  # your runner carries. Left as a variable so a fork is not editing job definitions to build.
+  BUILDAH_RUNNER_TAG: buildah
   # vfs, not overlay: buildah cannot stack overlayfs on the overlayfs the job container already
   # runs on. This is the storage driver, and it is why a buildah build is ~2x slower than docker's.
   STORAGE_DRIVER: vfs
@@ -30,8 +48,16 @@ variables:
 .base-build:
   stage: build
   tags:
-    - buildah
+    - $BUILDAH_RUNNER_TAG
   image: quay.io/buildah/stable
+  # ONE MATRIX JOB AT A TIME. The first publish run put all three PHP versions on the runner
+  # concurrently and filled the disk: with STORAGE_DRIVER=vfs every layer is copied in full, and
+  # each job builds TWO images (the runtime half carries nginx, supervisor, mysql-client and the gd
+  # image libs). The registry stores its blobs on that same disk, so it started returning
+  # 500 Internal Server Error with "no space left on device" mid-push, and 8.3 and 8.4 failed
+  # while 8.5 happened to get through. Serialising costs wall-clock on a pipeline that runs when a
+  # PHP version moves; it does not cost a red pipeline and a half-published tag set.
+  resource_group: base-images
   parallel:
     matrix:
       # 8.3 is what production runs today. 8.5 is the target of account-manager's framework
@@ -41,36 +67,42 @@ variables:
   script:
     - BUILD_IMAGE="$CI_REGISTRY_IMAGE/ez-laravel-build"
     - RUNTIME_IMAGE="$CI_REGISTRY_IMAGE/ez-laravel-runtime"
-    # --password-stdin, never on argv (fardadev-infra rules.md §2).
+    # --password-stdin, never on argv: process args are visible to anything that can read /proc.
     - echo "$CI_REGISTRY_PASSWORD" | buildah login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+    # One half at a time: build, assert, push, then DROP IT from local storage before starting the
+    # next. Holding both halves plus their vfs layer copies is what exhausted the disk. Assert
+    # always runs before push — a broken image that never reaches the registry cannot break anyone
+    # else's build — and the two halves carry deliberately different extension sets.
     - |
-      buildah build \
-        --build-arg "PHP_VERSION=$PHP_VERSION" \
-        --tag "$BUILD_IMAGE:$PHP_VERSION" \
-        --tag "$BUILD_IMAGE:$PHP_VERSION-$CI_COMMIT_SHORT_SHA" \
-        -f template/base-build.Dockerfile \
-        template
-    - |
-      buildah build \
-        --build-arg "PHP_VERSION=$PHP_VERSION" \
-        --tag "$RUNTIME_IMAGE:$PHP_VERSION" \
-        --tag "$RUNTIME_IMAGE:$PHP_VERSION-$CI_COMMIT_SHORT_SHA" \
-        -f template/base-runtime.Dockerfile \
-        template
-    # Assert BEFORE pushing. A broken image that never reaches the registry cannot break anyone
-    # else's build. Both halves are asserted; they carry deliberately different extension sets.
-    - ci/assert-base-images.sh buildah build   "$BUILD_IMAGE:$PHP_VERSION"   "$PHP_VERSION"
-    - ci/assert-base-images.sh buildah runtime "$RUNTIME_IMAGE:$PHP_VERSION" "$PHP_VERSION"
-    - |
-      if [ "$PUBLISH" = "true" ]; then
-        echo "publishing $PHP_VERSION (floating + $CI_COMMIT_SHORT_SHA)"
-        buildah push "$BUILD_IMAGE:$PHP_VERSION"
-        buildah push "$BUILD_IMAGE:$PHP_VERSION-$CI_COMMIT_SHORT_SHA"
-        buildah push "$RUNTIME_IMAGE:$PHP_VERSION"
-        buildah push "$RUNTIME_IMAGE:$PHP_VERSION-$CI_COMMIT_SHORT_SHA"
-      else
-        echo "verify-only pipeline (PUBLISH=$PUBLISH) — built and asserted, not pushed"
-      fi
+      set -eu
+      for half in build runtime; do
+        case "$half" in
+          build)   image="$BUILD_IMAGE";   dockerfile=template/base-build.Dockerfile ;;
+          runtime) image="$RUNTIME_IMAGE"; dockerfile=template/base-runtime.Dockerfile ;;
+        esac
+
+        echo "==> building $half half of $PHP_VERSION"
+        buildah build \
+          --build-arg "PHP_VERSION=$PHP_VERSION" \
+          --tag "$image:$PHP_VERSION" \
+          --tag "$image:$PHP_VERSION-$CI_COMMIT_SHORT_SHA" \
+          -f "$dockerfile" \
+          template
+
+        ci/assert-base-images.sh buildah "$half" "$image:$PHP_VERSION" "$PHP_VERSION"
+
+        if [ "$PUBLISH" = "true" ]; then
+          echo "==> publishing $image ($PHP_VERSION + $CI_COMMIT_SHORT_SHA)"
+          buildah push "$image:$PHP_VERSION"
+          buildah push "$image:$PHP_VERSION-$CI_COMMIT_SHORT_SHA"
+        else
+          echo "verify-only pipeline (PUBLISH=$PUBLISH) — $half half built and asserted, not pushed"
+        fi
+
+        # Reclaim before the next half. Failure here is not fatal: the job is about to end anyway
+        # and a stale local image cannot corrupt what has already been pushed.
+        buildah rmi "$image:$PHP_VERSION" "$image:$PHP_VERSION-$CI_COMMIT_SHORT_SHA" || true
+      done
 
 # Merge requests: prove both images still build and pass their assertions, publish nothing. The
 # floating :8.3 tag must never move because of an unmerged branch — every app builds FROM it.
@@ -79,7 +111,7 @@ verify:
   variables:
     PUBLISH: "false"
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $BASE_IMAGES_CI == "true" && $CI_PIPELINE_SOURCE == "merge_request_event"
 
 # Default branch: build, assert, publish.
 #
@@ -91,8 +123,8 @@ publish:
   variables:
     PUBLISH: "true"
   rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $BASE_IMAGES_CI == "true" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
     # Manual/scheduled rebuilds also publish — that is the point of them: picking up upstream
     # php/node/composer security fixes without a code change.
-    - if: $CI_PIPELINE_SOURCE == "web"
-    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $BASE_IMAGES_CI == "true" && $CI_PIPELINE_SOURCE == "web"
+    - if: $BASE_IMAGES_CI == "true" && $CI_PIPELINE_SOURCE == "schedule"

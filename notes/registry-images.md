@@ -38,20 +38,37 @@ FROM ${BASE}/ez-laravel-runtime:${PHP_VERSION}
 COPY --from=builder --chown=www-data:www-data /var/www /var/www
 ```
 
-**CI publishes them** (`.gitlab-ci.yml`): every push to the default branch builds the matrix,
-asserts both halves with `ci/assert-base-images.sh`, and pushes a floating `:<php>` tag plus an
-immutable `:<php>-<short-sha>`. Merge requests build and assert without publishing, so the floating
-tag every app builds FROM never moves for an unmerged branch.
-
-`scripts/publish-base-images.sh` remains as a local escape hatch and runs the same assertions:
+Publish them with docker, against any registry — this needs nothing but docker and a login:
 
 ```bash
 docker login registry.example.com
 scripts/publish-base-images.sh registry.example.com/group 8.5
 ```
 
-Publishing by hand was the original arrangement and is deliberately no longer the default — see
-`fardadev/ci-images`, which was migrated off exactly that for the same reasons.
+The script builds both halves, runs `ci/assert-base-images.sh` against each, and only pushes once
+the assertions pass. A broken image that never reaches the registry cannot break anyone's build.
+
+### Publishing from CI instead (optional)
+
+`.gitlab-ci.yml` does the same thing on a schedule you do not have to babysit: matrix over PHP
+versions, assert both halves, push a floating `:<php>` tag plus an immutable `:<php>-<short-sha>`.
+Merge requests build and assert **without** publishing, so the floating tag apps build `FROM` never
+moves for an unmerged branch.
+
+It is **off by default** and does nothing until you set two project CI/CD variables:
+
+| Variable | Set it to |
+|---|---|
+| `BASE_IMAGES_CI` | `true` to enable the pipeline at all |
+| `BUILDAH_RUNNER_TAG` | the tag of a runner that can build images (default `buildah`) |
+
+Off by default because building images in CI needs a runner that can do it unprivileged, and a job
+queued forever against a runner tag nobody carries is worse than no job. Everything else uses
+GitLab's predefined `CI_REGISTRY*` variables, so it works on gitlab.com or any self-managed
+instance without editing the file.
+
+Whichever path you use, the assertions are the same file — one copy, so a check cannot drift from
+the thing it protects.
 
 A runtime fix then reaches every app on its next build, rather than being re-pasted into each
 app's Dockerfile.
