@@ -32,6 +32,14 @@ variables:
   tags:
     - buildah
   image: quay.io/buildah/stable
+  # ONE MATRIX JOB AT A TIME. The first publish run put all three PHP versions on the runner
+  # concurrently and filled the disk: with STORAGE_DRIVER=vfs every layer is copied in full, and
+  # each job builds TWO images (the runtime half carries nginx, supervisor, mysql-client and the gd
+  # image libs). The registry stores its blobs on that same disk, so it started returning
+  # 500 Internal Server Error with "no space left on device" mid-push, and 8.3 and 8.4 failed
+  # while 8.5 happened to get through. Serialising costs wall-clock on a pipeline that runs when a
+  # PHP version moves; it does not cost a red pipeline and a half-published tag set.
+  resource_group: base-images
   parallel:
     matrix:
       # 8.3 is what production runs today. 8.5 is the target of account-manager's framework
@@ -43,34 +51,40 @@ variables:
     - RUNTIME_IMAGE="$CI_REGISTRY_IMAGE/ez-laravel-runtime"
     # --password-stdin, never on argv (fardadev-infra rules.md §2).
     - echo "$CI_REGISTRY_PASSWORD" | buildah login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+    # One half at a time: build, assert, push, then DROP IT from local storage before starting the
+    # next. Holding both halves plus their vfs layer copies is what exhausted the disk. Assert
+    # always runs before push — a broken image that never reaches the registry cannot break anyone
+    # else's build — and the two halves carry deliberately different extension sets.
     - |
-      buildah build \
-        --build-arg "PHP_VERSION=$PHP_VERSION" \
-        --tag "$BUILD_IMAGE:$PHP_VERSION" \
-        --tag "$BUILD_IMAGE:$PHP_VERSION-$CI_COMMIT_SHORT_SHA" \
-        -f template/base-build.Dockerfile \
-        template
-    - |
-      buildah build \
-        --build-arg "PHP_VERSION=$PHP_VERSION" \
-        --tag "$RUNTIME_IMAGE:$PHP_VERSION" \
-        --tag "$RUNTIME_IMAGE:$PHP_VERSION-$CI_COMMIT_SHORT_SHA" \
-        -f template/base-runtime.Dockerfile \
-        template
-    # Assert BEFORE pushing. A broken image that never reaches the registry cannot break anyone
-    # else's build. Both halves are asserted; they carry deliberately different extension sets.
-    - ci/assert-base-images.sh buildah build   "$BUILD_IMAGE:$PHP_VERSION"   "$PHP_VERSION"
-    - ci/assert-base-images.sh buildah runtime "$RUNTIME_IMAGE:$PHP_VERSION" "$PHP_VERSION"
-    - |
-      if [ "$PUBLISH" = "true" ]; then
-        echo "publishing $PHP_VERSION (floating + $CI_COMMIT_SHORT_SHA)"
-        buildah push "$BUILD_IMAGE:$PHP_VERSION"
-        buildah push "$BUILD_IMAGE:$PHP_VERSION-$CI_COMMIT_SHORT_SHA"
-        buildah push "$RUNTIME_IMAGE:$PHP_VERSION"
-        buildah push "$RUNTIME_IMAGE:$PHP_VERSION-$CI_COMMIT_SHORT_SHA"
-      else
-        echo "verify-only pipeline (PUBLISH=$PUBLISH) — built and asserted, not pushed"
-      fi
+      set -eu
+      for half in build runtime; do
+        case "$half" in
+          build)   image="$BUILD_IMAGE";   dockerfile=template/base-build.Dockerfile ;;
+          runtime) image="$RUNTIME_IMAGE"; dockerfile=template/base-runtime.Dockerfile ;;
+        esac
+
+        echo "==> building $half half of $PHP_VERSION"
+        buildah build \
+          --build-arg "PHP_VERSION=$PHP_VERSION" \
+          --tag "$image:$PHP_VERSION" \
+          --tag "$image:$PHP_VERSION-$CI_COMMIT_SHORT_SHA" \
+          -f "$dockerfile" \
+          template
+
+        ci/assert-base-images.sh buildah "$half" "$image:$PHP_VERSION" "$PHP_VERSION"
+
+        if [ "$PUBLISH" = "true" ]; then
+          echo "==> publishing $image ($PHP_VERSION + $CI_COMMIT_SHORT_SHA)"
+          buildah push "$image:$PHP_VERSION"
+          buildah push "$image:$PHP_VERSION-$CI_COMMIT_SHORT_SHA"
+        else
+          echo "verify-only pipeline (PUBLISH=$PUBLISH) — $half half built and asserted, not pushed"
+        fi
+
+        # Reclaim before the next half. Failure here is not fatal: the job is about to end anyway
+        # and a stale local image cannot corrupt what has already been pushed.
+        buildah rmi "$image:$PHP_VERSION" "$image:$PHP_VERSION-$CI_COMMIT_SHORT_SHA" || true
+      done
 
 # Merge requests: prove both images still build and pass their assertions, publish nothing. The
 # floating :8.3 tag must never move because of an unmerged branch — every app builds FROM it.
