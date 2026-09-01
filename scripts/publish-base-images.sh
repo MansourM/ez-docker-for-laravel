@@ -24,7 +24,12 @@ if [[ -z "$prefix" ]]; then
   exit 1
 fi
 
-cd "$(dirname "$0")/../template"
+# Resolve the repo root to an ABSOLUTE path before changing directory. $0 stays relative, so any
+# later "$(dirname "$0")/../ci/..." would resolve against template/ instead of the repo root and
+# fail with "command not found".
+repo_root="$(cd "$(dirname "$0")/.." && pwd)"
+
+cd "$repo_root/template"
 
 build_tag="${prefix}/ez-laravel-build:${php_version}"
 runtime_tag="${prefix}/ez-laravel-runtime:${php_version}"
@@ -38,8 +43,8 @@ docker build -f base-runtime.Dockerfile --build-arg "PHP_VERSION=${php_version}"
 # Assert BEFORE pushing. A broken image that never reaches the registry cannot break anyone
 # else's build.
 echo "==> asserting"
-"$(dirname "$0")/../ci/assert-base-images.sh" docker build   "$build_tag"   "$php_version"
-"$(dirname "$0")/../ci/assert-base-images.sh" docker runtime "$runtime_tag" "$php_version"
+"$repo_root/ci/assert-base-images.sh" docker build   "$build_tag"   "$php_version"
+"$repo_root/ci/assert-base-images.sh" docker runtime "$runtime_tag" "$php_version"
 
 echo "==> pushing"
 docker push "$build_tag"
