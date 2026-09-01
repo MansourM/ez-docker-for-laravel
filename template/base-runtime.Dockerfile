@@ -8,7 +8,11 @@
 # ownership with a particular host belongs to the layer that knows which host it is for.
 
 ARG PHP_VERSION=8.3
-FROM php:${PHP_VERSION}-fpm
+# FULLY QUALIFIED on purpose. Docker resolves a bare `php:...` against an implicit Docker Hub
+# default; buildah does not — it resolves bare names through registries.conf.d shortname aliases
+# and errors with "no stage or image found with that name". The publish pipeline builds with
+# buildah, so a bare name here fails CI while still building locally. Do not shorten it back.
+FROM docker.io/library/php:${PHP_VERSION}-fpm
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -34,7 +38,14 @@ RUN apt-get update && apt-get install -y \
     supervisor \
     default-mysql-client #This is needed because we need `mysqldump` for `spatie/laravel-backup`
 
-RUN docker-php-ext-configure gd --with-freetype=/usr/include/
+# --with-jpeg is REQUIRED, not optional. Since PHP 7.4 gd only gets JPEG support when it is asked
+# for explicitly; having libjpeg-dev installed is not enough. Without it the build still succeeds
+# and `php --ri gd` simply omits the JPEG line, so imagejpeg()/imagecreatefromjpeg() are missing and
+# any JPEG upload fails much later with a confusing error. Measured 2026-09-01: every image this
+# recipe has ever produced — 8.3 included — reports gd_info()['JPEG Support'] === false.
+# ci/assert-base-images.sh asserts JPEG and PNG so this cannot regress silently again.
+# The path form (--with-freetype=/usr/include/) is pre-7.4 syntax; 7.4+ takes a bare flag.
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 
 # NOTE: opcache is compiled into PHP 8.5+, but is a separately-installable shared
 # module on 8.2-8.4, so only install it when it isn't already present.

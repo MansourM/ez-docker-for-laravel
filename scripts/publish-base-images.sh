@@ -9,6 +9,10 @@
 #
 # Apps build FROM these, so a runtime fix reaches every app on its next build instead of being
 # re-pasted into each app's Dockerfile. Run `docker login <registry>` first.
+#
+# CI IS THE PUBLISHING PATH (.gitlab-ci.yml). This script remains as a local escape hatch — for
+# building a version CI does not yet cover, or publishing when the runner is down. It runs the same
+# ci/assert-base-images.sh the pipeline does, so a manual publish cannot skip the checks.
 set -euo pipefail
 
 prefix="${1:-}"
@@ -30,6 +34,12 @@ docker build -f base-build.Dockerfile --build-arg "PHP_VERSION=${php_version}" -
 
 echo "==> building $runtime_tag"
 docker build -f base-runtime.Dockerfile --build-arg "PHP_VERSION=${php_version}" -t "$runtime_tag" .
+
+# Assert BEFORE pushing. A broken image that never reaches the registry cannot break anyone
+# else's build.
+echo "==> asserting"
+"$(dirname "$0")/../ci/assert-base-images.sh" docker build   "$build_tag"   "$php_version"
+"$(dirname "$0")/../ci/assert-base-images.sh" docker runtime "$runtime_tag" "$php_version"
 
 echo "==> pushing"
 docker push "$build_tag"
